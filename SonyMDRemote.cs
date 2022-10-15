@@ -16,7 +16,7 @@ namespace SonyMDRemote
         {
             InitializeComponent();
 
-            label1.Text = String.Format("LA2YUA SonyMDRemote {0}", VersionString);
+            label1.Text = String.Format("LA2YUA SonyMDRemote {0} {1}", VersionString, ReleaseString);
 #if LOGGING
             string logfilename = String.Format("Log_{0}.txt", DateTime.UtcNow.ToString("o").Replace(':', '_'));
             logfile = new StreamWriter(logfilename, append: true);
@@ -35,9 +35,16 @@ namespace SonyMDRemote
             logfile.AutoFlush = true;
             logfile_cmd.AutoFlush = true;
 #endif
-            AppendLog("Program start version {0}", VersionString);
-            AppendCmdLog("Program start version {0}", VersionString);
+            AppendLog("Program start version {0} {1}", VersionString, ReleaseString);
+            AppendCmdLog("Program start version {0} {1}", VersionString, ReleaseString);
             AppendLog("Hint: select a COM port and hit Get Info to start everything");
+
+#if LOGGING
+            AppendLog("Debug build, unlimited scrollback and logging.");
+#elif !LOGGING
+            //AppendLog("Hint: select a COM port and hit Get Info to start everything");
+#endif
+
             Update_COM_List(true);
             comboBox1.SelectedIndex = 0;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(comboBox1_SelectedIndexChanged);
@@ -60,6 +67,12 @@ namespace SonyMDRemote
         }
 
         string VersionString = "v0.2a";
+
+#if LOGGING
+        string ReleaseString = "debug build";
+#elif !LOGGING
+        string ReleaseString = "release build";
+#endif
 
         StreamWriter logfile;
         StreamWriter logfile_cmd;
