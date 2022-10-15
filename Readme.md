@@ -15,11 +15,9 @@ You will need a female-female 9 pin D-Sub adapter cable (a null modem cable):
 * Pin 5 to Pin 5
 
 ## Use
-To connect, select a COM port from the selector. Then click Remote On, and Update to poll basic information.
+To connect, select a COM port from the selector, then click Get Info to start everything for playback/edit mode.
 
 The textbox below logs the received data and debug info.
-
-Click Get Info and wait for completion, then Populate to show all track names in a list.
 
 You can double click the leftmost part of a row to tell the MD to play a specific track. The currently playing track is bolded.
 

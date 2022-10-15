@@ -378,10 +378,17 @@ namespace SonyMDRemote
 
         private void timer_Poll_Time_Tick(object sender, EventArgs e)
         {
+
             // empty queue
             if (commandqueue == null || commandqueue.Count < 1)
             {
                 timer_Poll_Time.Enabled = false;
+                return;
+            }
+            // just spin and don't issue new command if we're getting the disc data
+            else if (_inforequest && timer_Poll_GetInfo.Enabled)
+            {
+                timer_Poll_Time.Interval = 2000;
                 return;
             }
                 
@@ -718,36 +725,30 @@ namespace SonyMDRemote
                     }
 
                     // 7.16 TRACK NAME (1st packet)
-                    if (ArrRep[4] == 0x20 && ArrRep[5] == 0x4A && ArrRep.Length > 8)
+                    if (ArrRep[4] == 0x20 && (ArrRep[5] == 0x4A || ArrRep[5] == 0x4B) && ArrRep.Length > 8)
                     {
                         string currenttrackname = TrimNonAscii(DecodeAscii(ref ArrRep, 7));
                         if (_infocounter >= 0)
                         {
-                            _infocounter++;
-                            tracknames.Add(_infocounter, new StringBuilder(128));
+                            if (ArrRep[5] == 0x4A)
+                            {
+                                _infocounter++;
+                                tracknames.Add(_infocounter, new StringBuilder(128));
+                            }
                             StringBuilder sb;
                             tracknames.TryGetValue(_infocounter, out sb);
                             sb.Append(currenttrackname);
                         }
+
+                        if (_inforequest)
+                        {
+                            timer_Poll_GetInfo.Stop();
+                            timer_Poll_GetInfo.Start();
+                        }
+                            
 
                         byte Segment = ArrRep[6];
                         AppendLog("MD: Track {1} name part 1 is: {0}", currenttrackname, Segment);
-                    }
-
-                    // 7.16 TRACK NAME (2nd packet)
-                    if (ArrRep[4] == 0x20 && ArrRep[5] == 0x4B && ArrRep.Length > 8)
-                    {
-                        string currenttrackname = TrimNonAscii(DecodeAscii(ref ArrRep, 7));
-
-                        if (_infocounter > 0)
-                        {
-                            StringBuilder sb;
-                            tracknames.TryGetValue(_infocounter, out sb);
-                            sb.Append(currenttrackname);
-                        }
-
-                        byte Segment = ArrRep[6];
-                        AppendLog("MD: Track name part {1} is: {0}", currenttrackname, Segment);
                     }
 
                     // 7.17 ALL NAME END
@@ -1018,20 +1019,29 @@ namespace SonyMDRemote
             Transmit_MDS_Message(MDS_TX_Eject);
         }
 
+        bool _inforequest = false;
+
         private void button10_Click(object sender, EventArgs e)
         {
+            
             checkBox1.Checked = false;
             checkBox2.Checked = false;
             // reset list of names
             _infocounter = 0;
             tracknames.Clear();
+            Transmit_MDS_Message(MDS_TX_SetRemoteOn, delay: 500);
             Transmit_MDS_Message(MDS_TX_DisableElapsedTimeTransmit);
-            Transmit_MDS_Message(MDS_TX_ReqDiscAndTrackNames, delay:12000);
+            Transmit_MDS_Message(MDS_TX_ReqModelName);
+            //Transmit_MDS_Message(MDS_TX_ReqDiscName, delay: 500);
+            Transmit_MDS_Message(MDS_TX_ReqDiscAndTrackNames, delay:3000);
+            _inforequest = true;
+            checkBox1.Checked = true;
+            checkBox2.Checked = true;
         }
 
         private void DoUpdateTask()
         {
-            Transmit_MDS_Message(MDS_TX_ReqDiscName);
+            
             Transmit_MDS_Message(MDS_TX_ReqStatus);
             if (checkBox2.Checked)
             {
@@ -1072,12 +1082,12 @@ namespace SonyMDRemote
 
         private void button13_Click(object sender, EventArgs e)
         {
-            Transmit_MDS_Message(MDS_TX_StartPlayAtTrack, (byte)numericUpDown1.Value);
+            Transmit_MDS_Message(MDS_TX_StartPlayAtTrack, tracknumber: (byte)numericUpDown1.Value);
         }
 
         private void button14_Click(object sender, EventArgs e)
         {
-            Transmit_MDS_Message(MDS_TX_PausePlayAtTrack, (byte)numericUpDown1.Value);
+            Transmit_MDS_Message(MDS_TX_PausePlayAtTrack, tracknumber: (byte)numericUpDown1.Value);
         }
 
 
@@ -1094,8 +1104,10 @@ namespace SonyMDRemote
 
         private void dataGridView1_RowHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
+            if (e.RowIndex == 0)
+                return;
             AppendLog("Playing track {0}", e.RowIndex);
-            Transmit_MDS_Message(MDS_TX_StartPlayAtTrack, (byte)(e.RowIndex));
+            Transmit_MDS_Message(MDS_TX_StartPlayAtTrack, tracknumber: (byte)(e.RowIndex));
         }
 
         private void label7_Click(object sender, EventArgs e)
@@ -1115,6 +1127,13 @@ namespace SonyMDRemote
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
             DoUpdateTask();
+        }
+
+        private void timer_Poll_GetInfo_Tick(object sender, EventArgs e)
+        {
+            _inforequest = false;
+            UpdateDataGrid();
+            timer_Poll_GetInfo.Enabled = false;
         }
     }
 }

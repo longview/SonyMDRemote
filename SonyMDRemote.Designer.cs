@@ -66,6 +66,7 @@
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.label9 = new System.Windows.Forms.Label();
+            this.timer_Poll_GetInfo = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -283,6 +284,11 @@
             this.numericUpDown1.Name = "numericUpDown1";
             this.numericUpDown1.Size = new System.Drawing.Size(54, 20);
             this.numericUpDown1.TabIndex = 19;
+            this.numericUpDown1.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // button13
             // 
@@ -426,6 +432,11 @@
             this.label9.TabIndex = 29;
             this.label9.Text = "Sony ";
             // 
+            // timer_Poll_GetInfo
+            // 
+            this.timer_Poll_GetInfo.Interval = 1500;
+            this.timer_Poll_GetInfo.Tick += new System.EventHandler(this.timer_Poll_GetInfo_Tick);
+            // 
             // SonyMDRemote
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -511,6 +522,7 @@
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Timer timer_Poll_GetInfo;
     }
 }
 
