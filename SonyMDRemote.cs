@@ -17,7 +17,7 @@ namespace SonyMDRemote
             InitializeComponent();
 
             label1.Text = String.Format("LA2YUA SonyMDRemote {0}", VersionString);
-
+#if LOGGING
             string logfilename = String.Format("Log_{0}.txt", DateTime.UtcNow.ToString("o").Replace(':', '_'));
             logfile = new StreamWriter(logfilename, append: true);
             if (logfile == null)
@@ -34,6 +34,7 @@ namespace SonyMDRemote
 
             logfile.AutoFlush = true;
             logfile_cmd.AutoFlush = true;
+#endif
             AppendLog("Program start version {0}", VersionString);
             AppendCmdLog("Program start version {0}", VersionString);
             Update_COM_List(true);
@@ -60,22 +61,28 @@ namespace SonyMDRemote
 
         private void AppendLog(string s, params object[] format)
         {
+#if LOGGING
             if (logfile == null)
             {
                 return;
             }
+#endif
             string datestamp = String.Format("{0}Z: ", DateTime.UtcNow.ToString("s"));
             string datestamp_log = String.Format("{0}Z: ", DateTime.UtcNow.ToString("o"));
             string data = String.Format("{0}\r\n", String.Format(s, format));
             richTextBox_Log.AppendText(datestamp);
             richTextBox_Log.AppendText(data);
+
+#if LOGGING
             logfile.Write(datestamp_log + data);
+#endif
 
             AppendCmdLog(data);
         }
 
         private void AppendCmdLog(string s, params object[] format)
         {
+#if LOGGING
             if (logfile_cmd == null)
             {
                 return;
@@ -83,6 +90,7 @@ namespace SonyMDRemote
             string datestamp = String.Format("{0}Z: ", DateTime.UtcNow.ToString("o"));
             string data = String.Format("{0}\r\n", String.Format(s, format));
             logfile_cmd.Write(datestamp + data);
+#endif
         }
 
         private void Update_COM_List(bool startup = false)
@@ -200,9 +208,9 @@ namespace SonyMDRemote
                 serialPort1.DiscardOutBuffer();
                 serialPort1.Close();
             }
-
+#if LOGGING
             logfile.Flush();
-
+#endif
             if (comboBox1_Serial_Port.Text != String.Empty)
             {
                 Properties.Settings.Default["Selected_COM_Port"] = comboBox1_Serial_Port.Text;
