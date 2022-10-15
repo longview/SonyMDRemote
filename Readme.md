@@ -68,10 +68,10 @@ The protocol has no escape sequences, and the start and stop bytes are also vali
 
 As such, you do need stateful decoder that reads the packet length to determine when to stop and process data.
 
-## 6.38 ALL NAME REQ
+### 6.38 ALL NAME REQ
 The returned 7.16 TRACK NAME messages appear to have the TrackNo field set to whatever track was last playing. This occurs even when the MD is ejected and reinserted.
 
-## 7.11 STATUS DATA
+### 7.11 STATUS DATA
 Data2 bit 7 is listed as indicating if the TOC has been read. It does, but it also indicates "Not yet" state when the TOC is dirty after a write.
 
 Track repeat modes are not documented in the base documentation, only an addendum which implies it's E12 exclusive.
