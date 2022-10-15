@@ -1188,5 +1188,13 @@ namespace SonyMDRemote
         {
             DoUpdateTask();
         }
+
+        private void SonyMDRemote_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.XButton1)
+                Transmit_MDS_Message(MDS_TX_PrevTrack, allowduplicates: true);
+            if (e.Button == MouseButtons.XButton2)
+                Transmit_MDS_Message(MDS_TX_NextTrack, allowduplicates: true);
+        }
     }
 }
