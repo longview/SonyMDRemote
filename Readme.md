@@ -33,14 +33,19 @@ Commands from the MD follow the same format, but start with 0x6F.
 * Recording
 * Track splitting/editing
 
-## Documentation bugs
+## Documentation & Player Bugs
 Here's what I got so far, seems like there will be lots to come!
 I've mostly been using the Combined E11, 12, 52 document.
 
 ### General Comms
 The recorder doesn't clear its output buffers, so many outputs involving text contain trailing garbage after the null termination. This is slightly irritating in C# but manageable.
 
-The protocol has no escape sequences, and the start and stop bytes are also valid payload data, _I don't like this. Don't do this._. As such, you do need stateful decoder that reads the packet length to determine when to stop and process data.
+The protocol has no escape sequences, and the start and stop bytes are also valid payload data, _I don't like this. Don't do this._
+
+As such, you do need stateful decoder that reads the packet length to determine when to stop and process data.
+
+### 6.38 ALL NAME REQ
+The returned 7.16 TRACK NAME messages appear to have the TrackNo field set to whatever is is was last playing. This occurs even when the MD is ejected and reinserted.
 
 ### 7.16 TRACK NAME
 The first packet is listed as:
@@ -53,7 +58,7 @@ The output appears to be :
 
 The field descriptions and my observations suggest this is the case, at least when a specific track name is requested.
 
-This command is very prone to bugs, see above.
+See also 6.38, this is not really reliable either.
 
 ### 7.22 TRACK TIME DATA
 Sequence listed as:
