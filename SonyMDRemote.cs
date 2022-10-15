@@ -1074,11 +1074,11 @@ namespace SonyMDRemote
             dataGridView1.Rows.Clear();
 
             // first index is disc name, this also makes the track and array indices line up
-            dataGridView1.Rows.Add("Disc", discname, false);
+            dataGridView1.Rows.Add("Disc", discname, discname.Length == 0 ? true : false);
 
             foreach (var track in tracknames)
             {
-                dataGridView1.Rows.Add(track.Key, track.Value.ToString(), true);
+                dataGridView1.Rows.Add(track.Key, track.Value.ToString(), track.Value.ToString().Length == 0 ? true : false);
             }
 
             UpdateDataGridBold(_currentrack);
@@ -1310,6 +1310,9 @@ namespace SonyMDRemote
 
         private void button16_Click(object sender, EventArgs e)
         {
+
+            checkBox1.Checked = false;
+            checkBox2.Checked = false;
 
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
