@@ -420,6 +420,11 @@ namespace SonyMDRemote
 
         byte _currentrack = 1;
         byte _packetlen = 0;
+        int _infocounter = -1;
+        string discname;
+
+        // list of track names
+        IDictionary<int, StringBuilder> tracknames = new Dictionary<int, StringBuilder>();
 
         private void serialData_input(byte[] text)
         {
@@ -434,8 +439,6 @@ namespace SonyMDRemote
             }
 
             byte[] rxdata = text;
-            StringBuilder sb = new StringBuilder();
-
 
             foreach (byte currentchar in rxdata)
             {
@@ -540,6 +543,11 @@ namespace SonyMDRemote
 
                         label2.Text = String.Format("Track {0}", TrackNo);
                         _currentrack = TrackNo;
+
+                        StringBuilder sb;
+                        tracknames.TryGetValue(_currentrack, out sb);
+                        if (sb != null)
+                            label8.Text = sb.ToString();
 
                         // these two seems to be inverted or useless on the E12
                         bool discinserted = IsBitSet(Data1, 5);
@@ -659,26 +667,48 @@ namespace SonyMDRemote
                     if (ArrRep[4] == 0x20 && (ArrRep[5] == 0x48 || ArrRep[5] == 0x49))
                     {
                         byte Segment = ArrRep[6];
+                        discname = TrimNonAscii(DecodeAscii(ref ArrRep, 7));
+                        label7.Text = String.Format("Disc: {0}", discname);
                         AppendLog("MD: Disc name part {1} is: {0}", TrimNonAscii(DecodeAscii(ref ArrRep, 7)), Segment);
                     }
 
                     // 7.16 TRACK NAME (1st packet)
                     if (ArrRep[4] == 0x20 && ArrRep[5] == 0x4A && ArrRep.Length > 8)
                     {
+                        string currenttrackname = TrimNonAscii(DecodeAscii(ref ArrRep, 7));
+                        if (_infocounter >= 0)
+                        {
+                            _infocounter++;
+                            tracknames.Add(_infocounter, new StringBuilder(128));
+                            StringBuilder sb;
+                            tracknames.TryGetValue(_infocounter, out sb);
+                            sb.Append(currenttrackname);
+                        }
+
                         byte Segment = ArrRep[6];
-                        AppendLog("MD: Track {1} name part 1 is: {0}", TrimNonAscii(DecodeAscii(ref ArrRep, 7)), Segment);
+                        AppendLog("MD: Track {1} name part 1 is: {0}", currenttrackname, Segment);
                     }
 
                     // 7.16 TRACK NAME (2nd packet)
                     if (ArrRep[4] == 0x20 && ArrRep[5] == 0x4B && ArrRep.Length > 8)
                     {
+                        string currenttrackname = TrimNonAscii(DecodeAscii(ref ArrRep, 7));
+
+                        if (_infocounter > 0)
+                        {
+                            StringBuilder sb;
+                            tracknames.TryGetValue(_infocounter, out sb);
+                            sb.Append(currenttrackname);
+                        }
+
                         byte Segment = ArrRep[6];
-                        AppendLog("MD: Track name part {1} is: {0}", TrimNonAscii(DecodeAscii(ref ArrRep, 7)), Segment);
+                        AppendLog("MD: Track name part {1} is: {0}", currenttrackname, Segment);
                     }
 
                     // 7.17 ALL NAME END
                     if (ArrRep[4] == 0x20 && ArrRep[5] == 0x4C)
                     {
+                        _infocounter = -1;
                         AppendLog("MD: ALL NAME END");
                     }
 
@@ -769,6 +799,10 @@ namespace SonyMDRemote
                     if (ArrRep[4] == 0x20 && ArrRep[5] == 0x83)
                     {
                         AppendLog("MD: Track changed");
+                        StringBuilder sb;
+                        tracknames.TryGetValue(_currentrack, out sb);
+                        if (sb != null)
+                            label8.Text = sb.ToString();
                     }
 
                     // 7.25 NO DISC NAME
@@ -868,21 +902,25 @@ namespace SonyMDRemote
         private void button8_Click(object sender, EventArgs e)
         {
             Transmit_MDS_Message(MDS_TX_Play);
+            Transmit_MDS_Message(MDS_TX_ReqStatus);
         }
 
         private void button7_Click(object sender, EventArgs e)
         {
             Transmit_MDS_Message(MDS_TX_Stop);
+            Transmit_MDS_Message(MDS_TX_ReqStatus);
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
             Transmit_MDS_Message(MDS_TX_PrevTrack);
+            Transmit_MDS_Message(MDS_TX_ReqStatus);
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
             Transmit_MDS_Message(MDS_TX_NextTrack);
+            Transmit_MDS_Message(MDS_TX_ReqStatus);
         }
 
         private void button9_Click(object sender, EventArgs e)
@@ -892,6 +930,9 @@ namespace SonyMDRemote
 
         private void button10_Click(object sender, EventArgs e)
         {
+            // reset list of names
+            _infocounter = 0;
+            tracknames.Clear();
             Transmit_MDS_Message(MDS_TX_ReqDiscAndTrackNames);
         }
 
