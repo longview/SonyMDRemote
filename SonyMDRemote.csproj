@@ -84,7 +84,7 @@
     <Folder Include="Docs\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="img\gui.png" />
+    <Content Include="img\gui2.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

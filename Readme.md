@@ -6,7 +6,7 @@ The goal is to replace the older SonyMDRemote program, which doesn't really work
 See the Docs folder for the protocol specifications if you want to help.
 Currently targets .NET 4.7.2
 
-![UI Screenshot](img/gui.png)
+![UI Screenshot](img/gui2.png)
 
 ## Hookup
 You will need a female-female 9 pin D-Sub adapter cable (a null modem cable):
