@@ -1067,11 +1067,15 @@ namespace SonyMDRemote
             
             Transmit_MDS_Message(MDS_TX_ReqStatus);
             if (checkBox2.Checked)
-            {
                 Transmit_MDS_Message(MDS_TX_EnableElapsedTimeTransmit);
-            }
             else
                 Transmit_MDS_Message(MDS_TX_DisableElapsedTimeTransmit);
+
+            if (checkBox3.Checked)
+                Transmit_MDS_Message(MDS_TX_AutoPauseOn);
+            else
+                Transmit_MDS_Message(MDS_TX_AutoPauseOff);
+
             //Transmit_MDS_Message(MDS_TX_ReqTrackTime, _currentrack);
             //Transmit_MDS_Message(MDS_TX_ReqTOCData);
         }
@@ -1162,6 +1166,11 @@ namespace SonyMDRemote
             _inforequest = false;
             UpdateDataGrid();
             timer_Poll_GetInfo.Enabled = false;
+        }
+
+        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        {
+            DoUpdateTask();
         }
     }
 }

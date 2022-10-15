@@ -59,14 +59,15 @@
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.button15 = new System.Windows.Forms.Button();
             this.trackno = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tracktitle = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.write = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.button15 = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.label9 = new System.Windows.Forms.Label();
             this.timer_Poll_GetInfo = new System.Windows.Forms.Timer(this.components);
+            this.checkBox3 = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -369,16 +370,6 @@
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.RowHeaderMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_RowHeaderMouseDoubleClick);
             // 
-            // button15
-            // 
-            this.button15.Location = new System.Drawing.Point(377, 12);
-            this.button15.Name = "button15";
-            this.button15.Size = new System.Drawing.Size(75, 23);
-            this.button15.TabIndex = 15;
-            this.button15.Text = "Populate";
-            this.button15.UseVisualStyleBackColor = true;
-            this.button15.Click += new System.EventHandler(this.button15_Click);
-            // 
             // trackno
             // 
             this.trackno.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
@@ -400,6 +391,16 @@
             this.write.HeaderText = "Write";
             this.write.Name = "write";
             this.write.Width = 38;
+            // 
+            // button15
+            // 
+            this.button15.Location = new System.Drawing.Point(377, 12);
+            this.button15.Name = "button15";
+            this.button15.Size = new System.Drawing.Size(75, 23);
+            this.button15.TabIndex = 15;
+            this.button15.Text = "Populate";
+            this.button15.UseVisualStyleBackColor = true;
+            this.button15.Click += new System.EventHandler(this.button15_Click);
             // 
             // checkBox1
             // 
@@ -437,11 +438,23 @@
             this.timer_Poll_GetInfo.Interval = 1500;
             this.timer_Poll_GetInfo.Tick += new System.EventHandler(this.timer_Poll_GetInfo_Tick);
             // 
+            // checkBox3
+            // 
+            this.checkBox3.AutoSize = true;
+            this.checkBox3.Location = new System.Drawing.Point(174, 98);
+            this.checkBox3.Name = "checkBox3";
+            this.checkBox3.Size = new System.Drawing.Size(81, 17);
+            this.checkBox3.TabIndex = 30;
+            this.checkBox3.Text = "Auto Pause";
+            this.checkBox3.UseVisualStyleBackColor = true;
+            this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
+            // 
             // SonyMDRemote
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 658);
+            this.Controls.Add(this.checkBox3);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.checkBox2);
             this.Controls.Add(this.checkBox1);
@@ -523,6 +536,7 @@
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Timer timer_Poll_GetInfo;
+        private System.Windows.Forms.CheckBox checkBox3;
     }
 }
 
