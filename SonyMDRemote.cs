@@ -730,9 +730,13 @@ namespace SonyMDRemote
                         // 7.22 TRACK TIME DATA
                         if (ArrRep[4] == 0x20 && ArrRep[5] == 0x62 && ArrRep.Length > 8)
                         {
-                            byte Min = ArrRep[8];
-                            byte Sec = ArrRep[9];
-                            AppendLog("MD: Current track length is {0,00}:{1,00}", Min, Sec);
+                            if (ArrRep[6] == 0x01 && ArrRep[7] == _currentrack)
+                            {
+                                byte Min = ArrRep[8];
+                                byte Sec = ArrRep[9];
+                                AppendLog("MD: Current track length is {0,00}:{1,00}", Min, Sec);
+                                label6.Text = String.Format("{0,00}:{1,00}", Min, Sec);
+                            }
                         }
 
                         // 7.23 DISC EXIST

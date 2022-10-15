@@ -55,6 +55,7 @@
             this.button14 = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.timer_Poll_Time = new System.Windows.Forms.Timer(this.components);
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -193,9 +194,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(183, 157);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(44, 13);
+            this.label2.Size = new System.Drawing.Size(56, 13);
             this.label2.TabIndex = 12;
-            this.label2.Text = "Track 0";
+            this.label2.Text = "Track 255";
             this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // label3
@@ -304,11 +305,21 @@
             this.timer_Poll_Time.Interval = 1000;
             this.timer_Poll_Time.Tick += new System.EventHandler(this.timer_Poll_Time_Tick);
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(245, 157);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(42, 13);
+            this.label6.TabIndex = 23;
+            this.label6.Text = "MM:SS";
+            // 
             // SonyMDRemote
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 658);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.button14);
             this.Controls.Add(this.button13);
@@ -369,6 +380,7 @@
         private System.Windows.Forms.Button button14;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Timer timer_Poll_Time;
+        private System.Windows.Forms.Label label6;
     }
 }
 

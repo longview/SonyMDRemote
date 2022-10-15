@@ -89,3 +89,14 @@ The output appears to be :
 The field descriptions and my observations suggest this is the case, at least when a specific track name is requested.
 
 This command is very prone to bugs, see above.
+
+### 7.22 TRACK TIME DATA
+Sequence listed as:
+
+	0x20 0x62 0x01 0x00 Min Sec
+
+The actual fields are:
+
+	0x20 0x62 0x01 TrackNo Min Sec
+
+Further, requesting an invalid track number puts 0xFF in all fields from TrackNo and out.
