@@ -728,7 +728,7 @@ namespace SonyMDRemote
                         }
 
                         // 7.22 TRACK TIME DATA
-                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x60)
+                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x62 && ArrRep.Length > 8)
                         {
                             byte Min = ArrRep[8];
                             byte Sec = ArrRep[9];
@@ -885,11 +885,13 @@ namespace SonyMDRemote
         private void label3_Click(object sender, EventArgs e)
         {
             Transmit_MDS_Message(MDS_TX_ReqStatus);
+            Transmit_MDS_Message(MDS_TX_ReqTrackTime, _currentrack);
         }
 
         private void label2_Click(object sender, EventArgs e)
         {
             Transmit_MDS_Message(MDS_TX_ReqStatus);
+            Transmit_MDS_Message(MDS_TX_ReqTrackTime, _currentrack);
         }
 
         private void label4_Click(object sender, EventArgs e)
@@ -905,6 +907,11 @@ namespace SonyMDRemote
         private void button14_Click(object sender, EventArgs e)
         {
             Transmit_MDS_Message(MDS_TX_PausePlayAtTrack, (byte)numericUpDown1.Value);
+        }
+
+        private void timer_Poll_Time_Tick(object sender, EventArgs e)
+        {
+
         }
     }
 }

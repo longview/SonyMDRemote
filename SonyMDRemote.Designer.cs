@@ -54,6 +54,7 @@
             this.button13 = new System.Windows.Forms.Button();
             this.button14 = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
+            this.timer_Poll_Time = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -298,6 +299,11 @@
             this.label5.TabIndex = 22;
             this.label5.Text = "Track Selector";
             // 
+            // timer_Poll_Time
+            // 
+            this.timer_Poll_Time.Interval = 1000;
+            this.timer_Poll_Time.Tick += new System.EventHandler(this.timer_Poll_Time_Tick);
+            // 
             // SonyMDRemote
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -362,6 +368,7 @@
         private System.Windows.Forms.Button button13;
         private System.Windows.Forms.Button button14;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Timer timer_Poll_Time;
     }
 }
 
