@@ -446,8 +446,12 @@ namespace SonyMDRemote
                         //AppendLog("Header received");
                         break;
                     case (char)0xFF:
-                        receiverstate = serialRXState.serialRxState_Stop;
+                        if (serialRXData.Count+1 != serialRXData[1])
+                        {
+                            AppendLog("Found terminator but count wrong: {0} but terminator at {1}", serialRXData.Count, serialRXData[1]);
+                        }
                         serialRXData.Add(currentchar);
+                        receiverstate = serialRXState.serialRxState_Stop;
 
 
                         //timer_Serial_Timeout.Stop();
