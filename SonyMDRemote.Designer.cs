@@ -65,6 +65,7 @@
             // 
             // serialPort1
             // 
+            this.serialPort1.ReadBufferSize = 8192;
             this.serialPort1.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.serialPort1_DataReceived);
             // 
             // comboBox1_Serial_Port
