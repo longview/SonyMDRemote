@@ -64,9 +64,12 @@ I've mostly been using the Combined E11, 12, 52 document.
 ### General Comms
 The recorder doesn't clear its output buffers, so many outputs involving text contain trailing garbage after the null termination. This is slightly irritating in C# but manageable.
 
-The protocol has no escape sequences, and the start and stop bytes are also valid payload data, _I don't like this. Don't do this._
+The protocol has no escape sequences, and the start and stop bytes are also valid payload data, _I don't like this.._
 
 As such, you do need stateful decoder that reads the packet length to determine when to stop and process data.
+
+### Minor Stuff
+There's no way to read back the "Auto Pause" flag once you set it, you just have to know. This program does not store that, so if you flag auto pause and restart, it will disable auto pause on initial connection to synchronize the MD and program states.
 
 ### 6.38 ALL NAME REQ
 The returned 7.16 TRACK NAME messages appear to have the TrackNo field set to whatever track was last playing. This occurs even when the MD is ejected and reinserted.
