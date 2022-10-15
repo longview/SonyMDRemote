@@ -448,7 +448,7 @@ namespace SonyMDRemote
                     case (char)0xFF:
                         if (serialRXData.Count+1 != serialRXData[1])
                         {
-                            AppendLog("Found terminator but count wrong: {0} but terminator at {1}", serialRXData.Count, serialRXData[1]);
+                            AppendLog("Found terminator but count wrong: {1} but terminator at {0}", serialRXData.Count, serialRXData[1]);
                         }
                         serialRXData.Add(currentchar);
                         receiverstate = serialRXState.serialRxState_Stop;
@@ -636,7 +636,7 @@ namespace SonyMDRemote
                             byte Hour = ArrRep[10];
                             byte Min = ArrRep[11];
                             byte Sec = ArrRep[12];
-                            AppendLog("MD: Track {0} was recorded at time XX{1,00}-{2,00}-{3,00}T{4,00}:{5,00}:{6,00}", TrackNo, Year, Month, Day, Hour, Min, Sec);
+                            AppendLog("MD: Track {0} was recorded at time XX{1:00}-{2:00}-{3:00}T{4:00}:{5:00}:{6:00}", TrackNo, Year, Month, Day, Hour, Min, Sec);
                         }
 
                         // 7.15 DISC NAME
@@ -672,7 +672,7 @@ namespace SonyMDRemote
                             byte TrackNo = ArrRep[6];
                             byte Min = ArrRep[8];
                             byte Sec = ArrRep[9];
-                            AppendLog("MD: Track {0} elapsed time is {1,00}:{2,00}", TrackNo, Min, Sec);
+                            AppendLog("MD: Track {0} elapsed time is {1:00}:{2:00}", TrackNo, Min, Sec);
                         }
 
                         // 7.19 REC REMAIN
@@ -680,7 +680,7 @@ namespace SonyMDRemote
                         {
                             byte Min = ArrRep[7];
                             byte Sec = ArrRep[8];
-                            AppendLog("MD: Record remaining time is {0,00}:{1,00}", Min, Sec);
+                            AppendLog("MD: Record remaining time is {0:00}:{1:00}", Min, Sec);
                         }
 
                         // 7.20 NAME REMAIN
@@ -700,8 +700,8 @@ namespace SonyMDRemote
                             byte LastTrackNo = ArrRep[8];
                             byte Min = ArrRep[9];
                             byte Sec = ArrRep[10];
-                            AppendLog("MD: First track is {0}, last track is {1}. Recorded time is {2,00}:{3,00}", FirstTrackNo,LastTrackNo,Min,Sec);
-                            label4.Text = String.Format("{0} tracks ({1}-{2}; {3,00}:{4,00})", 1+LastTrackNo-FirstTrackNo, FirstTrackNo,LastTrackNo, Min, Sec);
+                            AppendLog("MD: First track is {0}, last track is {1}. Recorded time is {2:00}:{3:00}", FirstTrackNo,LastTrackNo,Min,Sec);
+                            label4.Text = String.Format("{0} tracks ({1}-{2}; {3:00}:{4:00})", 1+LastTrackNo-FirstTrackNo, FirstTrackNo,LastTrackNo, Min, Sec);
 
                             if (FirstTrackNo != 0 && LastTrackNo !=0)
                             {
@@ -738,8 +738,8 @@ namespace SonyMDRemote
                             {
                                 byte Min = ArrRep[8];
                                 byte Sec = ArrRep[9];
-                                AppendLog("MD: Current track length is {0,00}:{1,00}", Min, Sec);
-                                label6.Text = String.Format("{0,00}:{1,00}", Min, Sec);
+                                AppendLog("MD: Current track length is {0:00}:{1:00}", Min, Sec);
+                                label6.Text = String.Format("{0:00}:{1:00}", Min, Sec);
                             }
                         }
 
