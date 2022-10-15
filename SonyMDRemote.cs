@@ -54,7 +54,7 @@ namespace SonyMDRemote
             
         }
 
-        string VersionString = "v0.1a";
+        string VersionString = "v0.2a";
 
         StreamWriter logfile;
         StreamWriter logfile_cmd;
