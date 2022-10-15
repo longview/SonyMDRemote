@@ -8,6 +8,8 @@ Currently targets .NET 4.7.2
 
 ![UI Screenshot](img/gui2.png)
 
+See also my previous blog post on my E12: [Adding Optical I/O to the Sony MDS-E12 MiniDisc Recorder](http://longview.be/adding-optical-io-to-the-sony-mds-e12-minidisc-recorder.html).
+
 ## Hookup
 You will need a female-female 9 pin D-Sub adapter cable (a null modem cable):
 * Pin 2 to Pin 3
@@ -33,15 +35,27 @@ Commands from the MD follow the same format, but start with 0x6F.
 * Write of both disc and track titles
 
 ## Planned:
-* Polling state machine to read e.g. track number, status flags automatically (somewhat there)
 * Check of maximum track name length - seems to be like 1700 chars per track though so not too important
 
 ## Not really working:
 * Disc status and Power status appears to be incorrect for the E12
 
+## Vague Ideas
+Making an ESP-based device that could sit inside the MD recorder, put in a web-interface to replace this project. 
+
+The cleanest mod would be to re-route the cable that goes to the RS-232/Parallel card into a new PCA with the ESP on it. One of the relay connector holes could be repurposed for the Wi-Fi antenna, the RS-232 and parallel D-Subs could be plugged or taped over.
+
+Doing that would also get you free access to the parallel switch I/O's.
+
+5 V power is already available on that plug, though finding the exact mating connector could be challenging since Sony's docs don't list a manufacturer or real part number.
+
+![CNT board schematics](img/cnt_board.PNG)
+
 ## Will likely not be supported:
 * Recording
 * Track splitting/editing
+
+I usually just use the autoqueue feature for record so track splits are good right away, and adding track splitting seems complicated.
 
 ## Documentation & Player Bugs
 Here's what I got so far, seems like there will be lots to come!
