@@ -981,9 +981,18 @@ namespace SonyMDRemote
                 if (row.Cells.Count == 0 || dataGridView1.Rows.IndexOf(row) == 0)
                     continue;
                 if (row.Cells[0].Value != null && (int)row.Cells[0].Value == trackplaying)
+                {
                     row.Cells[0].Style.Font = new Font(DefaultFont, FontStyle.Bold);
+                    row.Cells[0].Style.BackColor = Color.Black;
+                    row.Cells[0].Style.ForeColor = Color.White;
+                }
                 else
+                {
                     row.Cells[0].Style.Font = new Font(DefaultFont, FontStyle.Regular);
+                    row.Cells[0].Style.BackColor = Color.White;
+                    row.Cells[0].Style.ForeColor = Color.Black;
+                }
+                    
             }
 
         }
@@ -1057,6 +1066,7 @@ namespace SonyMDRemote
             tracknames.Clear();
             Transmit_MDS_Message(MDS_TX_SetRemoteOn, delay: 500);
             Transmit_MDS_Message(MDS_TX_DisableElapsedTimeTransmit);
+            Transmit_MDS_Message(MDS_TX_ReqStatus);
             Transmit_MDS_Message(MDS_TX_ReqModelName);
             Transmit_MDS_Message(MDS_TX_ReqRemainingRecordTime);
             //Transmit_MDS_Message(MDS_TX_ReqDiscName, delay: 500);
