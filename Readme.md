@@ -58,7 +58,7 @@ Doing that would also get you free access to the parallel switch I/O's.
 I usually just use the autoqueue feature for record so track splits are good right away, and adding track splitting seems complicated.
 
 ## Documentation & Player Bugs
-Here's what I got so far, seems like there will be lots to come!
+Here's what I got so far for erratas.
 I've mostly been using the Combined E11, 12, 52 document.
 
 ### General Comms
