@@ -442,6 +442,7 @@ namespace SonyMDRemote
                 {
                     case (char)0x6F:
                         receiverstate = serialRXState.serialRXState_Started;
+                        //AppendLog("Start byte, clearing old trash:", BitConverter.ToString(serialRXData.ToArray()));
                         serialRXData.Clear();
                         //AppendLog("Header received");
                         break;
@@ -456,6 +457,8 @@ namespace SonyMDRemote
 
                         //timer_Serial_Timeout.Stop();
                         byte[] ArrRep = serialRXData.ToArray();
+
+                        //serialRXData.Clear();
 
                         AppendLog("MD sent: {0}, ASCII: {1}", BitConverter.ToString(ArrRep), TrimNonAscii(System.Text.Encoding.ASCII.GetString(ArrRep)));
 
