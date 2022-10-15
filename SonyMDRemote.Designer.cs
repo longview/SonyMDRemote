@@ -68,6 +68,8 @@
             this.trackno = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tracktitle = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.write = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.button16 = new System.Windows.Forms.Button();
+            this.label10 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -368,15 +370,18 @@
             this.dataGridView1.Size = new System.Drawing.Size(492, 297);
             this.dataGridView1.TabIndex = 26;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
+            this.dataGridView1.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentDoubleClick);
+            this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellValueChanged);
             this.dataGridView1.RowHeaderMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_RowHeaderMouseDoubleClick);
+            this.dataGridView1.RowValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_RowValidated);
             // 
             // button15
             // 
             this.button15.Location = new System.Drawing.Point(377, 12);
             this.button15.Name = "button15";
-            this.button15.Size = new System.Drawing.Size(75, 23);
+            this.button15.Size = new System.Drawing.Size(46, 23);
             this.button15.TabIndex = 15;
-            this.button15.Text = "Populate";
+            this.button15.Text = "Reset";
             this.button15.UseVisualStyleBackColor = true;
             this.button15.Click += new System.EventHandler(this.button15_Click);
             // 
@@ -449,11 +454,33 @@
             this.write.Name = "write";
             this.write.Width = 38;
             // 
+            // button16
+            // 
+            this.button16.BackColor = System.Drawing.Color.OrangeRed;
+            this.button16.Location = new System.Drawing.Point(505, 12);
+            this.button16.Name = "button16";
+            this.button16.Size = new System.Drawing.Size(75, 23);
+            this.button16.TabIndex = 31;
+            this.button16.Text = "Write";
+            this.button16.UseVisualStyleBackColor = false;
+            this.button16.Click += new System.EventHandler(this.button16_Click);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(440, 17);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(59, 13);
+            this.label10.TabIndex = 32;
+            this.label10.Text = "TOC Clean";
+            // 
             // SonyMDRemote
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 658);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.button16);
             this.Controls.Add(this.checkBox3);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.checkBox2);
@@ -538,6 +565,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn trackno;
         private System.Windows.Forms.DataGridViewTextBoxColumn tracktitle;
         private System.Windows.Forms.DataGridViewCheckBoxColumn write;
+        private System.Windows.Forms.Button button16;
+        private System.Windows.Forms.Label label10;
     }
 }
 

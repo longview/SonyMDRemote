@@ -312,7 +312,7 @@ namespace SonyMDRemote
         // should wait for WRITE PACKET RECEIVED message between writes
         // final namedata byte must be 0 to effect write
         // then finally WRITE COMPLETE?
-        byte[] MDS_TX_WriteDiscName1 = new byte[] { 0x20, 0x70, 0x01 }; // next 16 bytes is name data
+        byte[] MDS_TX_WriteDiscName1 = new byte[] { 0x20, 0x70 }; // next byte is packet number, next 16 bytes is name data
         byte[] MDS_TX_WriteDiscName2 = new byte[] { 0x20, 0x71}; // next byte is packet number, next 16 bytes is name data, null terminated
 
         // 6.43 TRACK NO. NAME WRITE
@@ -321,7 +321,7 @@ namespace SonyMDRemote
         // should wait for WRITE PACKET RECEIVED message between writes
         // final namedata byte must be 0 to effect write
         // then finally WRITE COMPLETE
-        byte[] MDS_TX_WriteTrackName1 = new byte[] { 0x20, 0x72, }; // next byte is track number, next 16 bytes is name data, null terminated
+        byte[] MDS_TX_WriteTrackName1 = new byte[] { 0x20, 0x72 }; // next byte is track number, next 16 bytes is name data, null terminated
         byte[] MDS_TX_WriteTrackName2 = new byte[] { 0x20, 0x73 }; // next byte is packet number, next 16 bytes is name data, null terminated
 
         // basic transport controls
@@ -346,10 +346,100 @@ namespace SonyMDRemote
         byte[] MDS_TX_EnableElapsedTimeTransmit = new byte[] { 0x07, 0x10 };
         byte[] MDS_TX_DisableElapsedTimeTransmit = new byte[] { 0x07, 0x11 };
 
+        // issue a null-payload if payload is even multiple of 16
+
         // command queue object, list of raw commands to issue and what delay should be used before the next command
         List<Tuple<byte[], int>> commandqueue = new List<Tuple<byte[], int>>();
+        List<Tuple<byte[], int>> commandqueue_priority = new List<Tuple<byte[], int>>();
 
+        private void Transmit_MDS_Write(string name, byte tracknumber = 0)
+        {
+            if (!serialPort1.IsOpen)
+            {
+                return;
+            }
 
+            timer_Poll_Time.Stop();
+
+            List<byte> txname = new List<byte>(name.Length);
+            txname.AddRange(Encoding.ASCII.GetBytes(name));
+            txname.Add(0);
+
+            bool first = true;
+            int count = 0;
+            // work out how many iterations are needed
+            while(txname.Count > 0)
+            {
+                count++;
+                List<byte> txdata = new List<byte>(32);
+                // header, 0x7E is PC to MD, 0x6E is MD to PC
+                txdata.Add(0x7E);
+                // length from header to terminator, up to 32 (0x20)
+                // computed at the end of the function
+                txdata.Add(0x00);
+                // format type, fixed
+                txdata.Add(0x05);
+                // category, fixed
+                txdata.Add(0x47);
+
+                // add command and sequence number if required
+                if (first && tracknumber == 0)
+                {
+                    txdata.AddRange(MDS_TX_WriteDiscName1);
+                    first = false;
+                    txdata.Add((byte)count);
+                }
+                else if (!first && tracknumber == 0)
+                {
+                    txdata.AddRange(MDS_TX_WriteDiscName2);
+                    txdata.Add((byte)count);
+                }
+                else if (first)
+                {
+                    txdata.AddRange(MDS_TX_WriteTrackName1);
+                    first = false;
+                    txdata.Add((byte)tracknumber);
+                }
+                else if (!first)
+                {
+                    txdata.AddRange(MDS_TX_WriteTrackName2);
+                    txdata.Add((byte)count);
+                }
+
+                
+
+                int payloadcount = 0;
+                // iterate over data until we reach the limit
+                foreach (char s in txname)
+                {
+                    byte ss = (byte)s;
+                    // remove illegal values
+                    if (s != 0 && (s < 0x20 || (s > 0x5A && s < 0x5E) || s > 0x7A))
+                        ss = (byte)' ';
+
+                    payloadcount++;
+                    txdata.Add(ss);
+                    if (payloadcount == 16)
+                        break;
+                }
+                txname.RemoveRange(0, payloadcount);
+
+                // terminator
+                txdata.Add(0xFF);
+
+                txdata[1] = (byte)txdata.Count;
+
+                if (txdata.Count > 32)
+                    throw new ArgumentException("Transmission packet would be too big!");
+                var tup = new Tuple<byte[], int>(txdata.ToArray(), 500);
+                // ignore by default if payload is already present
+                commandqueue_priority.Add(tup);
+            }
+
+            timer_Poll_Time.Start();
+
+            timer_Poll_Time.Enabled = true;
+        }
 
         private void Transmit_MDS_Message(byte[] data, int delay = 100, byte tracknumber = 0, bool allowduplicates = false)
         {
@@ -397,6 +487,22 @@ namespace SonyMDRemote
 
         private void timer_Poll_Time_Tick(object sender, EventArgs e)
         {
+            Tuple<byte[], int> nextcommand;
+
+            // do priority commands first
+            if (commandqueue_priority.Count > 0)
+            {
+                // pop off the first item, transmit, then reset the timer with the delay
+                nextcommand  = commandqueue_priority[0];
+                commandqueue_priority.RemoveAt(0);
+
+                AppendLog("PC sent priority: {0}, ASCII: {1}", BitConverter.ToString(nextcommand.Item1), TrimNonAscii(System.Text.Encoding.ASCII.GetString(nextcommand.Item1)));
+
+                serialPort1.Write(nextcommand.Item1, 0, nextcommand.Item1.Length);
+
+                timer_Poll_Time.Interval = nextcommand.Item2;
+                return;
+            }
 
             // empty queue
             if (commandqueue == null || commandqueue.Count < 1)
@@ -413,7 +519,7 @@ namespace SonyMDRemote
                 
 
             // pop off the first item, transmit, then reset the timer with the delay
-            Tuple<byte[], int> nextcommand = commandqueue[0];
+            nextcommand = commandqueue[0];
             commandqueue.RemoveAt(0);
 
             AppendLog("PC sent: {0}, ASCII: {1}", BitConverter.ToString(nextcommand.Item1), TrimNonAscii(System.Text.Encoding.ASCII.GetString(nextcommand.Item1)));
@@ -688,12 +794,14 @@ namespace SonyMDRemote
                             poweredoff ? "powered on":"powered off",
                             TrackNo,
                             playbackstatusstr,
-                            toc_read_done ? "TOC read":"TOC not read yet",
+                            toc_read_done ? "TOC clean":"TOC dirty",
                             copy_protected ? "copy protected":"not copy protected",
                             mono ? "mono audio":"stereo audio",
                             digital_in_unlocked ? "digital input unlocked":"digital input locked",
                             recsourcestr
                             );
+
+                        label10.Text = toc_read_done ? "TOC Clean" : "TOC Dirty";
 
                         // request these since we now know the track number
                         Transmit_MDS_Message(MDS_TX_ReqTOCData);
@@ -739,7 +847,10 @@ namespace SonyMDRemote
                     if (ArrRep[4] == 0x20 && (ArrRep[5] == 0x48 || ArrRep[5] == 0x49))
                     {
                         byte Segment = ArrRep[6];
-                        discname = TrimNonAscii(DecodeAscii(ref ArrRep, 7));
+                        if (ArrRep[5] == 0x48)
+                            discname = TrimNonAscii(DecodeAscii(ref ArrRep, 7));
+                        else
+                            discname += TrimNonAscii(DecodeAscii(ref ArrRep, 7));
                         label7.Text = String.Format("Disc: {0}", discname);
                         AppendLog("MD: Disc name part {1} is: {0}", TrimNonAscii(DecodeAscii(ref ArrRep, 7)), Segment);
                     }
@@ -967,7 +1078,7 @@ namespace SonyMDRemote
 
             foreach (var track in tracknames)
             {
-                dataGridView1.Rows.Add(track.Key, track.Value.ToString(), false);
+                dataGridView1.Rows.Add(track.Key, track.Value.ToString(), true);
             }
 
             UpdateDataGridBold(_currentrack);
@@ -1195,6 +1306,45 @@ namespace SonyMDRemote
                 Transmit_MDS_Message(MDS_TX_PrevTrack, allowduplicates: true);
             if (e.Button == MouseButtons.XButton2)
                 Transmit_MDS_Message(MDS_TX_NextTrack, allowduplicates: true);
+        }
+
+        private void button16_Click(object sender, EventArgs e)
+        {
+
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if (row.Cells.Count == 0)
+                    continue;
+                if (dataGridView1.Rows.IndexOf(row) == dataGridView1.Rows.Count - 1)
+                    continue;
+                DataGridViewCheckBoxCell checkcell = row.Cells[2] as DataGridViewCheckBoxCell;
+                DataGridViewTextBoxCell textcell = row.Cells[1] as DataGridViewTextBoxCell;
+                if (dataGridView1.Rows.IndexOf(row) == 0 && (bool)checkcell.Value == true)
+                    Transmit_MDS_Write(textcell.Value.ToString());
+                else if ((dataGridView1.Rows.IndexOf(row) != 0) && (bool)checkcell.Value == true)
+                    Transmit_MDS_Write(textcell.Value.ToString(), (byte)dataGridView1.Rows.IndexOf(row));
+
+            }
+        }
+
+        private void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void dataGridView1_RowValidated(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void dataGridView1_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            DataGridView gridview = (DataGridView)sender;
+            DataGridViewRow row = gridview.Rows[e.RowIndex];
+            if (row.Cells.Count == 0)
+                return;
+            DataGridViewCheckBoxCell checkcell = row.Cells[2] as DataGridViewCheckBoxCell;
+            checkcell.Value = true;
         }
     }
 }
