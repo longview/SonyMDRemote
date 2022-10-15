@@ -41,6 +41,10 @@ namespace SonyMDRemote
             Update_COM_List(true);
             comboBox1.SelectedIndex = 0;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(comboBox1_SelectedIndexChanged);
+
+#if !LOGGING
+            button17.Visible = false;
+#endif
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -60,6 +64,12 @@ namespace SonyMDRemote
         StreamWriter logfile;
         StreamWriter logfile_cmd;
 
+        UInt32 loglines = 0;
+#if LOGGING
+        UInt32 loglineslimit = UInt32.MaxValue;
+#elif !LOGGING
+        UInt32 loglineslimit = 200;
+#endif
         private void AppendLog(string s, params object[] format)
         {
 #if LOGGING
@@ -73,6 +83,14 @@ namespace SonyMDRemote
             string data = String.Format("{0}\r\n", String.Format(s, format));
             richTextBox_Log.AppendText(datestamp);
             richTextBox_Log.AppendText(data);
+            loglines++;
+            
+            // limit the scrollback
+            if ((loglines > loglineslimit) && (loglines % loglineslimit == 0))
+            {
+                var lines = richTextBox_Log.Lines;
+                richTextBox_Log.Lines = lines.Skip((int)(lines.Length - loglineslimit)).ToArray();
+            }
 
 #if LOGGING
             logfile.Write(datestamp_log + data);
@@ -1408,6 +1426,11 @@ namespace SonyMDRemote
                 return;
             DataGridViewCheckBoxCell checkcell = row.Cells[2] as DataGridViewCheckBoxCell;
             checkcell.Value = true;
+        }
+
+        private void button17_Click(object sender, EventArgs e)
+        {
+            richTextBox_Log.Clear();
         }
     }
 }
