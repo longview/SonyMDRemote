@@ -642,8 +642,15 @@ namespace SonyMDRemote
                             AppendLog("MD: Disc name part {1} is: {0}", TrimNonAscii(DecodeAscii(ref ArrRep, 7)), Segment);
                         }
 
-                        // 7.16 TRACK NAME
-                        if (ArrRep[4] == 0x20 && (ArrRep[5] == 0x4A || ArrRep[5] == 0x4B) && ArrRep.Length > 8)
+                        // 7.16 TRACK NAME (1st packet)
+                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x4A && ArrRep.Length > 8)
+                        {
+                            byte Segment = ArrRep[6];
+                            AppendLog("MD: Track {1} name part 1 is: {0}", TrimNonAscii(DecodeAscii(ref ArrRep, 7)), Segment);
+                        }
+
+                        // 7.16 TRACK NAME (2nd packet)
+                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x4B && ArrRep.Length > 8)
                         {
                             byte Segment = ArrRep[6];
                             AppendLog("MD: Track name part {1} is: {0}", TrimNonAscii(DecodeAscii(ref ArrRep, 7)), Segment);
