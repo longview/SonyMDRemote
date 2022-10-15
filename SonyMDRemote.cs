@@ -418,7 +418,8 @@ namespace SonyMDRemote
         private List<byte> serialRXData = new List<byte>();
         delegate void SetSerialDataInputCallback(byte[] text);
 
-        byte _currentrack;
+        byte _currentrack = 1;
+        byte _packetlen = 0;
 
         private void serialData_input(byte[] text)
         {
@@ -438,390 +439,401 @@ namespace SonyMDRemote
 
             foreach (byte currentchar in rxdata)
             {
-                switch ((char)currentchar)
+                serialRXData.Add(currentchar);
+                // receiving start byte
+                if (receiverstate != serialRXState.serialRXState_Started && currentchar == (char)0x6F)
                 {
-                    case (char)0x6F:
-                        receiverstate = serialRXState.serialRXState_Started;
-                        //AppendLog("Start byte, clearing old trash:", BitConverter.ToString(serialRXData.ToArray()));
-                        serialRXData.Clear();
-                        //AppendLog("Header received");
+                    receiverstate = serialRXState.serialRXState_Started;
+                    //AppendLog("Start byte, clearing old trash:", BitConverter.ToString(serialRXData.ToArray()));
+                    serialRXData.Clear();
+                    serialRXData.Add(0x6F);
+                    //AppendLog("Header received");
+                }
+                // receiving payload data length
+                else if (receiverstate == serialRXState.serialRXState_Started && serialRXData.Count == 2)
+                {
+                    // max length is 0x20
+                    if (currentchar <= 0x20)
+                        _packetlen = currentchar;
+                }
+                // end of transmission
+                else if (receiverstate == serialRXState.serialRXState_Started && serialRXData.Count == _packetlen)
+                {
+                    receiverstate = serialRXState.serialRxState_Stop;
+                    if (currentchar != 0xff)
+                    {
+                        AppendLog("End of packet but terminator was {0:X}", currentchar);
+                    }
+                    serialRXData.Add(currentchar);
+                    receiverstate = serialRXState.serialRxState_Stop;
+
+
+                    //timer_Serial_Timeout.Stop();
+                    byte[] ArrRep = serialRXData.ToArray();
+
+                    //serialRXData.Clear();
+
+                    AppendLog("MD sent: {0}, ASCII: {1}", BitConverter.ToString(ArrRep), TrimNonAscii(System.Text.Encoding.ASCII.GetString(ArrRep)));
+
+                    if (ArrRep.Length < 5)
                         break;
-                    case (char)0xFF:
-                        if (serialRXData.Count+1 != serialRXData[1])
+
+                    // 7.2 REMOTE MODE
+                    if (ArrRep[4] == 0x10)
+                    {
+                        AppendLog("MD: Remote is {0}", ArrRep[5] == 0x03 ? "on" : "off");
+                    }
+
+                    // 7.6 PAUSE
+                    if (ArrRep[4] == 0x02 && ArrRep[5] == 0x03)
+                    {
+                        AppendLog("MD: Paused");
+                    }
+
+                    // 7.5 STOP
+                    if (ArrRep[4] == 0x02 && ArrRep[5] == 0x02)
+                    {
+                        AppendLog("MD: Stopped");
+                    }
+
+                    // 7.4 PLAY
+                    if (ArrRep[4] == 0x02 && ArrRep[5] == 0x01)
+                    {
+                        AppendLog("MD: Playing");
+                    }
+
+                    // 7.7 REC
+                    if (ArrRep[4] == 0x02 && ArrRep[5] == 0x21)
+                    {
+                        AppendLog("MD: Recording started");
+                    }
+
+                    // 7.8 REC PAUSE
+                    if (ArrRep[4] == 0x02 && ArrRep[5] == 0x25)
+                    {
+                        AppendLog("MD: Recording paused");
+                    }
+
+                    // 7.9 EJECT
+                    if (ArrRep[4] == 0x02 && ArrRep[5] == 0x40)
+                    {
+                        AppendLog("MD: Disc ejected");
+                    }
+
+                    // 7.10 MODEL DATA
+                    if (ArrRep[4] == 0x02 && ArrRep[5] == 0x61)
+                    {
+                        if (ArrRep[6] == 0x03)
+                            AppendLog("MD: recording & time machine recording capable");
+                        else
+                            AppendLog("MD: info received for unknown model");
+                    }
+
+                    // 7.11 STATUS DATA
+                    if (ArrRep[4] == 0x20 && ArrRep[5] == 0x20)
+                    {
+                        byte Data1 = ArrRep[6];
+                        byte Data2 = ArrRep[7];
+                        byte Data3 = ArrRep[8];
+                        // 9 is fixed 1
+                        byte TrackNo = ArrRep[10];
+
+                        label2.Text = String.Format("Track {0}", TrackNo);
+                        _currentrack = TrackNo;
+
+                        // these two seems to be inverted or useless on the E12
+                        bool discinserted = IsBitSet(Data1, 5);
+                        bool poweredoff = IsBitSet(Data1, 4);
+
+                        MDS_Status_D1 playbackstatus = MDS_Status_D1.reserved;
+                        string playbackstatusstr = "Unknown";
+                        switch (Data1 & 0x0f)
                         {
-                            AppendLog("Found terminator but count wrong: {1} but terminator at {0}", serialRXData.Count, serialRXData[1]);
+                            case 0x0:
+                                playbackstatus = MDS_Status_D1.STOP;
+                                playbackstatusstr = "Stop";
+                                break;
+                            case 0x1:
+                                playbackstatus = MDS_Status_D1.PLAY;
+                                playbackstatusstr = "Play";
+                                break;
+                            case 0x2:
+                                playbackstatus = MDS_Status_D1.PAUSE;
+                                playbackstatusstr = "Pause";
+                                break;
+                            case 0x3:
+                                playbackstatus = MDS_Status_D1.EJECT;
+                                playbackstatusstr = "Eject";
+                                break;
+                            case 0x4:
+                                playbackstatus = MDS_Status_D1.REC_PLAY;
+                                playbackstatusstr = "Rec. Play";
+                                break;
+                            case 0x5:
+                                playbackstatus = MDS_Status_D1.REC_PAUSE;
+                                playbackstatusstr = "Rec. Pause";
+                                break;
+                            case 0x6:
+                                playbackstatus = MDS_Status_D1.rehearsal;
+                                playbackstatusstr = "rehearsal";
+                                break;
+
                         }
-                        serialRXData.Add(currentchar);
-                        receiverstate = serialRXState.serialRxState_Stop;
 
+                        label3.Text = playbackstatusstr;
 
-                        //timer_Serial_Timeout.Stop();
-                        byte[] ArrRep = serialRXData.ToArray();
+                        bool toc_read_done = IsBitSet(Data2, 7);
+                        bool rec_possible = IsBitSet(Data2, 5);
 
-                        //serialRXData.Clear();
+                        bool mono = IsBitSet(Data3, 7);
+                        bool copy_protected = IsBitSet(Data3, 6);
+                        bool digital_in_unlocked = IsBitSet(Data3, 5);
 
-                        AppendLog("MD sent: {0}, ASCII: {1}", BitConverter.ToString(ArrRep), TrimNonAscii(System.Text.Encoding.ASCII.GetString(ArrRep)));
-
-                        if (ArrRep.Length < 5)
-                            break;
-
-                        // 7.2 REMOTE MODE
-                        if (ArrRep[4] == 0x10)
+                        MDS_Status_D3_Source recsource = MDS_Status_D3_Source.reserved;
+                        string recsourcestr = "Unknown";
+                        switch (Data3 & 0x07)
                         {
-                            AppendLog("MD: Remote is {0}", ArrRep[5] == 0x03 ? "on" : "off");
+                            case 0x1:
+                                recsource = MDS_Status_D3_Source.Analog;
+                                recsourcestr = "Analog";
+                                break;
+                            case 0x3:
+                                recsource = MDS_Status_D3_Source.Optical;
+                                recsourcestr = "Optical";
+                                break;
+                            case 0x5:
+                                recsource = MDS_Status_D3_Source.Coaxial;
+                                recsourcestr = "Coaxial";
+                                break;
+
                         }
 
-                        // 7.6 PAUSE
-                        if (ArrRep[4] == 0x02 && ArrRep[5] == 0x03)
+                        AppendLog("MD: Status dump {0} {1} track no. {2} {3} {4} {5} {6} {7} {8}", 
+                            discinserted ? "disc inserted":"no disc", 
+                            poweredoff ? "powered on":"powered off",
+                            TrackNo,
+                            playbackstatusstr,
+                            toc_read_done ? "TOC read":"TOC not read yet",
+                            copy_protected ? "copy protected":"not copy protected",
+                            mono ? "mono audio":"stereo audio",
+                            digital_in_unlocked ? "digital input unlocked":"digital input locked",
+                            recsourcestr
+                            );
+                    }
+
+                    // 7.12 DISC DATA
+                    if (ArrRep[4] == 0x20 && ArrRep[5] == 0x21)
+                    {
+                        byte DiscData = ArrRep[6];
+
+                        bool discerror = IsBitSet(DiscData, 3);
+                        bool writeprotected = IsBitSet(DiscData, 2);
+                        bool recordable = IsBitSet(DiscData, 0);
+
+                        AppendLog("MD: disc data: {0} {1} {2}",
+                            discerror ?"disc error":"no error",
+                            writeprotected ? "write protected":"recordable");
+                    }
+
+                    // 7.13 MODEL NAME
+                    if (ArrRep[4] == 0x20 && ArrRep[5] == 0x22)
+                    {
+                        string modelname = TrimNonAscii(DecodeAscii(ref ArrRep, 6));
+                        AppendLog("MD: Model is {0}", modelname);
+                    }
+
+                    // 7.14 REC DATA DATA
+                    if (ArrRep[4] == 0x20 && ArrRep[5] == 0x24)
+                    {
+                        byte TrackNo = ArrRep[6];
+                        byte Year = ArrRep[7];
+                        byte Month = ArrRep[8];
+                        byte Day = ArrRep[9];
+                        byte Hour = ArrRep[10];
+                        byte Min = ArrRep[11];
+                        byte Sec = ArrRep[12];
+                        AppendLog("MD: Track {0} was recorded at time XX{1:00}-{2:00}-{3:00}T{4:00}:{5:00}:{6:00}", TrackNo, Year, Month, Day, Hour, Min, Sec);
+                    }
+
+                    // 7.15 DISC NAME
+                    if (ArrRep[4] == 0x20 && (ArrRep[5] == 0x48 || ArrRep[5] == 0x49))
+                    {
+                        byte Segment = ArrRep[6];
+                        AppendLog("MD: Disc name part {1} is: {0}", TrimNonAscii(DecodeAscii(ref ArrRep, 7)), Segment);
+                    }
+
+                    // 7.16 TRACK NAME (1st packet)
+                    if (ArrRep[4] == 0x20 && ArrRep[5] == 0x4A && ArrRep.Length > 8)
+                    {
+                        byte Segment = ArrRep[6];
+                        AppendLog("MD: Track {1} name part 1 is: {0}", TrimNonAscii(DecodeAscii(ref ArrRep, 7)), Segment);
+                    }
+
+                    // 7.16 TRACK NAME (2nd packet)
+                    if (ArrRep[4] == 0x20 && ArrRep[5] == 0x4B && ArrRep.Length > 8)
+                    {
+                        byte Segment = ArrRep[6];
+                        AppendLog("MD: Track name part {1} is: {0}", TrimNonAscii(DecodeAscii(ref ArrRep, 7)), Segment);
+                    }
+
+                    // 7.17 ALL NAME END
+                    if (ArrRep[4] == 0x20 && ArrRep[5] == 0x4C)
+                    {
+                        AppendLog("MD: ALL NAME END");
+                    }
+
+                    // 7.18 ELAPSED TIME
+                    if (ArrRep[4] == 0x20 && ArrRep[5] == 0x51)
+                    {
+                        byte TrackNo = ArrRep[6];
+                        byte Min = ArrRep[8];
+                        byte Sec = ArrRep[9];
+                        AppendLog("MD: Track {0} elapsed time is {1:00}:{2:00}", TrackNo, Min, Sec);
+                    }
+
+                    // 7.19 REC REMAIN
+                    if (ArrRep[4] == 0x20 && ArrRep[5] == 0x54)
+                    {
+                        byte Min = ArrRep[7];
+                        byte Sec = ArrRep[8];
+                        AppendLog("MD: Record remaining time is {0:00}:{1:00}", Min, Sec);
+                    }
+
+                    // 7.20 NAME REMAIN
+                    if (ArrRep[4] == 0x20 && ArrRep[5] == 0x55)
+                    {
+                        byte TrackNo = ArrRep[7];
+                        byte RemainH = ArrRep[8];
+                        byte RemainL  = ArrRep[9];
+                        int remainingbytes = RemainH << 8 | RemainL;
+                        AppendLog("MD: Track {0} maximum name size is {1}", TrackNo, remainingbytes);
+                    }
+
+                    // 7.21 TOC DATA
+                    if (ArrRep[4] == 0x20 && ArrRep[5] == 0x60)
+                    {
+                        byte FirstTrackNo = ArrRep[7];
+                        byte LastTrackNo = ArrRep[8];
+                        byte Min = ArrRep[9];
+                        byte Sec = ArrRep[10];
+                        AppendLog("MD: First track is {0}, last track is {1}. Recorded time is {2:00}:{3:00}", FirstTrackNo,LastTrackNo,Min,Sec);
+                        label4.Text = String.Format("{0} tracks ({1}-{2}; {3:00}:{4:00})", 1+LastTrackNo-FirstTrackNo, FirstTrackNo,LastTrackNo, Min, Sec);
+
+                        if (FirstTrackNo != 0 && LastTrackNo !=0)
                         {
-                            AppendLog("MD: Paused");
-                        }
-
-                        // 7.5 STOP
-                        if (ArrRep[4] == 0x02 && ArrRep[5] == 0x02)
-                        {
-                            AppendLog("MD: Stopped");
-                        }
-
-                        // 7.4 PLAY
-                        if (ArrRep[4] == 0x02 && ArrRep[5] == 0x01)
-                        {
-                            AppendLog("MD: Playing");
-                        }
-
-                        // 7.7 REC
-                        if (ArrRep[4] == 0x02 && ArrRep[5] == 0x21)
-                        {
-                            AppendLog("MD: Recording started");
-                        }
-
-                        // 7.8 REC PAUSE
-                        if (ArrRep[4] == 0x02 && ArrRep[5] == 0x25)
-                        {
-                            AppendLog("MD: Recording paused");
-                        }
-
-                        // 7.9 EJECT
-                        if (ArrRep[4] == 0x02 && ArrRep[5] == 0x40)
-                        {
-                            AppendLog("MD: Disc ejected");
-                        }
-
-                        // 7.10 MODEL DATA
-                        if (ArrRep[4] == 0x02 && ArrRep[5] == 0x61)
-                        {
-                            if (ArrRep[6] == 0x03)
-                                AppendLog("MD: recording & time machine recording capable");
-                            else
-                                AppendLog("MD: info received for unknown model");
-                        }
-
-                        // 7.11 STATUS DATA
-                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x20)
-                        {
-                            byte Data1 = ArrRep[6];
-                            byte Data2 = ArrRep[7];
-                            byte Data3 = ArrRep[8];
-                            // 9 is fixed 1
-                            byte TrackNo = ArrRep[10];
-
-                            label2.Text = String.Format("Track {0}", TrackNo);
-                            _currentrack = TrackNo;
-
-                            // these two seems to be inverted or useless on the E12
-                            bool discinserted = IsBitSet(Data1, 5);
-                            bool poweredoff = IsBitSet(Data1, 4);
-
-                            MDS_Status_D1 playbackstatus = MDS_Status_D1.reserved;
-                            string playbackstatusstr = "Unknown";
-                            switch (Data1 & 0x0f)
+                            try
                             {
-                                case 0x0:
-                                    playbackstatus = MDS_Status_D1.STOP;
-                                    playbackstatusstr = "Stop";
-                                    break;
-                                case 0x1:
-                                    playbackstatus = MDS_Status_D1.PLAY;
-                                    playbackstatusstr = "Play";
-                                    break;
-                                case 0x2:
-                                    playbackstatus = MDS_Status_D1.PAUSE;
-                                    playbackstatusstr = "Pause";
-                                    break;
-                                case 0x3:
-                                    playbackstatus = MDS_Status_D1.EJECT;
-                                    playbackstatusstr = "Eject";
-                                    break;
-                                case 0x4:
-                                    playbackstatus = MDS_Status_D1.REC_PLAY;
-                                    playbackstatusstr = "Rec. Play";
-                                    break;
-                                case 0x5:
-                                    playbackstatus = MDS_Status_D1.REC_PAUSE;
-                                    playbackstatusstr = "Rec. Pause";
-                                    break;
-                                case 0x6:
-                                    playbackstatus = MDS_Status_D1.rehearsal;
-                                    playbackstatusstr = "rehearsal";
-                                    break;
+                                numericUpDown1.Minimum = FirstTrackNo;
+                                numericUpDown1.Maximum = LastTrackNo;
+                                if (numericUpDown1.Value < FirstTrackNo)
+                                    numericUpDown1.Value = FirstTrackNo;
+                                if (numericUpDown1.Value > LastTrackNo && LastTrackNo != 0)
+                                    numericUpDown1.Value = LastTrackNo;
 
+                                numericUpDown1.Minimum = FirstTrackNo;
+                                numericUpDown1.Maximum = LastTrackNo;
                             }
-
-                            label3.Text = playbackstatusstr;
-
-                            bool toc_read_done = IsBitSet(Data2, 7);
-                            bool rec_possible = IsBitSet(Data2, 5);
-
-                            bool mono = IsBitSet(Data3, 7);
-                            bool copy_protected = IsBitSet(Data3, 6);
-                            bool digital_in_unlocked = IsBitSet(Data3, 5);
-
-                            MDS_Status_D3_Source recsource = MDS_Status_D3_Source.reserved;
-                            string recsourcestr = "Unknown";
-                            switch (Data3 & 0x07)
+                            catch
                             {
-                                case 0x1:
-                                    recsource = MDS_Status_D3_Source.Analog;
-                                    recsourcestr = "Analog";
-                                    break;
-                                case 0x3:
-                                    recsource = MDS_Status_D3_Source.Optical;
-                                    recsourcestr = "Optical";
-                                    break;
-                                case 0x5:
-                                    recsource = MDS_Status_D3_Source.Coaxial;
-                                    recsourcestr = "Coaxial";
-                                    break;
-
+                                // do nothing, it literally makes no difference
                             }
-
-                            AppendLog("MD: Status dump {0} {1} track no. {2} {3} {4} {5} {6} {7} {8}", 
-                                discinserted ? "disc inserted":"no disc", 
-                                poweredoff ? "powered on":"powered off",
-                                TrackNo,
-                                playbackstatusstr,
-                                toc_read_done ? "TOC read":"TOC not read yet",
-                                copy_protected ? "copy protected":"not copy protected",
-                                mono ? "mono audio":"stereo audio",
-                                digital_in_unlocked ? "digital input unlocked":"digital input locked",
-                                recsourcestr
-                                );
+                        }
+                        else
+                        {
+                            numericUpDown1.Minimum = 1;
+                            numericUpDown1.Maximum = 255;
+                            numericUpDown1.Value = 1;
                         }
 
-                        // 7.12 DISC DATA
-                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x21)
+                    }
+
+                    // 7.22 TRACK TIME DATA
+                    if (ArrRep[4] == 0x20 && ArrRep[5] == 0x62 && ArrRep.Length > 8)
+                    {
+                        if (ArrRep[6] == 0x01 && ArrRep[7] == _currentrack)
                         {
-                            byte DiscData = ArrRep[6];
-
-                            bool discerror = IsBitSet(DiscData, 3);
-                            bool writeprotected = IsBitSet(DiscData, 2);
-                            bool recordable = IsBitSet(DiscData, 0);
-
-                            AppendLog("MD: disc data: {0} {1} {2}",
-                                discerror ?"disc error":"no error",
-                                writeprotected ? "write protected":"recordable");
-                        }
-
-                        // 7.13 MODEL NAME
-                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x22)
-                        {
-                            string modelname = TrimNonAscii(DecodeAscii(ref ArrRep, 6));
-                            AppendLog("MD: Model is {0}", modelname);
-                        }
-
-                        // 7.14 REC DATA DATA
-                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x24)
-                        {
-                            byte TrackNo = ArrRep[6];
-                            byte Year = ArrRep[7];
-                            byte Month = ArrRep[8];
-                            byte Day = ArrRep[9];
-                            byte Hour = ArrRep[10];
-                            byte Min = ArrRep[11];
-                            byte Sec = ArrRep[12];
-                            AppendLog("MD: Track {0} was recorded at time XX{1:00}-{2:00}-{3:00}T{4:00}:{5:00}:{6:00}", TrackNo, Year, Month, Day, Hour, Min, Sec);
-                        }
-
-                        // 7.15 DISC NAME
-                        if (ArrRep[4] == 0x20 && (ArrRep[5] == 0x48 || ArrRep[5] == 0x49))
-                        {
-                            byte Segment = ArrRep[6];
-                            AppendLog("MD: Disc name part {1} is: {0}", TrimNonAscii(DecodeAscii(ref ArrRep, 7)), Segment);
-                        }
-
-                        // 7.16 TRACK NAME (1st packet)
-                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x4A && ArrRep.Length > 8)
-                        {
-                            byte Segment = ArrRep[6];
-                            AppendLog("MD: Track {1} name part 1 is: {0}", TrimNonAscii(DecodeAscii(ref ArrRep, 7)), Segment);
-                        }
-
-                        // 7.16 TRACK NAME (2nd packet)
-                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x4B && ArrRep.Length > 8)
-                        {
-                            byte Segment = ArrRep[6];
-                            AppendLog("MD: Track name part {1} is: {0}", TrimNonAscii(DecodeAscii(ref ArrRep, 7)), Segment);
-                        }
-
-                        // 7.17 ALL NAME END
-                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x4C)
-                        {
-                            AppendLog("MD: ALL NAME END");
-                        }
-
-                        // 7.18 ELAPSED TIME
-                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x51)
-                        {
-                            byte TrackNo = ArrRep[6];
                             byte Min = ArrRep[8];
                             byte Sec = ArrRep[9];
-                            AppendLog("MD: Track {0} elapsed time is {1:00}:{2:00}", TrackNo, Min, Sec);
+                            AppendLog("MD: Current track length is {0:00}:{1:00}", Min, Sec);
+                            label6.Text = String.Format("{0:00}:{1:00}", Min, Sec);
                         }
+                    }
 
-                        // 7.19 REC REMAIN
-                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x54)
-                        {
-                            byte Min = ArrRep[7];
-                            byte Sec = ArrRep[8];
-                            AppendLog("MD: Record remaining time is {0:00}:{1:00}", Min, Sec);
-                        }
+                    // 7.23 DISC EXIST
+                    if (ArrRep[4] == 0x20 && ArrRep[5] == 0x82)
+                    {
+                        AppendLog("MD: TOC read, disc ready");
+                    }
 
-                        // 7.20 NAME REMAIN
-                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x55)
-                        {
-                            byte TrackNo = ArrRep[7];
-                            byte RemainH = ArrRep[8];
-                            byte RemainL  = ArrRep[9];
-                            int remainingbytes = RemainH << 8 | RemainL;
-                            AppendLog("MD: Track {0} maximum name size is {1}", TrackNo, remainingbytes);
-                        }
+                    // 7.24 1 TRACK END
+                    if (ArrRep[4] == 0x20 && ArrRep[5] == 0x83)
+                    {
+                        AppendLog("MD: Track changed");
+                    }
 
-                        // 7.21 TOC DATA
-                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x60)
-                        {
-                            byte FirstTrackNo = ArrRep[7];
-                            byte LastTrackNo = ArrRep[8];
-                            byte Min = ArrRep[9];
-                            byte Sec = ArrRep[10];
-                            AppendLog("MD: First track is {0}, last track is {1}. Recorded time is {2:00}:{3:00}", FirstTrackNo,LastTrackNo,Min,Sec);
-                            label4.Text = String.Format("{0} tracks ({1}-{2}; {3:00}:{4:00})", 1+LastTrackNo-FirstTrackNo, FirstTrackNo,LastTrackNo, Min, Sec);
+                    // 7.25 NO DISC NAME
+                    if (ArrRep[4] == 0x20 && ArrRep[5] == 0x85)
+                    {
+                        AppendLog("MD: Current disc not named");
+                    }
 
-                            if (FirstTrackNo != 0 && LastTrackNo !=0)
-                            {
-                                try
-                                {
-                                    numericUpDown1.Minimum = FirstTrackNo;
-                                    numericUpDown1.Maximum = LastTrackNo;
-                                    if (numericUpDown1.Value < FirstTrackNo)
-                                        numericUpDown1.Value = FirstTrackNo;
-                                    if (numericUpDown1.Value > LastTrackNo && LastTrackNo != 0)
-                                        numericUpDown1.Value = LastTrackNo;
+                    // 7.26 NO TRACK NAME
+                    if (ArrRep[4] == 0x20 && ArrRep[5] == 0x86)
+                    {
+                        AppendLog("MD: Current track not named");
+                    }
 
-                                    numericUpDown1.Minimum = FirstTrackNo;
-                                    numericUpDown1.Maximum = LastTrackNo;
-                                }
-                                catch
-                                {
-                                    // do nothing, it literally makes no difference
-                                }
-                            }
-                            else
-                            {
-                                numericUpDown1.Minimum = 1;
-                                numericUpDown1.Maximum = 255;
-                                numericUpDown1.Value = 1;
-                            }
+                    // 7.27 WRITE PACKET RECEIVED
+                    if (ArrRep[4] == 0x20 && ArrRep[5] == 0x87)
+                    {
+                        AppendLog("MD: Write packet acknowledge");
+                    }
 
-                        }
+                    // 7.28 NO TOC DATA
+                    if (ArrRep[4] == 0x20 && ArrRep[5] == 0x89)
+                    {
+                        AppendLog("MD: No TOC data present or no disc inserted");
+                    }
 
-                        // 7.22 TRACK TIME DATA
-                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x62 && ArrRep.Length > 8)
-                        {
-                            if (ArrRep[6] == 0x01 && ArrRep[7] == _currentrack)
-                            {
-                                byte Min = ArrRep[8];
-                                byte Sec = ArrRep[9];
-                                AppendLog("MD: Current track length is {0:00}:{1:00}", Min, Sec);
-                                label6.Text = String.Format("{0:00}:{1:00}", Min, Sec);
-                            }
-                        }
+                    /* skipped some editing commands */
 
-                        // 7.23 DISC EXIST
-                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x82)
-                        {
-                            AppendLog("MD: TOC read, disc ready");
-                        }
+                    // 7.33 UNDFINED COMMAND
+                    if (ArrRep[4] == 0x40 && ArrRep[5] == 0x01)
+                    {
+                        AppendLog("MD: Unknown command received by MD");
+                    }
 
-                        // 7.24 1 TRACK END
-                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x83)
-                        {
-                            AppendLog("MD: Track changed");
-                        }
-
-                        // 7.25 NO DISC NAME
-                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x85)
-                        {
-                            AppendLog("MD: Current disc not named");
-                        }
-
-                        // 7.26 NO TRACK NAME
-                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x86)
-                        {
-                            AppendLog("MD: Current track not named");
-                        }
-
-                        // 7.27 WRITE PACKET RECEIVED
-                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x87)
-                        {
-                            AppendLog("MD: Write packet acknowledge");
-                        }
-
-                        // 7.28 NO TOC DATA
-                        if (ArrRep[4] == 0x20 && ArrRep[5] == 0x89)
-                        {
-                            AppendLog("MD: No TOC data present or no disc inserted");
-                        }
-
-                        /* skipped some editing commands */
-
-                        // 7.33 UNDFINED COMMAND
-                        if (ArrRep[4] == 0x40 && ArrRep[5] == 0x01)
-                        {
-                            AppendLog("MD: Unknown command received by MD");
-                        }
-
-                        // 7.34 IMPOSSIBLE
-                        if (ArrRep[4] == 0x40 && ArrRep[5] == 0x03)
-                        {
-                            AppendLog("MD: Reports previous command not possible");
-                        }
+                    // 7.34 IMPOSSIBLE
+                    if (ArrRep[4] == 0x40 && ArrRep[5] == 0x03)
+                    {
+                        AppendLog("MD: Reports previous command not possible");
+                    }
 
 
-                        //try
-                        //{
-                        //    UInt32 Current_DAC_Value = BitConverter.ToUInt32(decodedbytes, 0);
-                        //}
-                        //catch (Exception e)
-                        //{
-                        //    AppendLog("Decode error! {0}", e.Message);
-                        //    return;
-                        //}
+                    //try
+                    //{
+                    //    UInt32 Current_DAC_Value = BitConverter.ToUInt32(decodedbytes, 0);
+                    //}
+                    //catch (Exception e)
+                    //{
+                    //    AppendLog("Decode error! {0}", e.Message);
+                    //    return;
+                    //}
 
-                        //if (rx_timeoutstate == serialtimeoutstate.Timeout)
-                        //{
-                        //    AppendLog("Now receiving valid data after previous timeout");
-                        //}
-                        //else if (rx_timeoutstate == serialtimeoutstate.Idle)
-                        //{
-                        //    AppendLog("Valid data received from device");
-                        //}
-                        //rx_timeoutstate = serialtimeoutstate.Received;
+                    //if (rx_timeoutstate == serialtimeoutstate.Timeout)
+                    //{
+                    //    AppendLog("Now receiving valid data after previous timeout");
+                    //}
+                    //else if (rx_timeoutstate == serialtimeoutstate.Idle)
+                    //{
+                    //    AppendLog("Valid data received from device");
+                    //}
+                    //rx_timeoutstate = serialtimeoutstate.Received;
 
-                        //UpdateGUI(ref lastrxstatus);
+                    //UpdateGUI(ref lastrxstatus);
                         break;
                 }
 
-                serialRXData.Add(currentchar);
             }
         }
 
