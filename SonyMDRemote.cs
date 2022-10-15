@@ -884,6 +884,7 @@ namespace SonyMDRemote
                     if (ArrRep[4] == 0x20 && ArrRep[5] == 0x83)
                     {
                         AppendLog("MD: Track changed");
+                        Transmit_MDS_Message(MDS_TX_ReqStatus);
                         StringBuilder sb;
                         tracknames.TryGetValue(_currentrack, out sb);
                         if (sb != null)
