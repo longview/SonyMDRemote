@@ -312,7 +312,7 @@
             // 
             // timer_Poll_Time
             // 
-            this.timer_Poll_Time.Interval = 1000;
+            this.timer_Poll_Time.Interval = 10;
             this.timer_Poll_Time.Tick += new System.EventHandler(this.timer_Poll_Time_Tick);
             // 
             // label6

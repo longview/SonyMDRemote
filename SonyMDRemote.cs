@@ -321,7 +321,10 @@ namespace SonyMDRemote
         byte[] MDS_TX_EnableElapsedTimeTransmit = new byte[] { 0x07, 0x10 };
         byte[] MDS_TX_DisableElapsedTimeTransmit = new byte[] { 0x07, 0x11 };
 
-        private void Transmit_MDS_Message(byte[] data, byte tracknumber = 0)
+        // command queue object, list of raw commands to issue and what delay should be used before the next command
+        List<Tuple<byte[], int>> commandqueue = new List<Tuple<byte[], int>>();
+
+        private void Transmit_MDS_Message(byte[] data, int delay = 100, byte tracknumber = 0)
         {
             if (!serialPort1.IsOpen)
             {
@@ -356,8 +359,32 @@ namespace SonyMDRemote
             if (txdata.Count > 32)
                 throw new ArgumentException("Transmission packet would be too big!");
 
-            serialPort1.Write(txdata.ToArray(), 0, txdata.Count);
+            commandqueue.Add(new Tuple<byte[], int>(txdata.ToArray(), delay));
+            timer_Poll_Time.Enabled = true;
+            //serialPort1.Write(txdata.ToArray(), 0, txdata.Count);
+
             //Start_Timeout();
+        }
+
+        private void timer_Poll_Time_Tick(object sender, EventArgs e)
+        {
+            // empty queue
+            if (commandqueue == null || commandqueue.Count < 1)
+            {
+                timer_Poll_Time.Enabled = false;
+                return;
+            }
+                
+
+            // pop off the first item, transmit, then reset the timer with the delay
+            Tuple<byte[], int> nextcommand = commandqueue[0];
+            commandqueue.RemoveAt(0);
+
+            AppendLog("PC sent: {0}, ASCII: {1}", BitConverter.ToString(nextcommand.Item1), TrimNonAscii(System.Text.Encoding.ASCII.GetString(nextcommand.Item1)));
+
+            serialPort1.Write(nextcommand.Item1, 0, nextcommand.Item1.Length);
+
+            timer_Poll_Time.Interval = nextcommand.Item2;
         }
 
         enum serialRXState
@@ -628,6 +655,10 @@ namespace SonyMDRemote
                             digital_in_unlocked ? "digital input unlocked":"digital input locked",
                             recsourcestr
                             );
+
+                        // request these since we now know the track number
+                        Transmit_MDS_Message(MDS_TX_ReqTOCData);
+                        Transmit_MDS_Message(MDS_TX_ReqTrackTime, tracknumber: _currentrack);
                     }
 
                     // 7.12 DISC DATA
@@ -968,15 +999,15 @@ namespace SonyMDRemote
             // reset list of names
             _infocounter = 0;
             tracknames.Clear();
-            Transmit_MDS_Message(MDS_TX_ReqDiscAndTrackNames);
+            Transmit_MDS_Message(MDS_TX_ReqDiscAndTrackNames, delay:2000);
         }
 
         private void button11_Click(object sender, EventArgs e)
         {
             Transmit_MDS_Message(MDS_TX_ReqDiscName);
             Transmit_MDS_Message(MDS_TX_ReqStatus);
-            Transmit_MDS_Message(MDS_TX_ReqTrackTime, _currentrack);
-            Transmit_MDS_Message(MDS_TX_ReqTOCData);
+            //Transmit_MDS_Message(MDS_TX_ReqTrackTime, _currentrack);
+            //Transmit_MDS_Message(MDS_TX_ReqTOCData);
         }
 
         private void button12_Click(object sender, EventArgs e)
@@ -987,13 +1018,13 @@ namespace SonyMDRemote
         private void label3_Click(object sender, EventArgs e)
         {
             Transmit_MDS_Message(MDS_TX_ReqStatus);
-            Transmit_MDS_Message(MDS_TX_ReqTrackTime, _currentrack);
+            Transmit_MDS_Message(MDS_TX_ReqTrackTime, tracknumber: _currentrack);
         }
 
         private void label2_Click(object sender, EventArgs e)
         {
             Transmit_MDS_Message(MDS_TX_ReqStatus);
-            Transmit_MDS_Message(MDS_TX_ReqTrackTime, _currentrack);
+            Transmit_MDS_Message(MDS_TX_ReqTrackTime, tracknumber: _currentrack);
         }
 
         private void label4_Click(object sender, EventArgs e)
@@ -1011,10 +1042,7 @@ namespace SonyMDRemote
             Transmit_MDS_Message(MDS_TX_PausePlayAtTrack, (byte)numericUpDown1.Value);
         }
 
-        private void timer_Poll_Time_Tick(object sender, EventArgs e)
-        {
 
-        }
 
         private void button15_Click(object sender, EventArgs e)
         {
