@@ -68,7 +68,7 @@ The protocol has no escape sequences, and the start and stop bytes are also vali
 
 As such, you do need stateful decoder that reads the packet length to determine when to stop and process data.
 
-### 6.38 ALL NAME REQ
+## 6.38 ALL NAME REQ
 The returned 7.16 TRACK NAME messages appear to have the TrackNo field set to whatever track was last playing. This occurs even when the MD is ejected and reinserted.
 
 ## 7.11 STATUS DATA
