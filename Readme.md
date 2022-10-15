@@ -6,11 +6,22 @@ The goal is to replace the older SonyMDRemote program, which doesn't really work
 See the Docs folder for the protocol specifications if you want to help.
 Currently targets .NET 4.7.2
 
+![UI Screenshot](img/gui.png)
+
 ## Hookup
 You will need a female-female 9 pin D-Sub adapter cable (a null modem cable):
 * Pin 2 to Pin 3
 * Pin 3 to Pin 2
 * Pin 5 to Pin 5
+
+## Use
+To connect, select a COM port from the selector. Then click Remote On, and Update to poll basic information.
+
+The textbox below logs the received data and debug info.
+
+Click Get Info and wait for completion, then Populate to show all track names in a list.
+
+You can double click the leftmost part of a row to tell the MD to play a specific track. The currently playing track is bolded.
 
 ## Basic Command Sequence
 Commands to the MD start with 0x7E, length, and some fixed parameters. Termination is 0xFF, and the length includes headers and termination.
