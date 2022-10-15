@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SonyMDRemote
@@ -490,6 +486,7 @@ namespace SonyMDRemote
         int _infocounter = -1;
         byte _currtracklen_min = 0;
         byte _currtracklen_sec = 0;
+        TimeSpan _remainingrecordtime = new TimeSpan(0);
         string discname;
 
         // list of track names
@@ -805,6 +802,8 @@ namespace SonyMDRemote
                     {
                         byte Min = ArrRep[7];
                         byte Sec = ArrRep[8];
+                        if (Min != _remainingrecordtime.Minutes || Sec != _remainingrecordtime.Seconds)
+                            _remainingrecordtime = new TimeSpan(0, Min, Sec);
                         AppendLog("MD: Record remaining time is {0:00}:{1:00}", Min, Sec);
                     }
 
@@ -826,7 +825,11 @@ namespace SonyMDRemote
                         byte Min = ArrRep[9];
                         byte Sec = ArrRep[10];
                         AppendLog("MD: First track is {0}, last track is {1}. Recorded time is {2:00}:{3:00}", FirstTrackNo,LastTrackNo,Min,Sec);
-                        label4.Text = String.Format("{0} tracks ({1}-{2}; {3:00}:{4:00})", 1+LastTrackNo-FirstTrackNo, FirstTrackNo,LastTrackNo, Min, Sec);
+                        label4.Text = String.Format("{0} tracks ({1}-{2}; {3:00}:{4:00}; {5:00}:{6:00} remaining)", 
+                            1+LastTrackNo-FirstTrackNo, 
+                            FirstTrackNo,LastTrackNo, 
+                            Min, Sec,
+                            _remainingrecordtime.Minutes, _remainingrecordtime.Seconds);
 
                         if (FirstTrackNo != 0 && LastTrackNo !=0)
                         {
@@ -1055,6 +1058,7 @@ namespace SonyMDRemote
             Transmit_MDS_Message(MDS_TX_SetRemoteOn, delay: 500);
             Transmit_MDS_Message(MDS_TX_DisableElapsedTimeTransmit);
             Transmit_MDS_Message(MDS_TX_ReqModelName);
+            Transmit_MDS_Message(MDS_TX_ReqRemainingRecordTime);
             //Transmit_MDS_Message(MDS_TX_ReqDiscName, delay: 500);
             Transmit_MDS_Message(MDS_TX_ReqDiscAndTrackNames, delay:3000);
             _inforequest = true;
@@ -1066,6 +1070,7 @@ namespace SonyMDRemote
         {
             
             Transmit_MDS_Message(MDS_TX_ReqStatus);
+            Transmit_MDS_Message(MDS_TX_ReqTrackRemainingNameSize, tracknumber: _currentrack);
             if (checkBox2.Checked)
                 Transmit_MDS_Message(MDS_TX_EnableElapsedTimeTransmit);
             else

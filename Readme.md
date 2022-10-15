@@ -32,8 +32,9 @@ Commands from the MD follow the same format, but start with 0x6F.
 * Basic playback commands
 
 ## Planned:
-* Polling state machine to read e.g. track number, status flags automatically
+* Polling state machine to read e.g. track number, status flags automatically (somewhat there)
 * Disc and Track Name editor (the main reason to make this in the first place)
+* Check of maximum track name length - seems to be like 1700 chars per track though so not too important
 
 ## Not really working:
 * Disc status and Power status appears to be incorrect for the E12
