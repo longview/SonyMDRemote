@@ -697,6 +697,34 @@ namespace SonyMDRemote
                             byte Min = ArrRep[9];
                             byte Sec = ArrRep[10];
                             AppendLog("MD: First track is {0}, last track is {1}. Recorded time is {2,00}:{3,00}", FirstTrackNo,LastTrackNo,Min,Sec);
+                            label4.Text = String.Format("{0} tracks ({1}-{2}; {3,00}:{4,00})", 1+LastTrackNo-FirstTrackNo, FirstTrackNo,LastTrackNo, Min, Sec);
+
+                            if (FirstTrackNo != 0 && LastTrackNo !=0)
+                            {
+                                try
+                                {
+                                    numericUpDown1.Minimum = FirstTrackNo;
+                                    numericUpDown1.Maximum = LastTrackNo;
+                                    if (numericUpDown1.Value < FirstTrackNo)
+                                        numericUpDown1.Value = FirstTrackNo;
+                                    if (numericUpDown1.Value > LastTrackNo && LastTrackNo != 0)
+                                        numericUpDown1.Value = LastTrackNo;
+
+                                    numericUpDown1.Minimum = FirstTrackNo;
+                                    numericUpDown1.Maximum = LastTrackNo;
+                                }
+                                catch
+                                {
+                                    // do nothing, it literally makes no difference
+                                }
+                            }
+                            else
+                            {
+                                numericUpDown1.Minimum = 1;
+                                numericUpDown1.Maximum = 255;
+                                numericUpDown1.Value = 1;
+                            }
+
                         }
 
                         // 7.22 TRACK TIME DATA
@@ -862,6 +890,21 @@ namespace SonyMDRemote
         private void label2_Click(object sender, EventArgs e)
         {
             Transmit_MDS_Message(MDS_TX_ReqStatus);
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+            Transmit_MDS_Message(MDS_TX_ReqTOCData);
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            Transmit_MDS_Message(MDS_TX_StartPlayAtTrack, (byte)numericUpDown1.Value);
+        }
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+            Transmit_MDS_Message(MDS_TX_PausePlayAtTrack, (byte)numericUpDown1.Value);
         }
     }
 }
