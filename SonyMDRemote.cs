@@ -794,7 +794,7 @@ namespace SonyMDRemote
                         AppendLog("MD: Track {0} elapsed time is {1:00}:{2:00}", TrackNo, Min, Sec);
                         label6.Text = String.Format("{0:00}:{1:00}/{2:00}:{3:00} (r: {4:00}:{5:00})", Min, Sec, 
                             _currtracklen_min, _currtracklen_sec, 
-                            remainingtime.Minutes, remainingtime.Seconds);
+                            (int)remainingtime.TotalMinutes, remainingtime.Seconds);
                     }
 
                     // 7.19 REC REMAIN
@@ -829,7 +829,7 @@ namespace SonyMDRemote
                             1+LastTrackNo-FirstTrackNo, 
                             FirstTrackNo,LastTrackNo, 
                             Min, Sec,
-                            _remainingrecordtime.Minutes, _remainingrecordtime.Seconds);
+                            (int)_remainingrecordtime.TotalMinutes, _remainingrecordtime.Seconds);
 
                         if (FirstTrackNo != 0 && LastTrackNo !=0)
                         {
