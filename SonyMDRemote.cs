@@ -167,8 +167,18 @@ namespace SonyMDRemote
 
         private void timer1_Maintenance_Tick(object sender, EventArgs e)
         {
-            timer1_Maintenance.Interval = 10000;
+            if (checkBox1.Checked)
+            {
+                timer1_Maintenance.Interval = 5000;
+                DoUpdateTask();
+            }
+            else
+            {
+                timer1_Maintenance.Interval = 10000;
+            }
             Update_COM_List();
+
+
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -448,6 +458,8 @@ namespace SonyMDRemote
         byte _currentrack = 1;
         byte _packetlen = 0;
         int _infocounter = -1;
+        byte _currtracklen_min = 0;
+        byte _currtracklen_sec = 0;
         string discname;
 
         // list of track names
@@ -680,6 +692,7 @@ namespace SonyMDRemote
                     {
                         string modelname = TrimNonAscii(DecodeAscii(ref ArrRep, 6));
                         AppendLog("MD: Model is {0}", modelname);
+                        label9.Text = "Sony " + modelname;
                     }
 
                     // 7.14 REC DATA DATA
@@ -752,7 +765,15 @@ namespace SonyMDRemote
                         byte TrackNo = ArrRep[6];
                         byte Min = ArrRep[8];
                         byte Sec = ArrRep[9];
+
+                        TimeSpan ts_track = new TimeSpan(0, _currtracklen_min, _currtracklen_sec);
+                        TimeSpan ts_elapsed = new TimeSpan(0, Min, Sec);
+                        TimeSpan remainingtime = ts_track - ts_elapsed;
+
                         AppendLog("MD: Track {0} elapsed time is {1:00}:{2:00}", TrackNo, Min, Sec);
+                        label6.Text = String.Format("{0:00}:{1:00}/{2:00}:{3:00} (r: {4:00}:{5:00})", Min, Sec, 
+                            _currtracklen_min, _currtracklen_sec, 
+                            remainingtime.Minutes, remainingtime.Seconds);
                     }
 
                     // 7.19 REC REMAIN
@@ -818,8 +839,11 @@ namespace SonyMDRemote
                         {
                             byte Min = ArrRep[8];
                             byte Sec = ArrRep[9];
+                            _currtracklen_min = Min;
+                            _currtracklen_sec = Sec;
                             AppendLog("MD: Current track length is {0:00}:{1:00}", Min, Sec);
-                            label6.Text = String.Format("{0:00}:{1:00}", Min, Sec);
+                            if (!checkBox2.Checked)
+                                label6.Text = String.Format("{0:00}:{1:00}", Min, Sec);
                         }
                     }
 
@@ -996,18 +1020,32 @@ namespace SonyMDRemote
 
         private void button10_Click(object sender, EventArgs e)
         {
+            checkBox1.Checked = false;
+            checkBox2.Checked = false;
             // reset list of names
             _infocounter = 0;
             tracknames.Clear();
-            Transmit_MDS_Message(MDS_TX_ReqDiscAndTrackNames, delay:2000);
+            Transmit_MDS_Message(MDS_TX_DisableElapsedTimeTransmit);
+            Transmit_MDS_Message(MDS_TX_ReqDiscAndTrackNames, delay:12000);
+        }
+
+        private void DoUpdateTask()
+        {
+            Transmit_MDS_Message(MDS_TX_ReqDiscName);
+            Transmit_MDS_Message(MDS_TX_ReqStatus);
+            if (checkBox2.Checked)
+            {
+                Transmit_MDS_Message(MDS_TX_EnableElapsedTimeTransmit);
+            }
+            else
+                Transmit_MDS_Message(MDS_TX_DisableElapsedTimeTransmit);
+            //Transmit_MDS_Message(MDS_TX_ReqTrackTime, _currentrack);
+            //Transmit_MDS_Message(MDS_TX_ReqTOCData);
         }
 
         private void button11_Click(object sender, EventArgs e)
         {
-            Transmit_MDS_Message(MDS_TX_ReqDiscName);
-            Transmit_MDS_Message(MDS_TX_ReqStatus);
-            //Transmit_MDS_Message(MDS_TX_ReqTrackTime, _currentrack);
-            //Transmit_MDS_Message(MDS_TX_ReqTOCData);
+            DoUpdateTask();
         }
 
         private void button12_Click(object sender, EventArgs e)
@@ -1063,6 +1101,20 @@ namespace SonyMDRemote
         private void label7_Click(object sender, EventArgs e)
         {
             Transmit_MDS_Message(MDS_TX_ReqDiscName);
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked)
+            {
+                timer1_Maintenance.Interval = 5000;
+                DoUpdateTask();
+            }
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            DoUpdateTask();
         }
     }
 }

@@ -63,6 +63,9 @@
             this.trackno = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tracktitle = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.write = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.label9 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -214,14 +217,14 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(12, 52);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(41, 13);
+            this.label3.Size = new System.Drawing.Size(50, 13);
             this.label3.TabIndex = 13;
-            this.label3.Text = "Playing";
+            this.label3.Text = "Playing : ";
             this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // button9
             // 
-            this.button9.Location = new System.Drawing.Point(174, 152);
+            this.button9.Location = new System.Drawing.Point(11, 152);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(75, 23);
             this.button9.TabIndex = 14;
@@ -231,7 +234,7 @@
             // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(174, 94);
+            this.button10.Location = new System.Drawing.Point(296, 12);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(75, 23);
             this.button10.TabIndex = 15;
@@ -241,7 +244,7 @@
             // 
             // button11
             // 
-            this.button11.Location = new System.Drawing.Point(12, 94);
+            this.button11.Location = new System.Drawing.Point(12, 284);
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(74, 23);
             this.button11.TabIndex = 16;
@@ -320,9 +323,9 @@
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(74, 65);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(42, 13);
+            this.label6.Size = new System.Drawing.Size(82, 13);
             this.label6.TabIndex = 23;
-            this.label6.Text = "MM:SS";
+            this.label6.Text = "MM:SS/MM:SS";
             // 
             // label7
             // 
@@ -337,7 +340,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(122, 65);
+            this.label8.Location = new System.Drawing.Point(57, 52);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(61, 13);
             this.label8.TabIndex = 25;
@@ -362,7 +365,7 @@
             // 
             // button15
             // 
-            this.button15.Location = new System.Drawing.Point(296, 12);
+            this.button15.Location = new System.Drawing.Point(377, 12);
             this.button15.Name = "button15";
             this.button15.Size = new System.Drawing.Size(75, 23);
             this.button15.TabIndex = 15;
@@ -392,11 +395,45 @@
             this.write.Name = "write";
             this.write.Width = 38;
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(90, 288);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(65, 17);
+            this.checkBox1.TabIndex = 27;
+            this.checkBox1.Text = "AutoPoll";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
+            // checkBox2
+            // 
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Location = new System.Drawing.Point(161, 288);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(95, 17);
+            this.checkBox2.TabIndex = 28;
+            this.checkBox2.Text = "Elapsed Count";
+            this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(12, 26);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(34, 13);
+            this.label9.TabIndex = 29;
+            this.label9.Text = "Sony ";
+            // 
             // SonyMDRemote
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 658);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.checkBox2);
+            this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
@@ -471,6 +508,9 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn trackno;
         private System.Windows.Forms.DataGridViewTextBoxColumn tracktitle;
         private System.Windows.Forms.DataGridViewCheckBoxColumn write;
+        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox checkBox2;
+        private System.Windows.Forms.Label label9;
     }
 }
 
