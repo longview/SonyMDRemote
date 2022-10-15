@@ -23,6 +23,8 @@ The textbox below logs the received data and debug info.
 
 You can double click the leftmost part of a row to tell the MD to play a specific track. The currently playing track is bolded.
 
+Release builds limits the log scrollback to around 250 lines to avoid ballooning memory usage. Debug builds have effectively unlimited scrollback, and generate log output files. Debug builds also add a "Clear" button to the log.
+
 ## Basic Command Sequence
 Commands to the MD start with 0x7E, length, and some fixed parameters. Termination is 0xFF, and the length includes headers and termination.
 
