@@ -619,6 +619,7 @@ namespace SonyMDRemote
         int _infocounter = -1;
         byte _currtracklen_min = 0;
         byte _currtracklen_sec = 0;
+        byte _lasttrackno = 0;
         TimeSpan _remainingrecordtime = new TimeSpan(0);
         string discname;
 
@@ -740,7 +741,7 @@ namespace SonyMDRemote
                         // 9 is fixed 1
                         byte TrackNo = ArrRep[10];
 
-                        label2.Text = String.Format("Track {0}", TrackNo);
+                        label2.Text = String.Format("Track {0}/{1}", TrackNo, _lasttrackno);
                         _currentrack = TrackNo;
                         UpdateDataGridBold(TrackNo);
 
@@ -900,7 +901,7 @@ namespace SonyMDRemote
                             discname = TrimNonAscii(DecodeAscii(ref ArrRep, 7));
                         else
                             discname += TrimNonAscii(DecodeAscii(ref ArrRep, 7));
-                        label7.Text = String.Format("Disc: {0}", discname);
+                        label7.Text = String.Format("{0}", discname);
                         AppendLog("MD: Disc name part {1} is: {0}", TrimNonAscii(DecodeAscii(ref ArrRep, 7)), Segment);
                     }
 
@@ -982,6 +983,7 @@ namespace SonyMDRemote
                     {
                         byte FirstTrackNo = ArrRep[7];
                         byte LastTrackNo = ArrRep[8];
+                        _lasttrackno = LastTrackNo;
                         byte Min = ArrRep[9];
                         byte Sec = ArrRep[10];
                         AppendLog("MD: First track is {0}, last track is {1}. Recorded time is {2:00}:{3:00}", FirstTrackNo,LastTrackNo,Min,Sec);
@@ -1239,7 +1241,7 @@ namespace SonyMDRemote
 
         private void DoUpdateTask()
         {
-            
+            Transmit_MDS_Message(MDS_TX_ReqTOCData);
             Transmit_MDS_Message(MDS_TX_ReqStatus);
             Transmit_MDS_Message(MDS_TX_ReqTrackRemainingNameSize, tracknumber: _currentrack);
             if (checkBox2.Checked)
