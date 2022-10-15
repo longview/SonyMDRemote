@@ -37,6 +37,7 @@ namespace SonyMDRemote
 #endif
             AppendLog("Program start version {0}", VersionString);
             AppendCmdLog("Program start version {0}", VersionString);
+            AppendLog("Hint: select a COM port and hit Get Info to start everything");
             Update_COM_List(true);
             comboBox1.SelectedIndex = 0;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(comboBox1_SelectedIndexChanged);
