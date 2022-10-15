@@ -467,7 +467,7 @@ namespace SonyMDRemote
                     {
                         AppendLog("End of packet but terminator was {0:X}", currentchar);
                     }
-                    serialRXData.Add(currentchar);
+                    //serialRXData.Add(currentchar);
                     receiverstate = serialRXState.serialRxState_Stop;
 
 
@@ -543,6 +543,7 @@ namespace SonyMDRemote
 
                         label2.Text = String.Format("Track {0}", TrackNo);
                         _currentrack = TrackNo;
+                        UpdateDataGridBold(TrackNo);
 
                         StringBuilder sb;
                         tracknames.TryGetValue(_currentrack, out sb);
@@ -710,6 +711,8 @@ namespace SonyMDRemote
                     {
                         _infocounter = -1;
                         AppendLog("MD: ALL NAME END");
+
+                        //UpdateDataGrid();
                     }
 
                     // 7.18 ELAPSED TIME
@@ -871,6 +874,38 @@ namespace SonyMDRemote
             }
         }
 
+        // convert our populated track-name index
+        private void UpdateDataGrid()
+        {
+            dataGridView1.Rows.Clear();
+
+            // first index is disc name, this also makes the track and array indices line up
+            dataGridView1.Rows.Add("Disc", discname, false);
+
+            foreach (var track in tracknames)
+            {
+                dataGridView1.Rows.Add(track.Key, track.Value.ToString(), false);
+            }
+
+            UpdateDataGridBold(_currentrack);
+
+        }
+
+        // if we know the current track, bold it in the datagrid
+        private void UpdateDataGridBold(int trackplaying)
+        {
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if (row.Cells.Count == 0 || dataGridView1.Rows.IndexOf(row) == 0)
+                    continue;
+                if (row.Cells[0].Value != null && (int)row.Cells[0].Value == trackplaying)
+                    row.Cells[0].Style.Font = new Font(DefaultFont, FontStyle.Bold);
+                else
+                    row.Cells[0].Style.Font = new Font(DefaultFont, FontStyle.Regular);
+            }
+
+        }
+
         private void richTextBox_Log_TextChanged(object sender, EventArgs e)
         {
             // set the current caret position to the end
@@ -939,11 +974,14 @@ namespace SonyMDRemote
         private void button11_Click(object sender, EventArgs e)
         {
             Transmit_MDS_Message(MDS_TX_ReqDiscName);
+            Transmit_MDS_Message(MDS_TX_ReqStatus);
+            Transmit_MDS_Message(MDS_TX_ReqTrackTime, _currentrack);
+            Transmit_MDS_Message(MDS_TX_ReqTOCData);
         }
 
         private void button12_Click(object sender, EventArgs e)
         {
-            Transmit_MDS_Message(MDS_TX_ReqTrackName, _currentrack);
+            Transmit_MDS_Message(MDS_TX_ReqTrackName, (byte)numericUpDown1.Value);
         }
 
         private void label3_Click(object sender, EventArgs e)
@@ -976,6 +1014,27 @@ namespace SonyMDRemote
         private void timer_Poll_Time_Tick(object sender, EventArgs e)
         {
 
+        }
+
+        private void button15_Click(object sender, EventArgs e)
+        {
+            UpdateDataGrid();
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void dataGridView1_RowHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            AppendLog("Playing track {0}", e.RowIndex);
+            Transmit_MDS_Message(MDS_TX_StartPlayAtTrack, (byte)(e.RowIndex));
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+            Transmit_MDS_Message(MDS_TX_ReqDiscName);
         }
     }
 }
