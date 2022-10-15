@@ -30,10 +30,10 @@ Commands from the MD follow the same format, but start with 0x6F.
 * Most MD-PC responses are decoded
 * Reading disc name, track numbers etc. is supported
 * Basic playback commands
+* Write of both disc and track titles
 
 ## Planned:
 * Polling state machine to read e.g. track number, status flags automatically (somewhat there)
-* Disc and Track Name editor (the main reason to make this in the first place)
 * Check of maximum track name length - seems to be like 1700 chars per track though so not too important
 
 ## Not really working:
@@ -57,6 +57,11 @@ As such, you do need stateful decoder that reads the packet length to determine 
 ### 6.38 ALL NAME REQ
 The returned 7.16 TRACK NAME messages appear to have the TrackNo field set to whatever track was last playing. This occurs even when the MD is ejected and reinserted.
 
+## 7.11 STATUS DATA
+Data2 bit 7 is listed as indicating if the TOC has been read. It does, but it also indicates "Not yet" state when the TOC is dirty after a write.
+
+Track repeat modes are not documented in the base documentation, only an addendum which implies it's E12 exclusive.
+
 ### 7.16 TRACK NAME
 The first packet is listed as:
 
@@ -69,6 +74,7 @@ The output appears to be :
 The field descriptions and my observations suggest this is the case, at least when a specific track name is requested.
 
 See also 6.38, this is not really reliable either.
+
 
 ### 7.22 TRACK TIME DATA
 Sequence listed as:

@@ -37,6 +37,20 @@ namespace SonyMDRemote
             AppendLog("Program start version {0}", VersionString);
             AppendCmdLog("Program start version {0}", VersionString);
             Update_COM_List(true);
+            comboBox1.SelectedIndex = 0;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(comboBox1_SelectedIndexChanged);
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ComboBox ch = (ComboBox)sender;
+            switch (ch.SelectedIndex)
+            {
+                case 0: Transmit_MDS_Message(MDS_TX_RepeatOff); break;
+                case 1: Transmit_MDS_Message(MDS_TX_RepeatAll); break;
+                case 2: Transmit_MDS_Message(MDS_TX_Repeat1Tr); break;
+            }
+            
         }
 
         string VersionString = "v0.1a";
@@ -339,6 +353,11 @@ namespace SonyMDRemote
         byte[] MDS_TX_AutoPauseOn = new byte[] { 0x02, 0x81 };
         byte[] MDS_TX_AutoPauseOff = new byte[] { 0x02, 0x80 };
 
+        // from addendum
+        byte[] MDS_TX_RepeatOff = new byte[] { 0x02, 0xA0 };
+        byte[] MDS_TX_RepeatAll = new byte[] { 0x02, 0xA1 };
+        byte[] MDS_TX_Repeat1Tr = new byte[] { 0x02, 0xA2 };
+
         // track management
         byte[] MDS_TX_StartPlayAtTrack = new byte[] { 0x03, 0x42, 0x01 }; // next byte is track number
         byte[] MDS_TX_PausePlayAtTrack = new byte[] { 0x03, 0x43, 0x01 }; // next byte is track number, pauses at the start of specific track
@@ -548,6 +567,14 @@ namespace SonyMDRemote
             REC_PAUSE = 5,
             rehearsal = 6,
             reserved = 7
+        };
+
+        // 7.11 STATUS DATA addendum
+        enum MDS_Status_D2_Repeat
+        {
+            REPEAT_OFF,
+            ALL_REPEAT,
+            TRACK_REPEAT
         };
 
         // 7.11 STATUS DATA
@@ -766,6 +793,25 @@ namespace SonyMDRemote
                         bool toc_read_done = IsBitSet(Data2, 7);
                         bool rec_possible = IsBitSet(Data2, 5);
 
+                        MDS_Status_D2_Repeat repeatstatus = MDS_Status_D2_Repeat.REPEAT_OFF;
+
+                        if (IsBitSet(Data2, 4) && !IsBitSet(Data2, 3))
+                            repeatstatus = MDS_Status_D2_Repeat.TRACK_REPEAT;
+                        else if (!IsBitSet(Data2, 4) && IsBitSet(Data2, 3))
+                            repeatstatus = MDS_Status_D2_Repeat.ALL_REPEAT;
+                        else if (!IsBitSet(Data2, 4) && !IsBitSet(Data2, 3))
+                            repeatstatus = MDS_Status_D2_Repeat.REPEAT_OFF;
+
+                        string repeatstr = "";
+                        switch (repeatstatus)
+                        {
+                            case MDS_Status_D2_Repeat.ALL_REPEAT: repeatstr = "Repeat"; break;
+                            case MDS_Status_D2_Repeat.TRACK_REPEAT: repeatstr = "1Tr Repeat"; break;
+                            case MDS_Status_D2_Repeat.REPEAT_OFF: repeatstr = "No Repeat"; break;
+                        }
+
+                        label11.Text = repeatstr;
+
                         bool mono = IsBitSet(Data3, 7);
                         bool copy_protected = IsBitSet(Data3, 6);
                         bool digital_in_unlocked = IsBitSet(Data3, 5);
@@ -801,7 +847,10 @@ namespace SonyMDRemote
                             recsourcestr
                             );
 
+                        AppendLog("MD: Repeat mode: {0}", repeatstr);
+
                         label10.Text = toc_read_done ? "TOC Clean" : "TOC Dirty";
+                        label10.Font = toc_read_done ? new Font(DefaultFont, FontStyle.Regular) : new Font(DefaultFont, FontStyle.Bold);
 
                         // request these since we now know the track number
                         Transmit_MDS_Message(MDS_TX_ReqTOCData);

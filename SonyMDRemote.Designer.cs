@@ -70,6 +70,8 @@
             this.write = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.button16 = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -168,7 +170,7 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(12, 123);
+            this.button5.Location = new System.Drawing.Point(11, 123);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(75, 23);
             this.button5.TabIndex = 8;
@@ -456,13 +458,12 @@
             // 
             // button16
             // 
-            this.button16.BackColor = System.Drawing.Color.OrangeRed;
             this.button16.Location = new System.Drawing.Point(505, 12);
             this.button16.Name = "button16";
             this.button16.Size = new System.Drawing.Size(75, 23);
             this.button16.TabIndex = 31;
             this.button16.Text = "Write";
-            this.button16.UseVisualStyleBackColor = false;
+            this.button16.UseVisualStyleBackColor = true;
             this.button16.Click += new System.EventHandler(this.button16_Click);
             // 
             // label10
@@ -474,11 +475,35 @@
             this.label10.TabIndex = 32;
             this.label10.Text = "TOC Clean";
             // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(12, 91);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(59, 13);
+            this.label11.TabIndex = 33;
+            this.label11.Text = "No Repeat";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "Repeat Off",
+            "All Repeat",
+            "1Tr Repeat"});
+            this.comboBox1.Location = new System.Drawing.Point(11, 207);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(93, 21);
+            this.comboBox1.TabIndex = 34;
+            // 
             // SonyMDRemote
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 658);
+            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.label11);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.button16);
             this.Controls.Add(this.checkBox3);
@@ -567,6 +592,8 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn write;
         private System.Windows.Forms.Button button16;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
 
