@@ -276,6 +276,25 @@ namespace SonyMDRemote
             //backgroundWorker1.RunWorkerAsync(rxdata);
         }
 
+        public bool ByteEquality(byte[] a1, byte[] b1)
+        {
+            int i;
+            if (a1.Length == b1.Length)
+            {
+                i = 0;
+                while (i < a1.Length && (a1[i] == b1[i])) //Earlier it was a1[i]!=b1[i]
+                {
+                    i++;
+                }
+                if (i == a1.Length)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         byte[] MDS_TX_SetRemoteOn = new byte[] { 0x10, 0x03 };
         byte[] MDS_TX_SetRemoteOff = new byte[] { 0x10, 0x04 };
 
@@ -334,7 +353,9 @@ namespace SonyMDRemote
         // command queue object, list of raw commands to issue and what delay should be used before the next command
         List<Tuple<byte[], int>> commandqueue = new List<Tuple<byte[], int>>();
 
-        private void Transmit_MDS_Message(byte[] data, int delay = 100, byte tracknumber = 0)
+
+
+        private void Transmit_MDS_Message(byte[] data, int delay = 100, byte tracknumber = 0, bool allowduplicates = false)
         {
             if (!serialPort1.IsOpen)
             {
@@ -368,8 +389,10 @@ namespace SonyMDRemote
 
             if (txdata.Count > 32)
                 throw new ArgumentException("Transmission packet would be too big!");
-
-            commandqueue.Add(new Tuple<byte[], int>(txdata.ToArray(), delay));
+            var tup = new Tuple<byte[], int>(txdata.ToArray(), delay);
+            // ignore by default if payload is already present
+            if (commandqueue.Find(item => ByteEquality(item.Item1, tup.Item1)) == null || allowduplicates)
+                commandqueue.Add(tup);
             timer_Poll_Time.Enabled = true;
             //serialPort1.Write(txdata.ToArray(), 0, txdata.Count);
 
@@ -1129,6 +1152,11 @@ namespace SonyMDRemote
             DoUpdateTask();
         }
 
+        // this timer is continuously reset whenever a track title message is received
+        // and the _inforequest flag is set
+        // so it expires once those messages stop rolling in
+        // the serial transmit routine detects that this timer is active and the flag is set
+        // and inhibits any further transmissions
         private void timer_Poll_GetInfo_Tick(object sender, EventArgs e)
         {
             _inforequest = false;
