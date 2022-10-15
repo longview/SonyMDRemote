@@ -1,4 +1,4 @@
-﻿# SonyMDRemote
+﻿# LA2YUA SonyMDRemote
 This is an attempt at making a C# application to talk to a Sony MDS-E12 MiniDisc recorder. If it works it should also work for the E11 and E52 models. 
 
 The goal is to replace the older SonyMDRemote program, which doesn't really work at all on anything modern and is quite buggy even on older systems.
