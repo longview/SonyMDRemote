@@ -704,6 +704,7 @@ namespace SonyMDRemote
         TimeSpan _remainingrecordtime = new TimeSpan(0);
         TimeSpan _disclength = new TimeSpan(0);
         string discname;
+        MDS_Status_D1 playbackstatus = MDS_Status_D1.reserved;
 
         string laststatusstr = String.Empty;
         string lastrptstr = String.Empty;
@@ -835,7 +836,7 @@ namespace SonyMDRemote
                         bool nodiscinserted = IsBitSet(Data1, 5);
                         bool poweredoff = IsBitSet(Data1, 4);
 
-                        MDS_Status_D1 playbackstatus = MDS_Status_D1.reserved;
+                        playbackstatus = MDS_Status_D1.reserved;
                         string playbackstatusstr = "Unknown";
                         switch (Data1 & 0x0f)
                         {
@@ -1310,6 +1311,7 @@ namespace SonyMDRemote
         // convert our populated track-name index when a full disc title sequence has been received
         private void UpdateDataGrid()
         {
+            // TODO: maybe update instead of clearing each time?
             dataGridView1.Rows.Clear();
 
             // first index is disc name, this also makes the track and array indices line up
@@ -1473,14 +1475,24 @@ namespace SonyMDRemote
             Transmit_MDS_Message(MDS_TX_ReqTOCData);
             Transmit_MDS_Message(MDS_TX_ReqStatus);
             Transmit_MDS_Message(MDS_TX_ReqDiscData);
-            Transmit_MDS_Message(MDS_TX_ReqTrackRemainingNameSize, tracknumber: _currentrack);
-            Transmit_MDS_Message(MDS_TX_ReqTrackRecordDate, tracknumber: _currentrack);
             
-            if (checkBox2_Elapsed.Checked)
-                Transmit_MDS_Message(MDS_TX_EnableElapsedTimeTransmit);
-            else
-                Transmit_MDS_Message(MDS_TX_DisableElapsedTimeTransmit);
 
+            // some commands are only supported or sensible in specific modes
+
+            if (_currentrack > 0)
+                Transmit_MDS_Message(MDS_TX_ReqTrackRemainingNameSize, tracknumber: _currentrack);
+            if (_currentrack > 0)
+                Transmit_MDS_Message(MDS_TX_ReqTrackRecordDate, tracknumber: _currentrack);
+
+            if (playbackstatus == MDS_Status_D1.PAUSE || playbackstatus == MDS_Status_D1.PLAY)
+            {
+                if (checkBox2_Elapsed.Checked)
+                    Transmit_MDS_Message(MDS_TX_EnableElapsedTimeTransmit);
+                else
+                    Transmit_MDS_Message(MDS_TX_DisableElapsedTimeTransmit);
+            }
+
+            
             if (checkBox3.Checked)
                 Transmit_MDS_Message(MDS_TX_AutoPauseOn);
             else

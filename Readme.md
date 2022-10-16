@@ -42,7 +42,7 @@ Release builds limits the log scrollback to around 200-400 lines to avoid balloo
 * Check of maximum track name length - seems to have a lot of room but would have to really dig into the MD format to figure it out properly
 * Recording timestamps seem to exist, not sure if anyone uses those (I didn't know these recorders had clocks...)
 
-Currently timestamps are polled, but not shown in the UI anywhere since none of my self-recorded discs appear to have valid timestamps.
+Currently timestamps are polled, but not shown in the UI except in the log, and then only if they have valid timestamps. None of my self-recorded discs appear to have valid timestamps.
 
 ## Not really working:
 * Disc status and Power status appears to be incorrect for the E12
@@ -76,7 +76,7 @@ The recorder doesn't clear its output buffers, so many outputs involving text co
 
 The protocol has no escape sequences, and the start and stop bytes are also valid payload data, _I don't like this.._
 
-As such, you do need stateful decoder that reads the packet length to determine when to stop and process data.
+As such, you do need stateful decoder that reads the packet length to determine when to stop and process data. The good news is that communications appear to be pretty reliable.
 
 ### Minor Stuff
 There's no way to read back the "Auto Pause" flag once you set it, you just have to know. This program does not store that, so if you flag auto pause and restart, it will disable auto pause on initial connection to synchronize the MD and program states.
