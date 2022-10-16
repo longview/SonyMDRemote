@@ -65,14 +65,14 @@
             this.label9 = new System.Windows.Forms.Label();
             this.timer_Poll_GetInfo = new System.Windows.Forms.Timer(this.components);
             this.checkBox3 = new System.Windows.Forms.CheckBox();
-            this.trackno = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.tracktitle = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.write = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.button16 = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.button17 = new System.Windows.Forms.Button();
+            this.trackno = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.tracktitle = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.write = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -443,28 +443,6 @@
             this.checkBox3.UseVisualStyleBackColor = true;
             this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
             // 
-            // trackno
-            // 
-            this.trackno.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.trackno.HeaderText = "Track";
-            this.trackno.Name = "trackno";
-            this.trackno.ReadOnly = true;
-            this.trackno.Width = 60;
-            // 
-            // tracktitle
-            // 
-            this.tracktitle.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.tracktitle.HeaderText = "Name";
-            this.tracktitle.Name = "tracktitle";
-            this.tracktitle.Width = 60;
-            // 
-            // write
-            // 
-            this.write.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.write.HeaderText = "Write";
-            this.write.Name = "write";
-            this.write.Width = 38;
-            // 
             // button16
             // 
             this.button16.Location = new System.Drawing.Point(505, 12);
@@ -516,6 +494,27 @@
             this.button17.Text = "Clear";
             this.button17.UseVisualStyleBackColor = true;
             this.button17.Click += new System.EventHandler(this.button17_Click);
+            // 
+            // trackno
+            // 
+            this.trackno.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.trackno.HeaderText = "Track";
+            this.trackno.Name = "trackno";
+            this.trackno.ReadOnly = true;
+            this.trackno.Width = 60;
+            // 
+            // tracktitle
+            // 
+            this.tracktitle.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.tracktitle.HeaderText = "Name";
+            this.tracktitle.Name = "tracktitle";
+            // 
+            // write
+            // 
+            this.write.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.write.HeaderText = "Write";
+            this.write.Name = "write";
+            this.write.Width = 38;
             // 
             // SonyMDRemote
             // 
@@ -609,14 +608,14 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Timer timer_Poll_GetInfo;
         private System.Windows.Forms.CheckBox checkBox3;
-        private System.Windows.Forms.DataGridViewTextBoxColumn trackno;
-        private System.Windows.Forms.DataGridViewTextBoxColumn tracktitle;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn write;
         private System.Windows.Forms.Button button16;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Button button17;
+        private System.Windows.Forms.DataGridViewTextBoxColumn trackno;
+        private System.Windows.Forms.DataGridViewTextBoxColumn tracktitle;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn write;
     }
 }
 
