@@ -1078,10 +1078,13 @@ namespace SonyMDRemote
                             TimeSpan newts = new TimeSpan(0, Min, Sec);
 
                             TimeSpan ts;
+                            // update index if already present
                             if (tracklengths.TryGetValue(_currentrack, out ts))
-                                ts = newts;
+                                tracklengths[_currentrack] = newts;
                             else
                                 tracklengths.Add(_currentrack, newts);
+
+                            UpdateDataGridBold(_currentrack);
 
                             //_currtracklen_min = Min;
                             //_currtracklen_sec = Sec;

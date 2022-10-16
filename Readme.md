@@ -43,6 +43,7 @@ Release builds limits the log scrollback to around 200-400 lines to avoid balloo
 
 ## Not really working:
 * Disc status and Power status appears to be incorrect for the E12
+* Changing discs may lead to slight inconsistencies, e.g. track times are not cleared when reloading track data, so these will be incorrect.
 
 ## Vague Ideas
 Making an ESP-based device that could sit inside the MD recorder, put in a web-interface to replace this project. 
