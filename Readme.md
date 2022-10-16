@@ -37,12 +37,10 @@ Release builds limits the log scrollback to around 200-400 lines to avoid balloo
 * Write of both disc and track titles - far better than the original Sony program
 * TOC dirty indication
 * Mouse nav-keys for forward/back (only in the main form area)
+* Recording timestamps are shown when available
 
 ## Planned:
 * Check of maximum track name length - seems to have a lot of room but would have to really dig into the MD format to figure it out properly
-* Recording timestamps seem to exist, though only if the recorder had a valid time at the time of recording
-
-Currently timestamps are polled, but not shown in the UI except in the log, and then only if they have valid timestamps. It's a 2-digit year so we assume anything with a year greater than the current 2-digit year is from 19xx.
 
 ## Not really working:
 * Disc status and Power status appears to be incorrect for the E12
@@ -77,6 +75,8 @@ The recorder doesn't clear its output buffers, so many outputs involving text co
 The protocol has no escape sequences, and the start and stop bytes are also valid payload data, _I don't like this.._
 
 As such, you do need stateful decoder that reads the packet length to determine when to stop and process data. The good news is that communications appear to be pretty reliable.
+
+Timestamps use a 2-digit year so we assume anything with a year greater than the current 2-digit year is from 19xx.
 
 ### Minor Stuff
 There's no way to read back the "Auto Pause" flag once you set it, you just have to know. This program does not store that, so if you flag auto pause and restart, it will disable auto pause on initial connection to synchronize the MD and program states.

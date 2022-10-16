@@ -319,6 +319,9 @@ namespace SonyMDRemote
                             Transmit_MDS_Message(MDS_TX_ReqTOCData);
                         }
 
+                        if (playbackstatus == MDS_Status_D1.EJECT)
+                            label12_timestamp.Text = "Recorded: N/A";
+
                     }
 
                     // 7.12 DISC DATA
@@ -382,9 +385,15 @@ namespace SonyMDRemote
                             string recdatestr = String.Format("MD: Track {0} was recorded at time {7}{1:00}-{2:00}-{3:00}T{4:00}:{5:00}:{6:00}", TrackNo, Year, Month, Day, Hour, Min, Sec, yearprefix);
                             if (!recdatestr.Equals(lastrecdatestr))
                                 AppendLog(recdatestr);
+
+                            label12_timestamp.Text = String.Format("T{7} Recorded: {6}{0:00}-{1:00}-{2:00}T{3:00}:{4:00}:{5:00}", Year, Month, Day, Hour, Min, Sec, yearprefix, TrackNo);
+
                             lastrecdatestr = recdatestr;
                         }
-                            
+                        else
+                            label12_timestamp.Text = "Recorded: N/A";
+
+
                     }
 
                     // 7.15 DISC NAME

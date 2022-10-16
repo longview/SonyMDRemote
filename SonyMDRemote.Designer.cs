@@ -74,6 +74,7 @@
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.button17 = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.label12_timestamp = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -313,7 +314,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(8, 226);
+            this.label5.Location = new System.Drawing.Point(12, 226);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(66, 13);
             this.label5.TabIndex = 22;
@@ -521,18 +522,29 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(10, 250);
+            this.progressBar1.Location = new System.Drawing.Point(10, 270);
             this.progressBar1.Maximum = 1000;
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(279, 17);
             this.progressBar1.TabIndex = 36;
             this.progressBar1.Visible = false;
             // 
+            // label12_timestamp
+            // 
+            this.label12_timestamp.AutoSize = true;
+            this.label12_timestamp.Location = new System.Drawing.Point(12, 249);
+            this.label12_timestamp.Name = "label12_timestamp";
+            this.label12_timestamp.Size = new System.Drawing.Size(60, 13);
+            this.label12_timestamp.TabIndex = 37;
+            this.label12_timestamp.Text = "Recorded: ";
+            this.label12_timestamp.Click += new System.EventHandler(this.label12_timestamp_Click);
+            // 
             // SonyMDRemote
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 566);
+            this.Controls.Add(this.label12_timestamp);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.button17);
             this.Controls.Add(this.comboBox1);
@@ -629,6 +641,7 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn write;
         private System.Windows.Forms.DataGridViewTextBoxColumn length;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Label label12_timestamp;
     }
 }
 

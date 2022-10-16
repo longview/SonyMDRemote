@@ -728,5 +728,10 @@ namespace SonyMDRemote
             if (e.RowIndex <= numericUpDown1.Maximum && e.RowIndex >= numericUpDown1.Minimum)
                 numericUpDown1.Value = e.RowIndex;
         }
+
+        private void label12_timestamp_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
