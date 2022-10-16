@@ -81,7 +81,9 @@ There's no way to read back the "Auto Pause" flag once you set it, you just have
 The returned 7.16 TRACK NAME messages appear to have the TrackNo field set to whatever track was last playing. This occurs even when the MD is ejected and reinserted.
 
 ### 7.11 STATUS DATA
-Data2 bit 7 is listed as indicating if the TOC has been read. It does, but it also indicates "Not yet" state when the TOC is dirty after a write.
+Data2 bit 7 is listed as indicating if the TOC has been read. It does, but it also indicates a not ready state when the TOC is dirty after a write.
+
+When a write protected disk is written to, this flag behaves as it would for a non-protected disc. The MD display does not indicate the TOC dirty status though, so the MD knows it's a protected disk, it just won't tell me!
 
 Track repeat modes are not documented in the base documentation, only an addendum which implies it's E12 exclusive.
 

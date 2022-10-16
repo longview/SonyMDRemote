@@ -500,7 +500,7 @@ namespace SonyMDRemote
             timer_Poll_Time.Enabled = true;
         }
 
-        private void Transmit_MDS_Message(byte[] data, int delay = 300, byte tracknumber = 0, bool allowduplicates = false)
+        private void Transmit_MDS_Message(byte[] data, int delay = 300, byte tracknumber = 0, bool allowduplicates = false, bool priority = false)
         {
             if (!serialPort1.IsOpen)
             {
@@ -545,7 +545,10 @@ namespace SonyMDRemote
                     commandqueue.Remove(foundcmd);
             }
 
-            commandqueue.Add(tup);
+            if (!priority)
+                commandqueue.Add(tup);
+            else
+                commandqueue.Insert(0, tup);
             timer_Poll_Time.Enabled = true;
             //serialPort1.Write(txdata.ToArray(), 0, txdata.Count);
 
@@ -1269,7 +1272,7 @@ namespace SonyMDRemote
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Transmit_MDS_Message(MDS_TX_SetRemoteOn);
+            Transmit_MDS_Message(MDS_TX_SetRemoteOn, priority: true);
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -1279,7 +1282,7 @@ namespace SonyMDRemote
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Transmit_MDS_Message(MDS_TX_PlayPause, allowduplicates: true);
+            Transmit_MDS_Message(MDS_TX_PlayPause, allowduplicates: true, priority: true);
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -1289,25 +1292,25 @@ namespace SonyMDRemote
 
         private void button8_Click(object sender, EventArgs e)
         {
-            Transmit_MDS_Message(MDS_TX_Play);
+            Transmit_MDS_Message(MDS_TX_Play, priority: true);
             Transmit_MDS_Message(MDS_TX_ReqStatus);
         }
 
         private void button7_Click(object sender, EventArgs e)
         {
-            Transmit_MDS_Message(MDS_TX_Stop);
+            Transmit_MDS_Message(MDS_TX_Stop, priority: true);
             Transmit_MDS_Message(MDS_TX_ReqStatus);
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            Transmit_MDS_Message(MDS_TX_PrevTrack);
+            Transmit_MDS_Message(MDS_TX_PrevTrack, priority: true);
             Transmit_MDS_Message(MDS_TX_ReqStatus);
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-            Transmit_MDS_Message(MDS_TX_NextTrack);
+            Transmit_MDS_Message(MDS_TX_NextTrack, priority: true);
             Transmit_MDS_Message(MDS_TX_ReqStatus);
         }
 
