@@ -1179,9 +1179,10 @@ namespace SonyMDRemote
 
             // try to update the track title label
             StringBuilder sb;
-            tracknames.TryGetValue(_currentrack, out sb);
-            if (sb != null)
+            if (tracknames.TryGetValue(_currentrack, out sb))
                 label8.Text = sb.ToString();
+            else
+                label8.Text = "Track Title";
         }
 
         private string GetTrackLenFormatted(int key)
