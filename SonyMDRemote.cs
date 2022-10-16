@@ -79,7 +79,7 @@ namespace SonyMDRemote
 
         UInt32 loglines = 0;
 #if LOGGING
-        UInt32 loglineslimit = UInt32.MaxValue;
+        UInt32 loglineslimit = 10000;
 #elif !LOGGING
         UInt32 loglineslimit = 200;
 #endif
@@ -1155,7 +1155,6 @@ namespace SonyMDRemote
         // note that track 0 is the stopped/new disc/no disc state
         private void ReceivedPlayingTrack(byte TrackNo, bool tracknounchanged = false)
         {
-
             if (!tracknounchanged)
                 _currentrack = TrackNo;
 
@@ -1193,6 +1192,9 @@ namespace SonyMDRemote
 
             // first index is disc name, this also makes the track and array indices line up
             dataGridView1.Rows.Add("Disc", discname, discname.Length == 0 ? true : false, GetTrackLenFormatted(0));
+
+            foreach (DataGridViewCell cell in dataGridView1.Rows[0].Cells)
+                cell.Style.Font = new Font(DefaultFont, FontStyle.Bold);
 
             foreach (var track in tracknames)
             {
