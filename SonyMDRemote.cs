@@ -500,7 +500,7 @@ namespace SonyMDRemote
             timer_Poll_Time.Enabled = true;
         }
 
-        private void Transmit_MDS_Message(byte[] data, int delay = 100, byte tracknumber = 0, bool allowduplicates = false)
+        private void Transmit_MDS_Message(byte[] data, int delay = 300, byte tracknumber = 0, bool allowduplicates = false)
         {
             if (!serialPort1.IsOpen)
             {

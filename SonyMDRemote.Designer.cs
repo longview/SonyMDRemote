@@ -352,6 +352,7 @@
             this.label7.Size = new System.Drawing.Size(219, 20);
             this.label7.TabIndex = 24;
             this.label7.Text = "Disc Name";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.TopRight;
             this.label7.Click += new System.EventHandler(this.label7_Click);
             // 
             // label8
