@@ -932,6 +932,12 @@ namespace SonyMDRemote
                             recsourcestr,
                             rec_possible ? "Rec. allowed":"Rec. disallowed"
                             );
+
+                        if (playbackstatus == MDS_Status_D1.EJECT)
+                            label10.Text = "No Disc";
+                        else
+                            label10.Text = nodiscinserted ? "No Disc" : toc_read_done ? "TOC Clean" : "TOC Dirty";
+                        label10.Font = toc_read_done ? new Font(DefaultFont, FontStyle.Regular) : new Font(DefaultFont, FontStyle.Bold);
 #if LOGGING
                         AppendLog(statusstr);
 #else
@@ -951,9 +957,13 @@ namespace SonyMDRemote
                         lastrptstr = repeatstr;
 
 
-                        // request these since we now know the track number
-                        Transmit_MDS_Message(MDS_TX_ReqTrackTime, tracknumber: _currentrack);
-                        Transmit_MDS_Message(MDS_TX_ReqTOCData);
+                        if (playbackstatus != MDS_Status_D1.EJECT)
+                        {
+                            // request these since we now know the track number
+                            Transmit_MDS_Message(MDS_TX_ReqTrackTime, tracknumber: _currentrack);
+                            Transmit_MDS_Message(MDS_TX_ReqTOCData);
+                        }
+                        
                     }
 
                     // 7.12 DISC DATA
@@ -965,11 +975,11 @@ namespace SonyMDRemote
                         bool writeprotected = IsBitSet(DiscData, 2);
                         bool recordable = IsBitSet(DiscData, 0);
 
-                        if (writeprotected)
+                        /*if (writeprotected)
                             label10.Text = toc_read_done ? "TOC Clean (WP)" : "TOC Dirty (WP)";
                         else
                             label10.Text = toc_read_done ? "TOC Clean" : "TOC Dirty";
-                        label10.Font = toc_read_done ? new Font(DefaultFont, FontStyle.Regular) : new Font(DefaultFont, FontStyle.Bold);
+                        label10.Font = toc_read_done ? new Font(DefaultFont, FontStyle.Regular) : new Font(DefaultFont, FontStyle.Bold);*/
 
                         string discdatastr = String.Format("MD: Disc Data: {0}, {1}, {2}",
                             discerror ? "Error" : "OK",
@@ -1472,17 +1482,25 @@ namespace SonyMDRemote
 
         private void DoUpdateTask()
         {
-            Transmit_MDS_Message(MDS_TX_ReqTOCData);
+            if (playbackstatus != MDS_Status_D1.EJECT)
+            {
+                // some of these might not be required since status receipt triggers other reads
+                // but doesn't seem to cause any problems
+                Transmit_MDS_Message(MDS_TX_ReqTOCData);
+                Transmit_MDS_Message(MDS_TX_ReqDiscData);
+                // some commands are only supported or sensible in specific modes
+
+                if (_currentrack > 0)
+                    Transmit_MDS_Message(MDS_TX_ReqTrackRemainingNameSize, tracknumber: _currentrack);
+                if (_currentrack > 0)
+                    Transmit_MDS_Message(MDS_TX_ReqTrackRecordDate, tracknumber: _currentrack);
+            }
+                
             Transmit_MDS_Message(MDS_TX_ReqStatus);
-            Transmit_MDS_Message(MDS_TX_ReqDiscData);
+            
             
 
-            // some commands are only supported or sensible in specific modes
-
-            if (_currentrack > 0)
-                Transmit_MDS_Message(MDS_TX_ReqTrackRemainingNameSize, tracknumber: _currentrack);
-            if (_currentrack > 0)
-                Transmit_MDS_Message(MDS_TX_ReqTrackRecordDate, tracknumber: _currentrack);
+            
 
             if (playbackstatus == MDS_Status_D1.PAUSE || playbackstatus == MDS_Status_D1.PLAY)
             {
