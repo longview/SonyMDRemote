@@ -537,7 +537,6 @@
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(279, 17);
             this.progressBar1.TabIndex = 36;
-            this.progressBar1.Value = 50;
             this.progressBar1.Visible = false;
             // 
             // SonyMDRemote
