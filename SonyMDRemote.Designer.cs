@@ -48,7 +48,6 @@
             this.button9 = new System.Windows.Forms.Button();
             this.button10 = new System.Windows.Forms.Button();
             this.button11 = new System.Windows.Forms.Button();
-            this.button12 = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.button13 = new System.Windows.Forms.Button();
@@ -264,16 +263,6 @@
             this.button11.UseVisualStyleBackColor = true;
             this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
-            // button12
-            // 
-            this.button12.Location = new System.Drawing.Point(220, 221);
-            this.button12.Name = "button12";
-            this.button12.Size = new System.Drawing.Size(69, 23);
-            this.button12.TabIndex = 17;
-            this.button12.Text = "Get Track Info";
-            this.button12.UseVisualStyleBackColor = true;
-            this.button12.Click += new System.EventHandler(this.button12_Click);
-            // 
             // label4
             // 
             this.label4.AutoSize = true;
@@ -286,7 +275,7 @@
             // 
             // numericUpDown1
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(49, 224);
+            this.numericUpDown1.Location = new System.Drawing.Point(83, 223);
             this.numericUpDown1.Maximum = new decimal(new int[] {
             255,
             0,
@@ -303,7 +292,7 @@
             // 
             // button13
             // 
-            this.button13.Location = new System.Drawing.Point(109, 221);
+            this.button13.Location = new System.Drawing.Point(143, 221);
             this.button13.Name = "button13";
             this.button13.Size = new System.Drawing.Size(45, 23);
             this.button13.TabIndex = 20;
@@ -313,7 +302,7 @@
             // 
             // button14
             // 
-            this.button14.Location = new System.Drawing.Point(160, 221);
+            this.button14.Location = new System.Drawing.Point(194, 221);
             this.button14.Name = "button14";
             this.button14.Size = new System.Drawing.Size(54, 23);
             this.button14.TabIndex = 21;
@@ -326,9 +315,9 @@
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(8, 226);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(35, 13);
+            this.label5.Size = new System.Drawing.Size(66, 13);
             this.label5.TabIndex = 22;
-            this.label5.Text = "Track";
+            this.label5.Text = "Track select";
             // 
             // timer_Poll_Time
             // 
@@ -563,7 +552,6 @@
             this.Controls.Add(this.button13);
             this.Controls.Add(this.numericUpDown1);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.button12);
             this.Controls.Add(this.button11);
             this.Controls.Add(this.button15);
             this.Controls.Add(this.button10);
@@ -615,7 +603,6 @@
         private System.Windows.Forms.Button button9;
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Button button11;
-        private System.Windows.Forms.Button button12;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.Button button13;

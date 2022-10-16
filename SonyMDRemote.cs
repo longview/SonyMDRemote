@@ -516,7 +516,7 @@ namespace SonyMDRemote
             timer_Poll_Time.Enabled = true;
         }
 
-        private void Transmit_MDS_Message(byte[] data, int delay = 300, byte tracknumber = 0, bool allowduplicates = false, bool priority = false)
+        private void Transmit_MDS_Message(byte[] data, int delay = 300, byte tracknumber = 0, bool allowduplicates = false, bool priority = false, bool batch = false, bool priorityqueue = false)
         {
             if (!serialPort1.IsOpen)
             {
@@ -561,11 +561,24 @@ namespace SonyMDRemote
                     commandqueue.Remove(foundcmd);
             }
 
-            if (!priority)
-                commandqueue.Add(tup);
+            if (priorityqueue)
+            {
+                if (!priority)
+                    commandqueue_priority.Add(tup);
+                else
+                    commandqueue_priority.Insert(0, tup);
+            }
             else
-                commandqueue.Insert(0, tup);
-            timer_Poll_Time.Enabled = true;
+            {
+                if (!priority)
+                    commandqueue.Add(tup);
+                else
+                    commandqueue.Insert(0, tup);
+            }
+            
+
+            if (!batch)
+                timer_Poll_Time.Enabled = true;
             //serialPort1.Write(txdata.ToArray(), 0, txdata.Count);
 
             //Start_Timeout();
@@ -591,7 +604,7 @@ namespace SonyMDRemote
             }
 
             // empty queue
-            if (commandqueue == null || commandqueue.Count < 1)
+            if (commandqueue == null || commandqueue.Count == 0)
             {
                 timer_Poll_Time.Enabled = false;
                 return;
@@ -1024,7 +1037,7 @@ namespace SonyMDRemote
                             StringBuilder sb;
                             tracknames.TryGetValue(_infocounter, out sb);
                             sb.Append(currenttrackname);
-                            AppendLog("MD: Track {2}/{1}: {0}", sb.ToString(), (ArrRep[5] == 0x4A) ? "1" : Segment.ToString(), _infocounter);
+                            AppendLog("MD: Track {2}/{3} part {1}: {0}", sb.ToString(), (ArrRep[5] == 0x4A) ? "1" : Segment.ToString(), _infocounter, _lasttrackno);
                         }
                         else
                             AppendLog("MD: Track segment {1}: {0}", currenttrackname, Segment);
@@ -1034,10 +1047,9 @@ namespace SonyMDRemote
                             timer_Poll_GetInfo.Stop();
                             timer_Poll_GetInfo.Start();
                         }
-                            
 
-                        
-                        
+                        // we might be able to update the GUI title field now?
+                        UpdateTrackTitle();
                     }
 
                     // 7.17 ALL NAME END
@@ -1045,6 +1057,14 @@ namespace SonyMDRemote
                     {
                         _infocounter = -1;
                         AppendLog("MD: All names received.");
+
+                        // if we got this and we're waiting for it, trigger the timer
+                        if (_inforequest)
+                        {
+                            timer_Poll_GetInfo.Stop();
+                            timer_Poll_GetInfo.Interval = 10;
+                            timer_Poll_GetInfo.Start();
+                        }
 
                         //UpdateDataGrid();
                     }
@@ -1067,7 +1087,7 @@ namespace SonyMDRemote
 
                         decimal completionratio = (decimal)ts_elapsed.Ticks / (decimal)(ts_track.Ticks+1);
 
-                        if (ts_track.Ticks == 0)
+                        if (ts_track.Ticks == 0 || ts_elapsed.Ticks == 0)
                             progressBar1.Value = 0;
                         else
                             progressBar1.Value = (int)Math.Min(completionratio * 1000, 1000);
@@ -1261,6 +1281,11 @@ namespace SonyMDRemote
             // update the datagridview active track indicator
             UpdateDataGridBold(_currentrack);
 
+            UpdateTrackTitle();
+        }
+
+        private void UpdateTrackTitle()
+        {
             // try to update the track title label
             StringBuilder sb;
             if (tracknames.TryGetValue(_currentrack, out sb))
@@ -1402,14 +1427,26 @@ namespace SonyMDRemote
             // reset list of names
             _infocounter = 0;
             tracknames.Clear();
-            Transmit_MDS_Message(MDS_TX_SetRemoteOn, delay: 500);
-            Transmit_MDS_Message(MDS_TX_DisableElapsedTimeTransmit);
-            Transmit_MDS_Message(MDS_TX_ReqStatus);
-            Transmit_MDS_Message(MDS_TX_ReqTOCData);
-            Transmit_MDS_Message(MDS_TX_ReqModelName);
-            Transmit_MDS_Message(MDS_TX_ReqRemainingRecordTime);
-            //Transmit_MDS_Message(MDS_TX_ReqDiscName, delay: 500);
-            Transmit_MDS_Message(MDS_TX_ReqDiscAndTrackNames, delay:3000);
+
+            // stop any commands in queue
+            timer_Poll_Time.Stop();
+
+            // clear all the previous non priority commands
+            commandqueue.Clear();
+
+            // dump all these in the priority queue to get them out before the track change
+            // these will be executed before any non priority commands regardless of state
+            Transmit_MDS_Message(MDS_TX_SetRemoteOn, batch: true, priorityqueue: true);
+            Transmit_MDS_Message(MDS_TX_DisableElapsedTimeTransmit, batch: true, priorityqueue: true);
+            Transmit_MDS_Message(MDS_TX_ReqStatus, batch: true, priorityqueue: true);
+            Transmit_MDS_Message(MDS_TX_ReqTOCData, batch: true, priorityqueue: true);
+            Transmit_MDS_Message(MDS_TX_ReqModelName, batch: true, priorityqueue: true);
+            Transmit_MDS_Message(MDS_TX_ReqRemainingRecordTime, batch: true, priorityqueue: true);
+            // re-request status to trigger GUI update again
+            Transmit_MDS_Message(MDS_TX_ReqStatus, batch: true, priorityqueue: true, allowduplicates: true);
+
+            // this triggers the whole sequence
+            Transmit_MDS_Message(MDS_TX_ReqDiscAndTrackNames, delay:1000);
             _inforequest = true;
             checkBox1_Autopoll.Checked = true;
             checkBox2_Elapsed.Checked = true;
@@ -1466,12 +1503,12 @@ namespace SonyMDRemote
 
         private void button13_Click(object sender, EventArgs e)
         {
-            Transmit_MDS_Message(MDS_TX_StartPlayAtTrack, tracknumber: (byte)numericUpDown1.Value);
+            Transmit_MDS_Message(MDS_TX_StartPlayAtTrack, tracknumber: (byte)numericUpDown1.Value, priority: true);
         }
 
         private void button14_Click(object sender, EventArgs e)
         {
-            Transmit_MDS_Message(MDS_TX_PausePlayAtTrack, tracknumber: (byte)numericUpDown1.Value);
+            Transmit_MDS_Message(MDS_TX_PausePlayAtTrack, tracknumber: (byte)numericUpDown1.Value, priority: true);
         }
 
 
