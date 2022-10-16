@@ -1324,7 +1324,7 @@ namespace SonyMDRemote
                 dataGridView1.Rows.Add(track.Key, track.Value.ToString(), track.Value.ToString().Length == 0 ? true : false, GetTrackLenFormatted(track.Key));
             }
 
-            dataGridView1.CurrentCell = dataGridView1.Rows[dataGridView1.Rows.Count - 1].Cells[0];
+            //dataGridView1.CurrentCell = dataGridView1.Rows[dataGridView1.Rows.Count - 1].Cells[0];
 
             UpdateDataGridBold(_currentrack);
 
@@ -1333,6 +1333,9 @@ namespace SonyMDRemote
         // if we know the current track, bold it in the datagrid
         private void UpdateDataGridBold(int trackplaying, bool setfocus = false)
         {
+            Font bold = new Font(DefaultFont, FontStyle.Bold);
+            Font regular = new Font(DefaultFont, FontStyle.Regular);
+
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
                 if (dataGridView1.Rows.IndexOf(row) == 0)
@@ -1348,16 +1351,25 @@ namespace SonyMDRemote
 
                 if (row.Cells[0].Value != null && (int)row.Cells[0].Value == trackplaying)
                 {
-                    row.Cells[0].Style.Font = new Font(DefaultFont, FontStyle.Bold);
-                    row.Cells[0].Style.BackColor = Color.Black;
-                    row.Cells[0].Style.ForeColor = Color.White;
-                    dataGridView1.CurrentCell = row.Cells[0];
+                    
+                    for (int i = 0; i < 4; i++)
+                    {
+                        row.Cells[i].Style.Font = bold;
+                        row.Cells[i].Style.BackColor = Color.Black;
+                        row.Cells[i].Style.ForeColor = Color.White;
+                    }
+
+                    if (setfocus)
+                        dataGridView1.CurrentCell = row.Cells[0];
                 }
                 else
                 {
-                    row.Cells[0].Style.Font = new Font(DefaultFont, FontStyle.Regular);
-                    row.Cells[0].Style.BackColor = Color.White;
-                    row.Cells[0].Style.ForeColor = Color.Black;
+                    for (int i = 0; i < 4; i++)
+                    {
+                        row.Cells[i].Style.Font = regular;
+                        row.Cells[i].Style.BackColor = Color.White;
+                        row.Cells[i].Style.ForeColor = Color.Black;
+                    }
                 }
                     
             }
