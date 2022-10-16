@@ -255,6 +255,8 @@ namespace SonyMDRemote
             if (serialPort1.IsOpen)
             {
                 checkBox1_Autopoll.Checked = false;
+                commandqueue.Clear();
+                commandqueue_priority.Clear();
                 serialPort1.Close();
                 AppendLog("Closing port {0}", serialPort1.PortName);
                 button_Serial_Connect.Text = "Connect";
