@@ -1375,6 +1375,8 @@ namespace SonyMDRemote
             Transmit_MDS_Message(MDS_TX_ReqStatus);
             Transmit_MDS_Message(MDS_TX_ReqDiscData);
             Transmit_MDS_Message(MDS_TX_ReqTrackRemainingNameSize, tracknumber: _currentrack);
+            Transmit_MDS_Message(MDS_TX_ReqTrackRecordDate, tracknumber: _currentrack);
+            
             if (checkBox2_Elapsed.Checked)
                 Transmit_MDS_Message(MDS_TX_EnableElapsedTimeTransmit);
             else

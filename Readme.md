@@ -40,11 +40,13 @@ Release builds limits the log scrollback to around 200-400 lines to avoid balloo
 
 ## Planned:
 * Check of maximum track name length - seems to have a lot of room but would have to really dig into the MD format to figure it out properly
+* Recording timestamps seem to exist, not sure if anyone uses those (I didn't know these recorders had clocks...)
 
 ## Not really working:
 * Disc status and Power status appears to be incorrect for the E12
-* Changing discs may lead to slight inconsistencies, e.g. track times are not cleared when reloading track data, so these will be incorrect.
-* Write-protection detection seems broken
+* (v0.2a) Changing discs may lead to slight inconsistencies, e.g. track times are not cleared when reloading track data, so these will be incorrect.
+* Write-protection detection seems broken? Can't find a way to detect that using the documented commands.
+* Repeat-modes don't work on my unit
 
 ## Vague Ideas
 Making an ESP-based device that could sit inside the MD recorder, put in a web-interface to replace this project. 
