@@ -337,13 +337,13 @@
             // 
             // label7
             // 
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(70, 39);
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(70, 12);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(219, 20);
+            this.label7.Size = new System.Drawing.Size(219, 47);
             this.label7.TabIndex = 24;
             this.label7.Text = "Disc Name";
-            this.label7.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.label7.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             this.label7.Click += new System.EventHandler(this.label7_Click);
             // 
             // label8
@@ -557,7 +557,6 @@
             this.Controls.Add(this.checkBox1_Autopoll);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.label8);
-            this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.button14);
@@ -582,6 +581,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBox1_Serial_Port);
             this.Controls.Add(this.richTextBox_Log);
+            this.Controls.Add(this.label7);
             this.MinimumSize = new System.Drawing.Size(816, 526);
             this.Name = "SonyMDRemote";
             this.Text = "LA2YUA SonyMDRemote";
