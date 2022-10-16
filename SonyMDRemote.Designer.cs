@@ -39,8 +39,8 @@
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
+            this.button5_Prev = new System.Windows.Forms.Button();
+            this.button6_Next = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
@@ -170,25 +170,25 @@
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
-            // button5
+            // button5_Prev
             // 
-            this.button5.Location = new System.Drawing.Point(10, 166);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(75, 23);
-            this.button5.TabIndex = 8;
-            this.button5.Text = "Previous";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.button5_Prev.Location = new System.Drawing.Point(10, 166);
+            this.button5_Prev.Name = "button5_Prev";
+            this.button5_Prev.Size = new System.Drawing.Size(75, 23);
+            this.button5_Prev.TabIndex = 8;
+            this.button5_Prev.Text = "Previous";
+            this.button5_Prev.UseVisualStyleBackColor = true;
+            this.button5_Prev.Click += new System.EventHandler(this.button5_Click);
             // 
-            // button6
+            // button6_Next
             // 
-            this.button6.Location = new System.Drawing.Point(173, 166);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(75, 23);
-            this.button6.TabIndex = 9;
-            this.button6.Text = "Next";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
+            this.button6_Next.Location = new System.Drawing.Point(173, 166);
+            this.button6_Next.Name = "button6_Next";
+            this.button6_Next.Size = new System.Drawing.Size(75, 23);
+            this.button6_Next.TabIndex = 9;
+            this.button6_Next.Text = "Next";
+            this.button6_Next.UseVisualStyleBackColor = true;
+            this.button6_Next.Click += new System.EventHandler(this.button6_Click);
             // 
             // button7
             // 
@@ -561,8 +561,8 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.button8);
             this.Controls.Add(this.button7);
-            this.Controls.Add(this.button6);
-            this.Controls.Add(this.button5);
+            this.Controls.Add(this.button6_Next);
+            this.Controls.Add(this.button5_Prev);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
@@ -595,8 +595,8 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button button5_Prev;
+        private System.Windows.Forms.Button button6_Next;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Label label2;

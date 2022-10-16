@@ -889,8 +889,8 @@ namespace SonyMDRemote
                         label10.Font = toc_read_done ? new Font(DefaultFont, FontStyle.Regular) : new Font(DefaultFont, FontStyle.Bold);
 
                         // request these since we now know the track number
-                        Transmit_MDS_Message(MDS_TX_ReqTOCData);
                         Transmit_MDS_Message(MDS_TX_ReqTrackTime, tracknumber: _currentrack);
+                        Transmit_MDS_Message(MDS_TX_ReqTOCData);
                     }
 
                     // 7.12 DISC DATA
@@ -1262,7 +1262,7 @@ namespace SonyMDRemote
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Transmit_MDS_Message(MDS_TX_PlayPause);
+            Transmit_MDS_Message(MDS_TX_PlayPause, allowduplicates: true);
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -1436,9 +1436,9 @@ namespace SonyMDRemote
         private void SonyMDRemote_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.XButton1)
-                Transmit_MDS_Message(MDS_TX_PrevTrack, allowduplicates: true);
+                button5_Prev.PerformClick();
             if (e.Button == MouseButtons.XButton2)
-                Transmit_MDS_Message(MDS_TX_NextTrack, allowduplicates: true);
+                button6_Next.PerformClick();
         }
 
         private void button16_Click(object sender, EventArgs e)
