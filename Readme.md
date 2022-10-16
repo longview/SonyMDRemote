@@ -40,9 +40,9 @@ Release builds limits the log scrollback to around 200-400 lines to avoid balloo
 
 ## Planned:
 * Check of maximum track name length - seems to have a lot of room but would have to really dig into the MD format to figure it out properly
-* Recording timestamps seem to exist, not sure if anyone uses those (I didn't know these recorders had clocks...)
+* Recording timestamps seem to exist, though only if the recorder had a valid time at the time of recording
 
-Currently timestamps are polled, but not shown in the UI except in the log, and then only if they have valid timestamps. None of my self-recorded discs appear to have valid timestamps.
+Currently timestamps are polled, but not shown in the UI except in the log, and then only if they have valid timestamps. It's a 2-digit year so we assume anything with a year greater than the current 2-digit year is from 19xx.
 
 ## Not really working:
 * Disc status and Power status appears to be incorrect for the E12

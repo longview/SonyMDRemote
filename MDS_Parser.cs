@@ -45,6 +45,7 @@ namespace SonyMDRemote
         string laststatusstr = String.Empty;
         string lastrptstr = String.Empty;
         string lastdiscstatusstr = String.Empty;
+        string lastrecdatestr = String.Empty;
 
         // list of track names
         IDictionary<int, StringBuilder> tracknames = new Dictionary<int, StringBuilder>();
@@ -370,9 +371,20 @@ namespace SonyMDRemote
                         byte Min = ArrRep[11];
                         byte Sec = ArrRep[12];
 
+                        // assume anything with a year from the future is from 19xx, most likely recordings are from 20xx
+                        int yearprefix = 19;
+                        if (Year < (DateTime.Now.Year) - 2000)
+                            yearprefix = 20;
+
                         // a valid day/month starts at 1, so if zero the data is invalid
                         if (Month > 0 && Day > 0)
-                            AppendLog("MD: Track {0} was recorded at time XX{1:00}-{2:00}-{3:00}T{4:00}:{5:00}:{6:00}", TrackNo, Year, Month, Day, Hour, Min, Sec);
+                        {
+                            string recdatestr = String.Format("MD: Track {0} was recorded at time {7}{1:00}-{2:00}-{3:00}T{4:00}:{5:00}:{6:00}", TrackNo, Year, Month, Day, Hour, Min, Sec, yearprefix);
+                            if (!recdatestr.Equals(lastrecdatestr))
+                                AppendLog(recdatestr);
+                            lastrecdatestr = recdatestr;
+                        }
+                            
                     }
 
                     // 7.15 DISC NAME
