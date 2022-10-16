@@ -962,6 +962,7 @@ namespace SonyMDRemote
                     // 7.16 TRACK NAME (1st packet)
                     if (ArrRep[4] == 0x20 && (ArrRep[5] == 0x4A || ArrRep[5] == 0x4B) && ArrRep.Length > 8)
                     {
+                        byte Segment = ArrRep[6];
                         string currenttrackname = TrimNonAscii(DecodeAscii(ref ArrRep, 7));
                         if (_infocounter >= 0)
                         {
@@ -973,7 +974,10 @@ namespace SonyMDRemote
                             StringBuilder sb;
                             tracknames.TryGetValue(_infocounter, out sb);
                             sb.Append(currenttrackname);
+                            AppendLog("MD: Track {2} name part {1} is: {0}", currenttrackname, (ArrRep[5] == 0x4A) ? "1" : Segment.ToString(), _infocounter);
                         }
+                        else
+                            AppendLog("MD: Track name segment {1} is: {0}", currenttrackname, Segment);
 
                         if (_inforequest)
                         {
@@ -982,8 +986,8 @@ namespace SonyMDRemote
                         }
                             
 
-                        byte Segment = ArrRep[6];
-                        AppendLog("MD: Track {1} name part 1 is: {0}", currenttrackname, Segment);
+                        
+                        
                     }
 
                     // 7.17 ALL NAME END
