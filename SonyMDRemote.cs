@@ -217,7 +217,7 @@ namespace SonyMDRemote
 
         private void timer1_Maintenance_Tick(object sender, EventArgs e)
         {
-            if (checkBox1.Checked)
+            if (checkBox1_Autopoll.Checked)
             {
                 timer1_Maintenance.Interval = 5000;
                 DoUpdateTask();
@@ -254,6 +254,7 @@ namespace SonyMDRemote
         {
             if (serialPort1.IsOpen)
             {
+                checkBox1_Autopoll.Checked = false;
                 serialPort1.Close();
                 AppendLog("Closing port {0}", serialPort1.PortName);
                 button_Serial_Connect.Text = "Connect";
@@ -1112,7 +1113,7 @@ namespace SonyMDRemote
                             //_currtracklen_min = Min;
                             //_currtracklen_sec = Sec;
                             AppendLog("MD: Current track length is {0:00}:{1:00}", Min, Sec);
-                            if (!checkBox2.Checked)
+                            if (!checkBox2_Elapsed.Checked)
                                 label6.Text = GetTrackLenFormatted(_currentrack);
                         }
                     }
@@ -1328,8 +1329,8 @@ namespace SonyMDRemote
         private void button10_Click(object sender, EventArgs e)
         {
             
-            checkBox1.Checked = false;
-            checkBox2.Checked = false;
+            checkBox1_Autopoll.Checked = false;
+            checkBox2_Elapsed.Checked = false;
             // reset list of names
             _infocounter = 0;
             tracknames.Clear();
@@ -1341,8 +1342,8 @@ namespace SonyMDRemote
             //Transmit_MDS_Message(MDS_TX_ReqDiscName, delay: 500);
             Transmit_MDS_Message(MDS_TX_ReqDiscAndTrackNames, delay:3000);
             _inforequest = true;
-            checkBox1.Checked = true;
-            checkBox2.Checked = true;
+            checkBox1_Autopoll.Checked = true;
+            checkBox2_Elapsed.Checked = true;
         }
 
         private void DoUpdateTask()
@@ -1351,7 +1352,7 @@ namespace SonyMDRemote
             Transmit_MDS_Message(MDS_TX_ReqStatus);
             Transmit_MDS_Message(MDS_TX_ReqDiscData);
             Transmit_MDS_Message(MDS_TX_ReqTrackRemainingNameSize, tracknumber: _currentrack);
-            if (checkBox2.Checked)
+            if (checkBox2_Elapsed.Checked)
                 Transmit_MDS_Message(MDS_TX_EnableElapsedTimeTransmit);
             else
                 Transmit_MDS_Message(MDS_TX_DisableElapsedTimeTransmit);
@@ -1429,7 +1430,7 @@ namespace SonyMDRemote
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox1.Checked)
+            if (checkBox1_Autopoll.Checked)
             {
                 timer1_Maintenance.Interval = 5000;
                 DoUpdateTask();
@@ -1469,8 +1470,8 @@ namespace SonyMDRemote
         private void button16_Click(object sender, EventArgs e)
         {
 
-            checkBox1.Checked = false;
-            checkBox2.Checked = false;
+            checkBox1_Autopoll.Checked = false;
+            checkBox2_Elapsed.Checked = false;
 
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {

@@ -64,8 +64,8 @@
             this.write = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.length = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.button15 = new System.Windows.Forms.Button();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.checkBox1_Autopoll = new System.Windows.Forms.CheckBox();
+            this.checkBox2_Elapsed = new System.Windows.Forms.CheckBox();
             this.label9 = new System.Windows.Forms.Label();
             this.timer_Poll_GetInfo = new System.Windows.Forms.Timer(this.components);
             this.checkBox3 = new System.Windows.Forms.CheckBox();
@@ -428,29 +428,29 @@
             this.button15.UseVisualStyleBackColor = true;
             this.button15.Click += new System.EventHandler(this.button15_Click);
             // 
-            // checkBox1
+            // checkBox1_Autopoll
             // 
-            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(90, 333);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(65, 17);
-            this.checkBox1.TabIndex = 27;
-            this.checkBox1.Text = "AutoPoll";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.checkBox1_Autopoll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBox1_Autopoll.AutoSize = true;
+            this.checkBox1_Autopoll.Location = new System.Drawing.Point(90, 333);
+            this.checkBox1_Autopoll.Name = "checkBox1_Autopoll";
+            this.checkBox1_Autopoll.Size = new System.Drawing.Size(65, 17);
+            this.checkBox1_Autopoll.TabIndex = 27;
+            this.checkBox1_Autopoll.Text = "AutoPoll";
+            this.checkBox1_Autopoll.UseVisualStyleBackColor = true;
+            this.checkBox1_Autopoll.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
-            // checkBox2
+            // checkBox2_Elapsed
             // 
-            this.checkBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(161, 333);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(95, 17);
-            this.checkBox2.TabIndex = 28;
-            this.checkBox2.Text = "Elapsed Count";
-            this.checkBox2.UseVisualStyleBackColor = true;
-            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
+            this.checkBox2_Elapsed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBox2_Elapsed.AutoSize = true;
+            this.checkBox2_Elapsed.Location = new System.Drawing.Point(161, 333);
+            this.checkBox2_Elapsed.Name = "checkBox2_Elapsed";
+            this.checkBox2_Elapsed.Size = new System.Drawing.Size(95, 17);
+            this.checkBox2_Elapsed.TabIndex = 28;
+            this.checkBox2_Elapsed.Text = "Elapsed Count";
+            this.checkBox2_Elapsed.UseVisualStyleBackColor = true;
+            this.checkBox2_Elapsed.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
             // 
             // label9
             // 
@@ -541,8 +541,8 @@
             this.Controls.Add(this.button16);
             this.Controls.Add(this.checkBox3);
             this.Controls.Add(this.label9);
-            this.Controls.Add(this.checkBox2);
-            this.Controls.Add(this.checkBox1);
+            this.Controls.Add(this.checkBox2_Elapsed);
+            this.Controls.Add(this.checkBox1_Autopoll);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
@@ -616,8 +616,8 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Button button15;
-        private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.CheckBox checkBox2;
+        private System.Windows.Forms.CheckBox checkBox1_Autopoll;
+        private System.Windows.Forms.CheckBox checkBox2_Elapsed;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Timer timer_Poll_GetInfo;
         private System.Windows.Forms.CheckBox checkBox3;
