@@ -1442,7 +1442,7 @@ namespace SonyMDRemote
             if (e.RowIndex == 0)
                 return;
             AppendLog("Playing track {0}", e.RowIndex);
-            Transmit_MDS_Message(MDS_TX_StartPlayAtTrack, tracknumber: (byte)(e.RowIndex));
+            Transmit_MDS_Message(MDS_TX_StartPlayAtTrack, tracknumber: (byte)(e.RowIndex), priority: true);
         }
 
         private void label7_Click(object sender, EventArgs e)
