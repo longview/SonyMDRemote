@@ -1485,5 +1485,10 @@ namespace SonyMDRemote
             richTextBox_Log.Clear();
         }
 
+        private void dataGridView1_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex <= numericUpDown1.Maximum && e.RowIndex >= numericUpDown1.Minimum)
+                numericUpDown1.Value = e.RowIndex;
+        }
     }
 }
