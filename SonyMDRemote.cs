@@ -687,9 +687,14 @@ namespace SonyMDRemote
         //byte _currtracklen_min = 0;
         //byte _currtracklen_sec = 0;
         byte _lasttrackno = 0;
+        byte _firsttrackno = 0;
         TimeSpan _remainingrecordtime = new TimeSpan(0);
         TimeSpan _disclength = new TimeSpan(0);
         string discname;
+
+        string laststatusstr = String.Empty;
+        string lastrptstr = String.Empty;
+        string lastdiscstatusstr = String.Empty;
 
         // list of track names
         IDictionary<int, StringBuilder> tracknames = new Dictionary<int, StringBuilder>();
@@ -899,21 +904,37 @@ namespace SonyMDRemote
 
                         }
 
-                        AppendLog("MD: Status: {0} {1} {9} track no. {2} {3} {4} {5} {6} {7} {8}",
-                            nodiscinserted ? "no disc" : "disc",
-                            poweredoff ? "off" : "on",
+                        
+
+                        string statusstr = String.Format("MD: Status: {0}, {1}, {9}, track no. {2}, {3}, {4}, {5}, {6}, {7}, {8}.",
+                            nodiscinserted ? "No disc" : "Disc",
+                            poweredoff ? "Off" : "On",
                             TrackNo,
                             playbackstatusstr,
                             toc_read_done ? "TOC clean" : "TOC dirty",
                             copy_protected ? "WP" : "no WP",
-                            mono ? "mono" : "stereo",
+                            mono ? "Mono" : "Stereo",
                             digital_in_unlocked ? "DIN unlock" : "DIN lock",
                             recsourcestr,
-                            rec_possible ? "rec. allowed":"rec. disallowed"
+                            rec_possible ? "Rec. allowed":"Rec. disallowed"
                             );
+#if LOGGING
+                        AppendLog(statusstr);
+#else
+                        if (!laststatusstr.Equals(statusstr))
+                            AppendLog(statusstr);
+#endif
+                        laststatusstr = statusstr;
 
+
+
+#if LOGGING
                         AppendLog("MD: Repeat mode: {0}", repeatstr);
-
+#else
+                        if (!lastrptstr.Equals(repeatstr))
+                            AppendLog("MD: Repeat mode: {0}", repeatstr);
+#endif
+                        lastrptstr = repeatstr;
 
 
                         // request these since we now know the track number
@@ -936,10 +957,20 @@ namespace SonyMDRemote
                             label10.Text = toc_read_done ? "TOC Clean" : "TOC Dirty";
                         label10.Font = toc_read_done ? new Font(DefaultFont, FontStyle.Regular) : new Font(DefaultFont, FontStyle.Bold);
 
-                        AppendLog("MD: disc data: {0} {1} {2}",
-                            discerror ?"disc error":"no error",
-                            writeprotected ? "WP":"no wp",
-                            recordable ? "pre-mastered":"recordable");
+                        string discdatastr = String.Format("MD: Disc Data: {0}, {1}, {2}",
+                            discerror ? "Error" : "OK",
+                            writeprotected ? "WP" : "no WP",
+                            recordable ? "Pre-Mastered" : "Recordable");
+
+#if LOGGING
+                        AppendLog(discdatastr);
+#else
+                        if (!lastdiscstatusstr.Equals(discdatastr))
+                            AppendLog(discdatastr);
+#endif
+                        lastdiscstatusstr = discdatastr;
+
+                        
                     }
 
                     // 7.13 MODEL NAME
@@ -975,7 +1006,7 @@ namespace SonyMDRemote
                         else
                             discname += TrimNonAscii(DecodeAscii(ref ArrRep, 7));
                         label7.Text = String.Format("{0}", discname);
-                        AppendLog("MD: Disc name part {1} is: {0}", TrimNonAscii(DecodeAscii(ref ArrRep, 7)), Segment);
+                        AppendLog("MD: Disc Title/{1} is: {0}", discname, Segment);
                     }
 
                     // 7.16 TRACK NAME (1st packet)
@@ -993,7 +1024,7 @@ namespace SonyMDRemote
                             StringBuilder sb;
                             tracknames.TryGetValue(_infocounter, out sb);
                             sb.Append(currenttrackname);
-                            AppendLog("MD: Track {2}/{1}: {0}", currenttrackname, (ArrRep[5] == 0x4A) ? "1" : Segment.ToString(), _infocounter);
+                            AppendLog("MD: Track {2}/{1}: {0}", sb.ToString(), (ArrRep[5] == 0x4A) ? "1" : Segment.ToString(), _infocounter);
                         }
                         else
                             AppendLog("MD: Track segment {1}: {0}", currenttrackname, Segment);
@@ -1013,7 +1044,7 @@ namespace SonyMDRemote
                     if (ArrRep[4] == 0x20 && ArrRep[5] == 0x4C)
                     {
                         _infocounter = -1;
-                        AppendLog("MD: ALL NAME END");
+                        AppendLog("MD: All names received.");
 
                         //UpdateDataGrid();
                     }
@@ -1040,8 +1071,9 @@ namespace SonyMDRemote
                             progressBar1.Value = 0;
                         else
                             progressBar1.Value = (int)Math.Min(completionratio * 1000, 1000);
-
+#if LOGGING
                         AppendLog("MD: Track {0} elapsed time is {1:00}:{2:00}", TrackNo, Min, Sec);
+#endif
                         label6.Text = String.Format("{0:00}:{1:00}/{2:00}:{3:00} (r: {4:00}:{5:00})", Min, Sec, 
                             (int)ts_track.TotalMinutes, ts_track.Seconds, 
                             (int)remainingtime.TotalMinutes, remainingtime.Seconds);
@@ -1053,8 +1085,10 @@ namespace SonyMDRemote
                         byte Min = ArrRep[7];
                         byte Sec = ArrRep[8];
                         if (Min != _remainingrecordtime.Minutes || Sec != _remainingrecordtime.Seconds)
+                        {
                             _remainingrecordtime = new TimeSpan(0, Min, Sec);
-                        AppendLog("MD: Record remaining time is {0:00}:{1:00}", Min, Sec);
+                            AppendLog("MD: Record remaining time is {0:00}:{1:00}", Min, Sec);
+                        }
                     }
 
                     // 7.20 NAME REMAIN
@@ -1064,7 +1098,9 @@ namespace SonyMDRemote
                         byte RemainH = ArrRep[8];
                         byte RemainL  = ArrRep[9];
                         int remainingbytes = RemainH << 8 | RemainL;
+#if LOGGING
                         AppendLog("MD: Track {0} maximum name size is {1}", TrackNo, remainingbytes);
+#endif
                     }
 
                     // 7.21 TOC DATA
@@ -1072,7 +1108,7 @@ namespace SonyMDRemote
                     {
                         byte FirstTrackNo = ArrRep[7];
                         byte LastTrackNo = ArrRep[8];
-                        _lasttrackno = LastTrackNo;
+                        
 
                         // call this since we are now sure what the last track is
                         ReceivedPlayingTrack(0, tracknounchanged: true);
@@ -1081,12 +1117,17 @@ namespace SonyMDRemote
                         byte Sec = ArrRep[10];
                         _disclength = new TimeSpan(0, Min, Sec);
 
-                        AppendLog("MD: First track is {0}, last track is {1}. Recorded time is {2:00}:{3:00}", FirstTrackNo,LastTrackNo,Min,Sec);
-                        label4.Text = String.Format("{0} tracks ({1}-{2}; {3:00}:{4:00}; {5:00}:{6:00} remaining)", 
-                            1+LastTrackNo-FirstTrackNo, 
-                            FirstTrackNo,LastTrackNo, 
-                            Min, Sec,
-                            (int)_remainingrecordtime.TotalMinutes, _remainingrecordtime.Seconds);
+                        // only log if a change
+                        if ((FirstTrackNo != _firsttrackno) || (LastTrackNo != _lasttrackno))
+                            AppendLog("MD: First {0}, last {1}. Time {2:00}:{3:00}", FirstTrackNo,LastTrackNo,Min,Sec);
+                            label4.Text = String.Format("{0} tracks ({1}-{2}; {3:00}:{4:00}; {5:00}:{6:00} remaining)", 
+                                1+LastTrackNo-FirstTrackNo, 
+                                FirstTrackNo,LastTrackNo, 
+                                Min, Sec,
+                                (int)_remainingrecordtime.TotalMinutes, _remainingrecordtime.Seconds);
+
+                        _lasttrackno = LastTrackNo;
+                        _firsttrackno = FirstTrackNo;
 
                         if (FirstTrackNo != 0 && LastTrackNo !=0)
                         {
@@ -1124,20 +1165,21 @@ namespace SonyMDRemote
                             byte Min = ArrRep[8];
                             byte Sec = ArrRep[9];
 
-                            TimeSpan newts = new TimeSpan(0, Min, Sec);
-
                             TimeSpan ts;
+                            bool tracklengthpresent = tracklengths.TryGetValue(_currentrack, out ts);
+
+                            if ((Min != (byte)ts.TotalMinutes) || (Sec != (byte)ts.Seconds))
+                                AppendLog("MD: Track {2} length {0:00}:{1:00}", Min, Sec, _currentrack);
+
+                            TimeSpan newts = new TimeSpan(0, Min, Sec);
                             // update index if already present
-                            if (tracklengths.TryGetValue(_currentrack, out ts))
+                            if (tracklengthpresent)
                                 tracklengths[_currentrack] = newts;
                             else
                                 tracklengths.Add(_currentrack, newts);
 
                             UpdateDataGridBold(_currentrack);
-
-                            //_currtracklen_min = Min;
-                            //_currtracklen_sec = Sec;
-                            AppendLog("MD: Current track length is {0:00}:{1:00}", Min, Sec);
+                            
                             if (!checkBox2_Elapsed.Checked)
                                 label6.Text = GetTrackLenFormatted(_currentrack);
                         }
@@ -1363,6 +1405,7 @@ namespace SonyMDRemote
             Transmit_MDS_Message(MDS_TX_SetRemoteOn, delay: 500);
             Transmit_MDS_Message(MDS_TX_DisableElapsedTimeTransmit);
             Transmit_MDS_Message(MDS_TX_ReqStatus);
+            Transmit_MDS_Message(MDS_TX_ReqTOCData);
             Transmit_MDS_Message(MDS_TX_ReqModelName);
             Transmit_MDS_Message(MDS_TX_ReqRemainingRecordTime);
             //Transmit_MDS_Message(MDS_TX_ReqDiscName, delay: 500);
