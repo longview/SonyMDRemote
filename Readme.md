@@ -19,22 +19,24 @@ You will need a female-female 9 pin D-Sub adapter cable (a null modem cable):
 ## Use
 To connect, select a COM port from the selector, then click Get Info to start everything for playback/edit mode.
 
+Only checked rows will be written, when reading track data unnamed tracks are automatically marked for writing. You can tab around the view to quickly enter track titles. 
+
+Push the Write button to perform a write, it is best to pause or stop playback before doing this to avoid any issues. After a write you can click Get Info again to reload the data from the MD. The TOC will be dirty after a write, when satisfied hit the Eject button to make the MD commit the TOC and actually update the disc.
+
+You can double click the leftmost part of a row to tell the MD to play a specific track. The currently playing track is highlighted.
+
 The textbox below logs the received data and debug info.
 
-You can double click the leftmost part of a row to tell the MD to play a specific track. The currently playing track is bolded.
-
 Release builds limits the log scrollback to around 200-400 lines to avoid ballooning memory usage. Debug builds have effectively unlimited scrollback, and generate log output files. Debug builds also add a "Clear" button to the log.
-
-## Basic Command Sequence
-Commands to the MD start with 0x7E, length, and some fixed parameters. Termination is 0xFF, and the length includes headers and termination.
-
-Commands from the MD follow the same format, but start with 0x6F.
 
 ## Features implemented:
 * Most MD-PC responses are decoded
 * Reading disc name, track numbers etc. is supported
+* Keeps track of track lengths
 * Basic playback commands
-* Write of both disc and track titles
+* Write of both disc and track titles - far better than the original Sony program
+* TOC dirty indication
+* Mouse nav-keys for forward/back (only in the main form area)
 
 ## Planned:
 * Check of maximum track name length - seems to be like 1700 chars per track though so not too important
