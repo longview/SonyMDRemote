@@ -42,6 +42,8 @@ Release builds limits the log scrollback to around 200-400 lines to avoid balloo
 * Check of maximum track name length - seems to have a lot of room but would have to really dig into the MD format to figure it out properly
 * Recording timestamps seem to exist, not sure if anyone uses those (I didn't know these recorders had clocks...)
 
+Currently timestamps are polled, but not shown in the UI anywhere since none of my self-recorded discs appear to have valid timestamps.
+
 ## Not really working:
 * Disc status and Power status appears to be incorrect for the E12
 * (v0.2a) Changing discs may lead to slight inconsistencies, e.g. track times are not cleared when reloading track data, so these will be incorrect.
@@ -67,7 +69,7 @@ I usually just use the autoqueue feature for record so track splits are good rig
 
 ## Documentation & Player Bugs
 Here's what I got so far for erratas.
-I've mostly been using the Combined E11, 12, 52 document.
+I've mostly been using the Combined E11, 12, 52 document. The user-made addendun document has also been referenced.
 
 ### General Comms
 The recorder doesn't clear its output buffers, so many outputs involving text contain trailing garbage after the null termination. This is slightly irritating in C# but manageable.
@@ -78,6 +80,8 @@ As such, you do need stateful decoder that reads the packet length to determine 
 
 ### Minor Stuff
 There's no way to read back the "Auto Pause" flag once you set it, you just have to know. This program does not store that, so if you flag auto pause and restart, it will disable auto pause on initial connection to synchronize the MD and program states.
+
+Repeat modes may work on some variants, but not mine. There doesn't seem to be a way to determine if this is the case programmatically. I do have the option to use this in the menus on the player itself.
 
 ### 6.38 ALL NAME REQ
 The returned 7.16 TRACK NAME messages appear to have the TrackNo field set to whatever track was last playing. This occurs even when the MD is ejected and reinserted.
