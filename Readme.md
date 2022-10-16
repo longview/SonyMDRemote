@@ -44,6 +44,7 @@ Release builds limits the log scrollback to around 200-400 lines to avoid balloo
 ## Not really working:
 * Disc status and Power status appears to be incorrect for the E12
 * Changing discs may lead to slight inconsistencies, e.g. track times are not cleared when reloading track data, so these will be incorrect.
+* Write-protection detection seems broken
 
 ## Vague Ideas
 Making an ESP-based device that could sit inside the MD recorder, put in a web-interface to replace this project. 
@@ -83,6 +84,9 @@ The returned 7.16 TRACK NAME messages appear to have the TrackNo field set to wh
 Data2 bit 7 is listed as indicating if the TOC has been read. It does, but it also indicates "Not yet" state when the TOC is dirty after a write.
 
 Track repeat modes are not documented in the base documentation, only an addendum which implies it's E12 exclusive.
+
+### 7.12 DISC DATA
+The "Protected" flag does not seems to reflect the status of the Write Protect slot on the disc. It seems to output No Protect for all states.
 
 ### 7.16 TRACK NAME
 The first packet is listed as:

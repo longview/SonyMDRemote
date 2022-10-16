@@ -664,6 +664,7 @@ namespace SonyMDRemote
         byte _currentrack = 1;
         byte _packetlen = 0;
         int _infocounter = -1;
+        bool toc_read_done = false;
         //byte _currtracklen_min = 0;
         //byte _currtracklen_sec = 0;
         byte _lasttrackno = 0;
@@ -794,7 +795,7 @@ namespace SonyMDRemote
                         ReceivedPlayingTrack(TrackNo);
 
                         // these two seems to be inverted or useless on the E12
-                        bool discinserted = IsBitSet(Data1, 5);
+                        bool nodiscinserted = IsBitSet(Data1, 5);
                         bool poweredoff = IsBitSet(Data1, 4);
 
                         MDS_Status_D1 playbackstatus = MDS_Status_D1.reserved;
@@ -834,7 +835,7 @@ namespace SonyMDRemote
 
                         label3.Text = playbackstatusstr;
 
-                        bool toc_read_done = IsBitSet(Data2, 7);
+                        toc_read_done = IsBitSet(Data2, 7);
                         bool rec_possible = IsBitSet(Data2, 5);
 
                         MDS_Status_D2_Repeat repeatstatus = MDS_Status_D2_Repeat.REPEAT_OFF;
@@ -879,22 +880,22 @@ namespace SonyMDRemote
 
                         }
 
-                        AppendLog("MD: Status dump {0} {1} track no. {2} {3} {4} {5} {6} {7} {8}",
-                            discinserted ? "disc inserted" : "no disc",
-                            poweredoff ? "powered on" : "powered off",
+                        AppendLog("MD: Status dump {0} {1} {9} track no. {2} {3} {4} {5} {6} {7} {8}",
+                            nodiscinserted ? "no disc" : "disc inserted",
+                            poweredoff ? "powered off" : "powered on",
                             TrackNo,
                             playbackstatusstr,
                             toc_read_done ? "TOC clean" : "TOC dirty",
                             copy_protected ? "copy protected" : "not copy protected",
                             mono ? "mono audio" : "stereo audio",
                             digital_in_unlocked ? "digital input unlocked" : "digital input locked",
-                            recsourcestr
+                            recsourcestr,
+                            rec_possible ? "rec. allowed":"rec. disallowed"
                             );
 
                         AppendLog("MD: Repeat mode: {0}", repeatstr);
 
-                        label10.Text = toc_read_done ? "TOC Clean" : "TOC Dirty";
-                        label10.Font = toc_read_done ? new Font(DefaultFont, FontStyle.Regular) : new Font(DefaultFont, FontStyle.Bold);
+
 
                         // request these since we now know the track number
                         Transmit_MDS_Message(MDS_TX_ReqTrackTime, tracknumber: _currentrack);
@@ -910,9 +911,16 @@ namespace SonyMDRemote
                         bool writeprotected = IsBitSet(DiscData, 2);
                         bool recordable = IsBitSet(DiscData, 0);
 
+                        if (writeprotected)
+                            label10.Text = toc_read_done ? "TOC Clean (WP)" : "TOC Dirty (WP)";
+                        else
+                            label10.Text = toc_read_done ? "TOC Clean" : "TOC Dirty";
+                        label10.Font = toc_read_done ? new Font(DefaultFont, FontStyle.Regular) : new Font(DefaultFont, FontStyle.Bold);
+
                         AppendLog("MD: disc data: {0} {1} {2}",
                             discerror ?"disc error":"no error",
-                            writeprotected ? "write protected":"recordable");
+                            writeprotected ? "WP":"no wp",
+                            recordable ? "pre-mastered":"recordable");
                     }
 
                     // 7.13 MODEL NAME
@@ -1334,6 +1342,7 @@ namespace SonyMDRemote
         {
             Transmit_MDS_Message(MDS_TX_ReqTOCData);
             Transmit_MDS_Message(MDS_TX_ReqStatus);
+            Transmit_MDS_Message(MDS_TX_ReqDiscData);
             Transmit_MDS_Message(MDS_TX_ReqTrackRemainingNameSize, tracknumber: _currentrack);
             if (checkBox2.Checked)
                 Transmit_MDS_Message(MDS_TX_EnableElapsedTimeTransmit);
