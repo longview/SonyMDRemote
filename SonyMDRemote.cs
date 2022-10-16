@@ -534,9 +534,10 @@ namespace SonyMDRemote
 
             if (txdata.Count > 32)
                 throw new ArgumentException("Transmission packet would be too big!");
+
             var tup = new Tuple<byte[], int>(txdata.ToArray(), delay);
             // ignore by default if payload is already present
-            // but we insert the requested command at the end of the sequence
+            // but we insert the requested command at the end of the sequence, removing the previous command
             if (!allowduplicates)
             {
                 var foundcmd = commandqueue.Find(item => ByteEquality(item.Item1, tup.Item1));
