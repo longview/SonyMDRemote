@@ -591,9 +591,9 @@ namespace SonyMDRemote
             // pop off the first item, transmit, then reset the timer with the delay
             nextcommand = commandqueue[0];
             commandqueue.RemoveAt(0);
-
+#if DEBUG
             AppendLog("PC sent: {0}, ASCII: {1}", BitConverter.ToString(nextcommand.Item1), TrimNonAscii(System.Text.Encoding.ASCII.GetString(nextcommand.Item1)));
-
+#endif
             serialPort1.Write(nextcommand.Item1, 0, nextcommand.Item1.Length);
 
             timer_Poll_Time.Interval = nextcommand.Item2;
@@ -730,9 +730,9 @@ namespace SonyMDRemote
                     byte[] ArrRep = serialRXData.ToArray();
 
                     //serialRXData.Clear();
-
+#if DEBUG
                     AppendLog("MD sent: {0}, ASCII: {1}", BitConverter.ToString(ArrRep), TrimNonAscii(System.Text.Encoding.ASCII.GetString(ArrRep)));
-
+#endif
                     if (ArrRep.Length < 5)
                         break;
 
