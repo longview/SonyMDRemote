@@ -452,6 +452,7 @@ namespace SonyMDRemote
         private void button2_Click(object sender, EventArgs e)
         {
             Transmit_MDS_Message(MDS_TX_SetRemoteOff);
+            checkBox1_Autopoll.Checked = false;
         }
 
         private void button3_Click(object sender, EventArgs e)

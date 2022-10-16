@@ -320,8 +320,13 @@ namespace SonyMDRemote
                         }
 
                         if (playbackstatus == MDS_Status_D1.EJECT)
+                        {
                             label12_timestamp.Text = "Recorded: N/A";
-
+                            discname = "No Disc";
+                            label7_disctitle.Text = "No Disc";
+                            _currentrack = 0;
+                            
+                        }
                     }
 
                     // 7.12 DISC DATA
@@ -404,7 +409,7 @@ namespace SonyMDRemote
                             discname = TrimNonAscii(DecodeAscii(ref ArrRep, 7));
                         else
                             discname += TrimNonAscii(DecodeAscii(ref ArrRep, 7));
-                        label7.Text = String.Format("{0}", discname);
+                        label7_disctitle.Text = String.Format("{0}", discname);
                         AppendLog("MD: Disc Title/{1} is: {0}", discname, Segment);
                     }
 

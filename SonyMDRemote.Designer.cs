@@ -55,7 +55,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.timer_Poll_Time = new System.Windows.Forms.Timer(this.components);
             this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
+            this.label7_disctitle = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.trackno = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -335,16 +335,16 @@
             this.label6.TabIndex = 23;
             this.label6.Text = "MM:SS/MM:SS";
             // 
-            // label7
+            // label7_disctitle
             // 
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(70, 12);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(219, 47);
-            this.label7.TabIndex = 24;
-            this.label7.Text = "Disc Name";
-            this.label7.TextAlign = System.Drawing.ContentAlignment.BottomRight;
-            this.label7.Click += new System.EventHandler(this.label7_Click);
+            this.label7_disctitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7_disctitle.Location = new System.Drawing.Point(70, 12);
+            this.label7_disctitle.Name = "label7_disctitle";
+            this.label7_disctitle.Size = new System.Drawing.Size(219, 47);
+            this.label7_disctitle.TabIndex = 24;
+            this.label7_disctitle.Text = "Disc Name";
+            this.label7_disctitle.TextAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.label7_disctitle.Click += new System.EventHandler(this.label7_Click);
             // 
             // label8
             // 
@@ -581,7 +581,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBox1_Serial_Port);
             this.Controls.Add(this.richTextBox_Log);
-            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label7_disctitle);
             this.MinimumSize = new System.Drawing.Size(816, 526);
             this.Name = "SonyMDRemote";
             this.Text = "LA2YUA SonyMDRemote";
@@ -622,7 +622,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Timer timer_Poll_Time;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label7_disctitle;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Button button15;
