@@ -650,7 +650,6 @@ namespace SonyMDRemote
         }
 
         private serialRXState receiverstate = serialRXState.serialRXState_Idle;
-        private int serialRXStateCounter = 0;
         private List<byte> serialRXData = new List<byte>();
         delegate void SetSerialDataInputCallback(byte[] text);
 
@@ -1020,7 +1019,7 @@ namespace SonyMDRemote
                         _lasttrackno = LastTrackNo;
 
                         // call this since we are now sure what the last track is
-                        ReceivedPlayingTrack(_currentrack, tracknounchanged: true);
+                        ReceivedPlayingTrack(0, tracknounchanged: true);
 
                         byte Min = ArrRep[9];
                         byte Sec = ArrRep[10];
