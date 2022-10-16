@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -49,10 +50,21 @@ namespace SonyMDRemote
             comboBox1.SelectedIndex = 0;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(comboBox1_SelectedIndexChanged);
 
+            SendMessage(progressBar1.Handle,
+              0x400 + 16, //WM_USER + PBM_SETSTATE
+              0x0003, //PBST_PAUSED
+              0);
+
 #if !LOGGING
             button17.Visible = false;
 #endif
         }
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        static extern uint SendMessage(IntPtr hWnd,
+  uint Msg,
+  uint wParam,
+  uint lParam);
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -1018,6 +1030,13 @@ namespace SonyMDRemote
                         TimeSpan ts_elapsed = new TimeSpan(0, Min, Sec);
                         TimeSpan remainingtime = ts_track - ts_elapsed;
 
+                        decimal completionratio = (decimal)ts_elapsed.Ticks / (decimal)(ts_track.Ticks+1);
+
+                        if (ts_track.Ticks == 0)
+                            progressBar1.Value = 0;
+                        else
+                            progressBar1.Value = (int)Math.Min(completionratio * 1000, 1000);
+
                         AppendLog("MD: Track {0} elapsed time is {1:00}:{2:00}", TrackNo, Min, Sec);
                         label6.Text = String.Format("{0:00}:{1:00}/{2:00}:{3:00} (r: {4:00}:{5:00})", Min, Sec, 
                             (int)ts_track.TotalMinutes, ts_track.Seconds, 
@@ -1130,6 +1149,7 @@ namespace SonyMDRemote
                     if (ArrRep[4] == 0x20 && ArrRep[5] == 0x83)
                     {
                         AppendLog("MD: Track changed");
+                        progressBar1.Value = 0;
                         Transmit_MDS_Message(MDS_TX_ReqStatus);
                         StringBuilder sb;
                         tracknames.TryGetValue(_currentrack, out sb);
@@ -1442,6 +1462,11 @@ namespace SonyMDRemote
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
             DoUpdateTask();
+
+            if (checkBox2_Elapsed.Checked)
+                progressBar1.Visible = true;
+            else
+                progressBar1.Visible = false;
         }
 
         // this timer is continuously reset whenever a track title message is received

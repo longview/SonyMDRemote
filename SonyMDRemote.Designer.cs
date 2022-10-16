@@ -74,6 +74,7 @@
             this.label11 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.button17 = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -529,11 +530,22 @@
             this.button17.UseVisualStyleBackColor = true;
             this.button17.Click += new System.EventHandler(this.button17_Click);
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(10, 250);
+            this.progressBar1.Maximum = 1000;
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(279, 17);
+            this.progressBar1.TabIndex = 36;
+            this.progressBar1.Value = 50;
+            this.progressBar1.Visible = false;
+            // 
             // SonyMDRemote
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 566);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.button17);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.label11);
@@ -630,6 +642,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn tracktitle;
         private System.Windows.Forms.DataGridViewCheckBoxColumn write;
         private System.Windows.Forms.DataGridViewTextBoxColumn length;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }
 
