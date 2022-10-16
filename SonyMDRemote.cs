@@ -536,8 +536,15 @@ namespace SonyMDRemote
                 throw new ArgumentException("Transmission packet would be too big!");
             var tup = new Tuple<byte[], int>(txdata.ToArray(), delay);
             // ignore by default if payload is already present
-            if (commandqueue.Find(item => ByteEquality(item.Item1, tup.Item1)) == null || allowduplicates)
-                commandqueue.Add(tup);
+            // but we insert the requested command at the end of the sequence
+            if (!allowduplicates)
+            {
+                var foundcmd = commandqueue.Find(item => ByteEquality(item.Item1, tup.Item1));
+                if (foundcmd != null)
+                    commandqueue.Remove(foundcmd);
+            }
+
+            commandqueue.Add(tup);
             timer_Poll_Time.Enabled = true;
             //serialPort1.Write(txdata.ToArray(), 0, txdata.Count);
 
