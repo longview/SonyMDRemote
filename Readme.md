@@ -39,7 +39,7 @@ Release builds limits the log scrollback to around 200-400 lines to avoid balloo
 * Mouse nav-keys for forward/back (only in the main form area)
 
 ## Planned:
-* Check of maximum track name length - seems to be like 1700 chars per track though so not too important
+* Check of maximum track name length - seems to have a lot of room but would have to really dig into the MD format to figure it out properly
 
 ## Not really working:
 * Disc status and Power status appears to be incorrect for the E12
