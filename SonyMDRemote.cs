@@ -37,6 +37,7 @@ namespace SonyMDRemote
             logfile_cmd.AutoFlush = true;
 #endif
             AppendLog("Program start version {0} {1}", VersionString, ReleaseString);
+            AppendLog("See https://github.com/longview/SonyMDRemote for the latest release.");
             AppendCmdLog("Program start version {0} {1}", VersionString, ReleaseString);
             AppendLog("Hint: select a COM port and hit Get Info to start everything");
 
