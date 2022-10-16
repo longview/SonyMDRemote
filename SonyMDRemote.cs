@@ -1050,6 +1050,7 @@ namespace SonyMDRemote
 
                         // we might be able to update the GUI title field now?
                         UpdateTrackTitle();
+                        UpdateDataGrid();
                     }
 
                     // 7.17 ALL NAME END
@@ -1066,7 +1067,7 @@ namespace SonyMDRemote
                             timer_Poll_GetInfo.Start();
                         }
 
-                        //UpdateDataGrid();
+                        UpdateDataGrid();
                     }
 
                     // 7.18 ELAPSED TIME
@@ -1323,12 +1324,14 @@ namespace SonyMDRemote
                 dataGridView1.Rows.Add(track.Key, track.Value.ToString(), track.Value.ToString().Length == 0 ? true : false, GetTrackLenFormatted(track.Key));
             }
 
+            dataGridView1.CurrentCell = dataGridView1.Rows[dataGridView1.Rows.Count - 1].Cells[0];
+
             UpdateDataGridBold(_currentrack);
 
         }
 
         // if we know the current track, bold it in the datagrid
-        private void UpdateDataGridBold(int trackplaying)
+        private void UpdateDataGridBold(int trackplaying, bool setfocus = false)
         {
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
@@ -1348,6 +1351,7 @@ namespace SonyMDRemote
                     row.Cells[0].Style.Font = new Font(DefaultFont, FontStyle.Bold);
                     row.Cells[0].Style.BackColor = Color.Black;
                     row.Cells[0].Style.ForeColor = Color.White;
+                    dataGridView1.CurrentCell = row.Cells[0];
                 }
                 else
                 {
@@ -1436,12 +1440,12 @@ namespace SonyMDRemote
 
             // dump all these in the priority queue to get them out before the track change
             // these will be executed before any non priority commands regardless of state
-            Transmit_MDS_Message(MDS_TX_SetRemoteOn, batch: true, priorityqueue: true);
-            Transmit_MDS_Message(MDS_TX_DisableElapsedTimeTransmit, batch: true, priorityqueue: true);
-            Transmit_MDS_Message(MDS_TX_ReqStatus, batch: true, priorityqueue: true);
-            Transmit_MDS_Message(MDS_TX_ReqTOCData, batch: true, priorityqueue: true);
-            Transmit_MDS_Message(MDS_TX_ReqModelName, batch: true, priorityqueue: true);
-            Transmit_MDS_Message(MDS_TX_ReqRemainingRecordTime, batch: true, priorityqueue: true);
+            Transmit_MDS_Message(MDS_TX_SetRemoteOn, batch: true, priorityqueue: true, delay: 100);
+            Transmit_MDS_Message(MDS_TX_DisableElapsedTimeTransmit, batch: true, priorityqueue: true, delay: 100);
+            Transmit_MDS_Message(MDS_TX_ReqStatus, batch: true, priorityqueue: true, delay: 100);
+            Transmit_MDS_Message(MDS_TX_ReqTOCData, batch: true, priorityqueue: true, delay: 100);
+            Transmit_MDS_Message(MDS_TX_ReqModelName, batch: true, priorityqueue: true, delay: 100);
+            Transmit_MDS_Message(MDS_TX_ReqRemainingRecordTime, batch: true, priorityqueue: true, delay: 100);
             // re-request status to trigger GUI update again
             Transmit_MDS_Message(MDS_TX_ReqStatus, batch: true, priorityqueue: true, allowduplicates: true);
 
@@ -1565,6 +1569,8 @@ namespace SonyMDRemote
             _inforequest = false;
             UpdateDataGrid();
             timer_Poll_GetInfo.Enabled = false;
+            // set focus to currently playing track
+            UpdateDataGridBold(_currentrack, setfocus: true);
         }
 
         private void checkBox3_CheckedChanged(object sender, EventArgs e)
