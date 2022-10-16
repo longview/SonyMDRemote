@@ -899,15 +899,15 @@ namespace SonyMDRemote
 
                         }
 
-                        AppendLog("MD: Status dump {0} {1} {9} track no. {2} {3} {4} {5} {6} {7} {8}",
-                            nodiscinserted ? "no disc" : "disc inserted",
-                            poweredoff ? "powered off" : "powered on",
+                        AppendLog("MD: Status: {0} {1} {9} track no. {2} {3} {4} {5} {6} {7} {8}",
+                            nodiscinserted ? "no disc" : "disc",
+                            poweredoff ? "off" : "on",
                             TrackNo,
                             playbackstatusstr,
                             toc_read_done ? "TOC clean" : "TOC dirty",
-                            copy_protected ? "copy protected" : "not copy protected",
-                            mono ? "mono audio" : "stereo audio",
-                            digital_in_unlocked ? "digital input unlocked" : "digital input locked",
+                            copy_protected ? "WP" : "no WP",
+                            mono ? "mono" : "stereo",
+                            digital_in_unlocked ? "DIN unlock" : "DIN lock",
                             recsourcestr,
                             rec_possible ? "rec. allowed":"rec. disallowed"
                             );
@@ -950,7 +950,7 @@ namespace SonyMDRemote
                         label9.Text = "Sony " + modelname;
                     }
 
-                    // 7.14 REC DATA DATA
+                    // 7.14 REC DATE DATA
                     if (ArrRep[4] == 0x20 && ArrRep[5] == 0x24)
                     {
                         byte TrackNo = ArrRep[6];
@@ -960,7 +960,10 @@ namespace SonyMDRemote
                         byte Hour = ArrRep[10];
                         byte Min = ArrRep[11];
                         byte Sec = ArrRep[12];
-                        AppendLog("MD: Track {0} was recorded at time XX{1:00}-{2:00}-{3:00}T{4:00}:{5:00}:{6:00}", TrackNo, Year, Month, Day, Hour, Min, Sec);
+
+                        // a valid day/month starts at 1, so if zero the data is invalid
+                        if (Month > 0 && Day > 0)
+                            AppendLog("MD: Track {0} was recorded at time XX{1:00}-{2:00}-{3:00}T{4:00}:{5:00}:{6:00}", TrackNo, Year, Month, Day, Hour, Min, Sec);
                     }
 
                     // 7.15 DISC NAME
@@ -990,10 +993,10 @@ namespace SonyMDRemote
                             StringBuilder sb;
                             tracknames.TryGetValue(_infocounter, out sb);
                             sb.Append(currenttrackname);
-                            AppendLog("MD: Track {2} name part {1} is: {0}", currenttrackname, (ArrRep[5] == 0x4A) ? "1" : Segment.ToString(), _infocounter);
+                            AppendLog("MD: Track {2}/{1}: {0}", currenttrackname, (ArrRep[5] == 0x4A) ? "1" : Segment.ToString(), _infocounter);
                         }
                         else
-                            AppendLog("MD: Track name segment {1} is: {0}", currenttrackname, Segment);
+                            AppendLog("MD: Track segment {1}: {0}", currenttrackname, Segment);
 
                         if (_inforequest)
                         {
