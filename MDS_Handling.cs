@@ -13,6 +13,8 @@ namespace SonyMDRemote
 {
     public partial class SonyMDRemote
     {
+        // this is mostly how to talk to the MDSes
+
         byte[] MDS_TX_SetRemoteOn = new byte[] { 0x10, 0x03 };
         byte[] MDS_TX_SetRemoteOff = new byte[] { 0x10, 0x04 };
 

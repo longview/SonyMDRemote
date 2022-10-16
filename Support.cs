@@ -13,7 +13,7 @@ namespace SonyMDRemote
 {
     public partial class SonyMDRemote
     {
-
+        // random helper functions
         public bool ByteEquality(byte[] a1, byte[] b1)
         {
             int i;

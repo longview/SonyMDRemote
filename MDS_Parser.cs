@@ -14,7 +14,7 @@ namespace SonyMDRemote
     public partial class SonyMDRemote
     {
         // this filename is kind of a lie
-        // it's just a place to stash the decoder function out of the way :)
+        // it's just a place to stash the receiver functions out of the way :)
 
 
         enum serialRXState
