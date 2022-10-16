@@ -780,15 +780,7 @@ namespace SonyMDRemote
                         byte Data3 = ArrRep[8];
                         // 9 is fixed 1
                         byte TrackNo = ArrRep[10];
-
-                        label2.Text = String.Format("Track {0}/{1}", TrackNo, _lasttrackno);
-                        _currentrack = TrackNo;
-                        UpdateDataGridBold(TrackNo);
-
-                        StringBuilder sb;
-                        tracknames.TryGetValue(_currentrack, out sb);
-                        if (sb != null)
-                            label8.Text = sb.ToString();
+                        ReceivedPlayingTrack(TrackNo);
 
                         // these two seems to be inverted or useless on the E12
                         bool discinserted = IsBitSet(Data1, 5);
@@ -876,15 +868,15 @@ namespace SonyMDRemote
 
                         }
 
-                        AppendLog("MD: Status dump {0} {1} track no. {2} {3} {4} {5} {6} {7} {8}", 
-                            discinserted ? "disc inserted":"no disc", 
-                            poweredoff ? "powered on":"powered off",
+                        AppendLog("MD: Status dump {0} {1} track no. {2} {3} {4} {5} {6} {7} {8}",
+                            discinserted ? "disc inserted" : "no disc",
+                            poweredoff ? "powered on" : "powered off",
                             TrackNo,
                             playbackstatusstr,
-                            toc_read_done ? "TOC clean":"TOC dirty",
-                            copy_protected ? "copy protected":"not copy protected",
-                            mono ? "mono audio":"stereo audio",
-                            digital_in_unlocked ? "digital input unlocked":"digital input locked",
+                            toc_read_done ? "TOC clean" : "TOC dirty",
+                            copy_protected ? "copy protected" : "not copy protected",
+                            mono ? "mono audio" : "stereo audio",
+                            digital_in_unlocked ? "digital input unlocked" : "digital input locked",
                             recsourcestr
                             );
 
@@ -988,6 +980,8 @@ namespace SonyMDRemote
                         byte Min = ArrRep[8];
                         byte Sec = ArrRep[9];
 
+                        ReceivedPlayingTrack(TrackNo);
+
                         TimeSpan ts_track = new TimeSpan(0, _currtracklen_min, _currtracklen_sec);
                         TimeSpan ts_elapsed = new TimeSpan(0, Min, Sec);
                         TimeSpan remainingtime = ts_track - ts_elapsed;
@@ -1024,6 +1018,10 @@ namespace SonyMDRemote
                         byte FirstTrackNo = ArrRep[7];
                         byte LastTrackNo = ArrRep[8];
                         _lasttrackno = LastTrackNo;
+
+                        // call this since we are now sure what the last track is
+                        ReceivedPlayingTrack(_currentrack, tracknounchanged: true);
+
                         byte Min = ArrRep[9];
                         byte Sec = ArrRep[10];
                         AppendLog("MD: First track is {0}, last track is {1}. Recorded time is {2:00}:{3:00}", FirstTrackNo,LastTrackNo,Min,Sec);
@@ -1130,36 +1128,34 @@ namespace SonyMDRemote
                     {
                         AppendLog("MD: Reports previous command not possible");
                     }
-
-
-                    //try
-                    //{
-                    //    UInt32 Current_DAC_Value = BitConverter.ToUInt32(decodedbytes, 0);
-                    //}
-                    //catch (Exception e)
-                    //{
-                    //    AppendLog("Decode error! {0}", e.Message);
-                    //    return;
-                    //}
-
-                    //if (rx_timeoutstate == serialtimeoutstate.Timeout)
-                    //{
-                    //    AppendLog("Now receiving valid data after previous timeout");
-                    //}
-                    //else if (rx_timeoutstate == serialtimeoutstate.Idle)
-                    //{
-                    //    AppendLog("Valid data received from device");
-                    //}
-                    //rx_timeoutstate = serialtimeoutstate.Received;
-
-                    //UpdateGUI(ref lastrxstatus);
-                        break;
                 }
 
             }
         }
 
-        // convert our populated track-name index
+        // this function handles GUI updates when we receive track playing info
+        // tracknounchanged flags that we received e.g. a last track number
+        // note that track 0 is the stopped/new disc/no disc state
+        private void ReceivedPlayingTrack(byte TrackNo, bool tracknounchanged = false)
+        {
+            if (TrackNo > 0)
+                label2.Text = String.Format("Track {0}/{1}", TrackNo, _lasttrackno);
+            else
+                label2.Text = String.Format("Track -/{0}", _lasttrackno);
+            if (!tracknounchanged)
+                _currentrack = TrackNo;
+
+            // update the datagridview active track indicator
+            UpdateDataGridBold(TrackNo);
+
+            // try to update the track title label
+            StringBuilder sb;
+            tracknames.TryGetValue(_currentrack, out sb);
+            if (sb != null)
+                label8.Text = sb.ToString();
+        }
+
+        // convert our populated track-name index when a full disc title sequence has been received
         private void UpdateDataGrid()
         {
             dataGridView1.Rows.Clear();
