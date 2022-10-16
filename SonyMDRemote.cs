@@ -1046,7 +1046,7 @@ namespace SonyMDRemote
                             }
                             catch
                             {
-                                // do nothing, it literally makes no difference
+                                // do nothing, it literally makes no difference if this errors out
                             }
                         }
                         else
@@ -1137,15 +1137,17 @@ namespace SonyMDRemote
         // note that track 0 is the stopped/new disc/no disc state
         private void ReceivedPlayingTrack(byte TrackNo, bool tracknounchanged = false)
         {
-            if (TrackNo > 0)
-                label2.Text = String.Format("Track {0}/{1}", TrackNo, _lasttrackno);
-            else
-                label2.Text = String.Format("Track -/{0}", _lasttrackno);
+
             if (!tracknounchanged)
                 _currentrack = TrackNo;
 
+            if (_currentrack > 0)
+                label2.Text = String.Format("Track {0}/{1}", _currentrack, _lasttrackno);
+            else
+                label2.Text = String.Format("Track -/{0}", _lasttrackno);
+
             // update the datagridview active track indicator
-            UpdateDataGridBold(TrackNo);
+            UpdateDataGridBold(_currentrack);
 
             // try to update the track title label
             StringBuilder sb;
@@ -1404,8 +1406,8 @@ namespace SonyMDRemote
             {
                 if (row.Cells.Count == 0)
                     continue;
-                if (dataGridView1.Rows.IndexOf(row) == dataGridView1.Rows.Count - 1)
-                    continue;
+                //if (dataGridView1.Rows.IndexOf(row) == dataGridView1.Rows.Count - 1)
+                //    continue;
                 DataGridViewCheckBoxCell checkcell = row.Cells[2] as DataGridViewCheckBoxCell;
                 DataGridViewTextBoxCell textcell = row.Cells[1] as DataGridViewTextBoxCell;
                 if (dataGridView1.Rows.IndexOf(row) == 0 && (bool)checkcell.Value == true)

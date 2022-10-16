@@ -59,6 +59,9 @@
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.trackno = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.tracktitle = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.write = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.button15 = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
@@ -70,9 +73,6 @@
             this.label11 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.button17 = new System.Windows.Forms.Button();
-            this.trackno = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.tracktitle = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.write = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -366,6 +366,9 @@
             // 
             // dataGridView1
             // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.AllowUserToResizeRows = false;
             this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -383,6 +386,27 @@
             this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellValueChanged);
             this.dataGridView1.RowHeaderMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_RowHeaderMouseDoubleClick);
             this.dataGridView1.RowValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_RowValidated);
+            // 
+            // trackno
+            // 
+            this.trackno.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.trackno.HeaderText = "Track";
+            this.trackno.Name = "trackno";
+            this.trackno.ReadOnly = true;
+            this.trackno.Width = 60;
+            // 
+            // tracktitle
+            // 
+            this.tracktitle.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.tracktitle.HeaderText = "Name";
+            this.tracktitle.Name = "tracktitle";
+            // 
+            // write
+            // 
+            this.write.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.write.HeaderText = "Write";
+            this.write.Name = "write";
+            this.write.Width = 38;
             // 
             // button15
             // 
@@ -494,27 +518,6 @@
             this.button17.Text = "Clear";
             this.button17.UseVisualStyleBackColor = true;
             this.button17.Click += new System.EventHandler(this.button17_Click);
-            // 
-            // trackno
-            // 
-            this.trackno.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.trackno.HeaderText = "Track";
-            this.trackno.Name = "trackno";
-            this.trackno.ReadOnly = true;
-            this.trackno.Width = 60;
-            // 
-            // tracktitle
-            // 
-            this.tracktitle.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.tracktitle.HeaderText = "Name";
-            this.tracktitle.Name = "tracktitle";
-            // 
-            // write
-            // 
-            this.write.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.write.HeaderText = "Write";
-            this.write.Name = "write";
-            this.write.Width = 38;
             // 
             // SonyMDRemote
             // 
