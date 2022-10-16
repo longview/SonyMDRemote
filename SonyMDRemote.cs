@@ -656,14 +656,17 @@ namespace SonyMDRemote
         byte _currentrack = 1;
         byte _packetlen = 0;
         int _infocounter = -1;
-        byte _currtracklen_min = 0;
-        byte _currtracklen_sec = 0;
+        //byte _currtracklen_min = 0;
+        //byte _currtracklen_sec = 0;
         byte _lasttrackno = 0;
         TimeSpan _remainingrecordtime = new TimeSpan(0);
         string discname;
 
         // list of track names
         IDictionary<int, StringBuilder> tracknames = new Dictionary<int, StringBuilder>();
+
+        // list of track lengths
+        IDictionary<int, TimeSpan> tracklengths = new Dictionary<int, TimeSpan>();
 
         private void serialData_input(byte[] text)
         {
@@ -981,13 +984,16 @@ namespace SonyMDRemote
 
                         ReceivedPlayingTrack(TrackNo);
 
-                        TimeSpan ts_track = new TimeSpan(0, _currtracklen_min, _currtracklen_sec);
+
+                        TimeSpan ts_track;
+                        tracklengths.TryGetValue(_currentrack, out ts_track);
+
                         TimeSpan ts_elapsed = new TimeSpan(0, Min, Sec);
                         TimeSpan remainingtime = ts_track - ts_elapsed;
 
                         AppendLog("MD: Track {0} elapsed time is {1:00}:{2:00}", TrackNo, Min, Sec);
                         label6.Text = String.Format("{0:00}:{1:00}/{2:00}:{3:00} (r: {4:00}:{5:00})", Min, Sec, 
-                            _currtracklen_min, _currtracklen_sec, 
+                            (int)ts_track.TotalMinutes, ts_track.Seconds, 
                             (int)remainingtime.TotalMinutes, remainingtime.Seconds);
                     }
 
@@ -1065,8 +1071,17 @@ namespace SonyMDRemote
                         {
                             byte Min = ArrRep[8];
                             byte Sec = ArrRep[9];
-                            _currtracklen_min = Min;
-                            _currtracklen_sec = Sec;
+
+                            TimeSpan newts = new TimeSpan(0, Min, Sec);
+
+                            TimeSpan ts;
+                            if (tracklengths.TryGetValue(_currentrack, out ts))
+                                ts = newts;
+                            else
+                                tracklengths.Add(_currentrack, newts);
+
+                            //_currtracklen_min = Min;
+                            //_currtracklen_sec = Sec;
                             AppendLog("MD: Current track length is {0:00}:{1:00}", Min, Sec);
                             if (!checkBox2.Checked)
                                 label6.Text = String.Format("{0:00}:{1:00}", Min, Sec);
