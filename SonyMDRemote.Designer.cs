@@ -59,9 +59,6 @@
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.trackno = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.tracktitle = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.write = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.button15 = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
@@ -73,6 +70,10 @@
             this.label11 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.button17 = new System.Windows.Forms.Button();
+            this.trackno = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.tracktitle = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.write = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.length = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -376,7 +377,8 @@
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.trackno,
             this.tracktitle,
-            this.write});
+            this.write,
+            this.length});
             this.dataGridView1.Location = new System.Drawing.Point(296, 39);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.Size = new System.Drawing.Size(492, 342);
@@ -386,27 +388,6 @@
             this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellValueChanged);
             this.dataGridView1.RowHeaderMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_RowHeaderMouseDoubleClick);
             this.dataGridView1.RowValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_RowValidated);
-            // 
-            // trackno
-            // 
-            this.trackno.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.trackno.HeaderText = "Track";
-            this.trackno.Name = "trackno";
-            this.trackno.ReadOnly = true;
-            this.trackno.Width = 60;
-            // 
-            // tracktitle
-            // 
-            this.tracktitle.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.tracktitle.HeaderText = "Name";
-            this.tracktitle.Name = "tracktitle";
-            // 
-            // write
-            // 
-            this.write.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.write.HeaderText = "Write";
-            this.write.Name = "write";
-            this.write.Width = 38;
             // 
             // button15
             // 
@@ -519,6 +500,35 @@
             this.button17.UseVisualStyleBackColor = true;
             this.button17.Click += new System.EventHandler(this.button17_Click);
             // 
+            // trackno
+            // 
+            this.trackno.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.trackno.HeaderText = "Track";
+            this.trackno.Name = "trackno";
+            this.trackno.ReadOnly = true;
+            this.trackno.Width = 60;
+            // 
+            // tracktitle
+            // 
+            this.tracktitle.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.tracktitle.HeaderText = "Name";
+            this.tracktitle.Name = "tracktitle";
+            // 
+            // write
+            // 
+            this.write.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.write.HeaderText = "Write";
+            this.write.Name = "write";
+            this.write.Width = 38;
+            // 
+            // length
+            // 
+            this.length.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.length.HeaderText = "Len";
+            this.length.Name = "length";
+            this.length.ReadOnly = true;
+            this.length.Width = 50;
+            // 
             // SonyMDRemote
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -619,6 +629,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn trackno;
         private System.Windows.Forms.DataGridViewTextBoxColumn tracktitle;
         private System.Windows.Forms.DataGridViewCheckBoxColumn write;
+        private System.Windows.Forms.DataGridViewTextBoxColumn length;
     }
 }
 

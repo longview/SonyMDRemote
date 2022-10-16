@@ -660,6 +660,7 @@ namespace SonyMDRemote
         //byte _currtracklen_sec = 0;
         byte _lasttrackno = 0;
         TimeSpan _remainingrecordtime = new TimeSpan(0);
+        TimeSpan _disclength = new TimeSpan(0);
         string discname;
 
         // list of track names
@@ -1029,6 +1030,8 @@ namespace SonyMDRemote
 
                         byte Min = ArrRep[9];
                         byte Sec = ArrRep[10];
+                        _disclength = new TimeSpan(0, Min, Sec);
+
                         AppendLog("MD: First track is {0}, last track is {1}. Recorded time is {2:00}:{3:00}", FirstTrackNo,LastTrackNo,Min,Sec);
                         label4.Text = String.Format("{0} tracks ({1}-{2}; {3:00}:{4:00}; {5:00}:{6:00} remaining)", 
                             1+LastTrackNo-FirstTrackNo, 
@@ -1084,7 +1087,7 @@ namespace SonyMDRemote
                             //_currtracklen_sec = Sec;
                             AppendLog("MD: Current track length is {0:00}:{1:00}", Min, Sec);
                             if (!checkBox2.Checked)
-                                label6.Text = String.Format("{0:00}:{1:00}", Min, Sec);
+                                label6.Text = GetTrackLenFormatted(_currentrack);
                         }
                     }
 
@@ -1171,17 +1174,30 @@ namespace SonyMDRemote
                 label8.Text = sb.ToString();
         }
 
+        private string GetTrackLenFormatted(int key)
+        {
+            if (key == 0)
+                return String.Format("{0:00}:{1:00}", (int)_disclength.TotalMinutes, (int)_disclength.Seconds);
+
+            TimeSpan ts;
+            if (tracklengths.TryGetValue(key, out ts))
+                return String.Format("{0:00}:{1:00}", (int)ts.TotalMinutes, (int)ts.Seconds);
+            else
+                return "";
+        }
+
         // convert our populated track-name index when a full disc title sequence has been received
         private void UpdateDataGrid()
         {
             dataGridView1.Rows.Clear();
 
             // first index is disc name, this also makes the track and array indices line up
-            dataGridView1.Rows.Add("Disc", discname, discname.Length == 0 ? true : false);
+            dataGridView1.Rows.Add("Disc", discname, discname.Length == 0 ? true : false, GetTrackLenFormatted(0));
 
             foreach (var track in tracknames)
             {
-                dataGridView1.Rows.Add(track.Key, track.Value.ToString(), track.Value.ToString().Length == 0 ? true : false);
+
+                dataGridView1.Rows.Add(track.Key, track.Value.ToString(), track.Value.ToString().Length == 0 ? true : false, GetTrackLenFormatted(track.Key));
             }
 
             UpdateDataGridBold(_currentrack);
@@ -1193,8 +1209,17 @@ namespace SonyMDRemote
         {
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
-                if (row.Cells.Count == 0 || dataGridView1.Rows.IndexOf(row) == 0)
+                if (dataGridView1.Rows.IndexOf(row) == 0)
+                {
+                    row.Cells[3].Value = GetTrackLenFormatted(0);
                     continue;
+                }
+
+                if (row.Cells.Count == 0)
+                    continue;
+
+                row.Cells[3].Value = GetTrackLenFormatted((int)row.Cells[0].Value);
+
                 if (row.Cells[0].Value != null && (int)row.Cells[0].Value == trackplaying)
                 {
                     row.Cells[0].Style.Font = new Font(DefaultFont, FontStyle.Bold);
