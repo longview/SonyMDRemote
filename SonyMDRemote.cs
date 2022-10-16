@@ -1484,5 +1484,6 @@ namespace SonyMDRemote
         {
             richTextBox_Log.Clear();
         }
+
     }
 }
