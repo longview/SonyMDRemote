@@ -1582,7 +1582,7 @@ namespace SonyMDRemote
             UpdateDataGrid();
             timer_Poll_GetInfo.Enabled = false;
             // set focus to currently playing track
-            UpdateDataGridBold(_currentrack, setfocus: true);
+            UpdateDataGridBold(_currentrack, setfocus: false);
         }
 
         private void checkBox3_CheckedChanged(object sender, EventArgs e)
