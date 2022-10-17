@@ -41,6 +41,7 @@ namespace SonyMDRemote
         TimeSpan _disclength = new TimeSpan(0);
         string discname;
         MDS_Status_D1 playbackstatus = MDS_Status_D1.reserved;
+        MDS_Status_D1 lastplaybackstatus = MDS_Status_D1.reserved;
 
         string laststatusstr = String.Empty;
         string lastrptstr = String.Empty;
@@ -325,7 +326,9 @@ namespace SonyMDRemote
                             discname = "No Disc";
                             label7_disctitle.Text = "No Disc";
                             _currentrack = 0;
-                            
+                            if (lastplaybackstatus != MDS_Status_D1.EJECT)
+                                tracklengths.Clear();
+                            lastplaybackstatus = playbackstatus;
                         }
                     }
 
