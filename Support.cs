@@ -29,6 +29,7 @@ namespace SonyMDRemote
 
             float minsize = 12;
 
+            // even more fudge, ideally we should store this somewhere in the object
             if (lab.Equals(label7_disctitle))
                 minsize = 9.5f;
 
