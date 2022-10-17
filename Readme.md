@@ -144,11 +144,13 @@ File naming convention may change and is only defined to allow a potential autom
 
 	SonyMDTracklist_<disctitle>_<timestamp>_.txt
 
+Timespans are whatever .NET TimeSpan.Parse() will eat, for example HH:MM:SS; MM:SS will likely not work since it will be taken to be HH:MM.
+
 Line 1 is a header containing information, this is logged upon reading but is not parsed.
 
 Line 2 is the disc title and length information. The disc length is parsed and may be used with the title to e.g. match a set of track datas to "fingerprint" a disc to autoload the track data from file.
 
-	Disc Title <TAB> (Disc length in format MMM:SS, zero pad) <TAB> (Disc free time in format MMM:SS, zero pad)
+	Disc Title <TAB> (Disc length) <TAB> (Disc free time)
 
 Disc length and remaining free time is optional and can be skipped, in this case drop the tabs.
 
@@ -156,10 +158,21 @@ Lines past 2 follow the general format:
 
 	Track Index (1 index) <TAB> Track Name <TAB> (Track length in format MMM:SS, zero pad)
 
-Track lengths are read and parsed, but are not mandatory, if the second Tab character is not present in the line the track length is considered to be unknown.
+Track lengths are read and parsed, but are not mandatory, if the second Tab character is not present in the line the track length is considered to be unknown. 
+
+Track index is included for compatibility with weird discs that may not start at track 1, it is to be considered optional.
 
 For example for a 1-track disc:
 
 	Track listing exported 2022-10-17T22:43:00 by LA2YUA SonyMDRemote v0.4a-dev/<build timetamp>\r\n
 	My Cool MixDisc<TAB>069:42<TAB>010:20\r\n
 	1<TAB>Cool Track / Awesome Artist<TAB>004:20\r\n
+
+But this should also work:
+
+	<whatever/empty>
+	My MixDisc
+	Cool Song / Cool Guy
+	Cool Song / Awesome Remix
+
+Corresponding to a 2-track disc named "My MixDisc." Empty lines are allowed for track titles and track names, but not sure why you'd do that.
