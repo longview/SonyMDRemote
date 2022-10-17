@@ -18,10 +18,20 @@ namespace SonyMDRemote
             InitializeComponent();
 
             string builddate = Properties.Resources.BuildDate;
+            try
+            {
+                DateTime builddate_parsed = DateTime.Parse(builddate);
+                builddate = builddate_parsed.ToString("s");
+            }
+            catch
+            {
+                
+            }
+            
 
             label1.Text = String.Format("LA2YUA SonyMDRemote {0} {1}", VersionString, ReleaseString);
 #if LOGGING
-            label1.Text = String.Format("LA2YUA SonyMDRemote {0} {1} built {2}", VersionString, ReleaseString, builddate);
+            label1.Text = String.Format("LA2YUA SonyMDRemote {0} {1}/{2}", VersionString, ReleaseString, builddate);
             string logfilename = String.Format("Log_{0}.txt", DateTime.UtcNow.ToString("o").Replace(':', '_'));
             logfile = new StreamWriter(logfilename, append: true);
             if (logfile == null)
@@ -85,9 +95,9 @@ namespace SonyMDRemote
         string VersionString = "v0.4a";
 
 #if LOGGING
-        string ReleaseString = "debug build";
+        string ReleaseString = "debug";
 #elif !LOGGING
-        string ReleaseString = "release build";
+        string ReleaseString = "release";
 #endif
 
         StreamWriter logfile;
