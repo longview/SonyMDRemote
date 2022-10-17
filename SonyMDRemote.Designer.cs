@@ -78,6 +78,7 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -85,6 +86,7 @@
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            this.tableLayoutPanel4.SuspendLayout();
             this.SuspendLayout();
             // 
             // richTextBox_Log
@@ -106,9 +108,9 @@
             // comboBox1_Serial_Port
             // 
             this.comboBox1_Serial_Port.FormattingEnabled = true;
-            this.comboBox1_Serial_Port.Location = new System.Drawing.Point(619, 13);
+            this.comboBox1_Serial_Port.Location = new System.Drawing.Point(330, 3);
             this.comboBox1_Serial_Port.Name = "comboBox1_Serial_Port";
-            this.comboBox1_Serial_Port.Size = new System.Drawing.Size(88, 21);
+            this.comboBox1_Serial_Port.Size = new System.Drawing.Size(57, 21);
             this.comboBox1_Serial_Port.TabIndex = 1;
             // 
             // timer1_Maintenance
@@ -119,7 +121,7 @@
             // 
             // button_Serial_Connect
             // 
-            this.button_Serial_Connect.Location = new System.Drawing.Point(713, 12);
+            this.button_Serial_Connect.Location = new System.Drawing.Point(393, 3);
             this.button_Serial_Connect.Name = "button_Serial_Connect";
             this.button_Serial_Connect.Size = new System.Drawing.Size(75, 23);
             this.button_Serial_Connect.TabIndex = 3;
@@ -245,9 +247,9 @@
             // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(319, 12);
+            this.button10.Location = new System.Drawing.Point(3, 3);
             this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(75, 23);
+            this.button10.Size = new System.Drawing.Size(67, 23);
             this.button10.TabIndex = 15;
             this.button10.Text = "Get Info";
             this.button10.UseVisualStyleBackColor = true;
@@ -371,9 +373,9 @@
             this.tracktitle,
             this.write,
             this.length});
-            this.dataGridView1.Location = new System.Drawing.Point(319, 39);
+            this.dataGridView1.Location = new System.Drawing.Point(319, 42);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(473, 372);
+            this.dataGridView1.Size = new System.Drawing.Size(473, 369);
             this.dataGridView1.TabIndex = 26;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentDoubleClick);
@@ -413,7 +415,7 @@
             // 
             // button15
             // 
-            this.button15.Location = new System.Drawing.Point(400, 12);
+            this.button15.Location = new System.Drawing.Point(76, 3);
             this.button15.Name = "button15";
             this.button15.Size = new System.Drawing.Size(46, 23);
             this.button15.TabIndex = 15;
@@ -464,7 +466,7 @@
             // 
             // button16
             // 
-            this.button16.Location = new System.Drawing.Point(517, 12);
+            this.button16.Location = new System.Drawing.Point(214, 3);
             this.button16.Name = "button16";
             this.button16.Size = new System.Drawing.Size(75, 23);
             this.button16.TabIndex = 31;
@@ -475,9 +477,10 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(452, 17);
+            this.label10.Location = new System.Drawing.Point(128, 0);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(59, 13);
+            this.label10.Padding = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this.label10.Size = new System.Drawing.Size(59, 19);
             this.label10.TabIndex = 32;
             this.label10.Text = "TOC Clean";
             // 
@@ -625,6 +628,28 @@
             this.tableLayoutPanel2.Size = new System.Drawing.Size(289, 58);
             this.tableLayoutPanel2.TabIndex = 40;
             // 
+            // tableLayoutPanel4
+            // 
+            this.tableLayoutPanel4.ColumnCount = 6;
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 86F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 116F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 63F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 83F));
+            this.tableLayoutPanel4.Controls.Add(this.button10, 0, 0);
+            this.tableLayoutPanel4.Controls.Add(this.button15, 1, 0);
+            this.tableLayoutPanel4.Controls.Add(this.label10, 2, 0);
+            this.tableLayoutPanel4.Controls.Add(this.button16, 3, 0);
+            this.tableLayoutPanel4.Controls.Add(this.comboBox1_Serial_Port, 4, 0);
+            this.tableLayoutPanel4.Controls.Add(this.button_Serial_Connect, 5, 0);
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(319, 12);
+            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
+            this.tableLayoutPanel4.RowCount = 1;
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(473, 34);
+            this.tableLayoutPanel4.TabIndex = 41;
+            // 
             // SonyMDRemote
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -633,15 +658,10 @@
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.button17);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.button16);
             this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.button15);
-            this.Controls.Add(this.button10);
-            this.Controls.Add(this.button_Serial_Connect);
-            this.Controls.Add(this.comboBox1_Serial_Port);
             this.Controls.Add(this.richTextBox_Log);
             this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.tableLayoutPanel4);
             this.MinimumSize = new System.Drawing.Size(820, 635);
             this.Name = "SonyMDRemote";
             this.Text = "LA2YUA SonyMDRemote";
@@ -658,8 +678,9 @@
             this.tableLayoutPanel3.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
+            this.tableLayoutPanel4.ResumeLayout(false);
+            this.tableLayoutPanel4.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -714,6 +735,7 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
     }
 }
 
