@@ -17,8 +17,11 @@ namespace SonyMDRemote
         {
             InitializeComponent();
 
+            string builddate = Properties.Resources.BuildDate;
+
             label1.Text = String.Format("LA2YUA SonyMDRemote {0} {1}", VersionString, ReleaseString);
 #if LOGGING
+            label1.Text = String.Format("LA2YUA SonyMDRemote {0} {1} built {2}", VersionString, ReleaseString, builddate);
             string logfilename = String.Format("Log_{0}.txt", DateTime.UtcNow.ToString("o").Replace(':', '_'));
             logfile = new StreamWriter(logfilename, append: true);
             if (logfile == null)
@@ -36,7 +39,7 @@ namespace SonyMDRemote
             logfile.AutoFlush = true;
             logfile_cmd.AutoFlush = true;
 #endif
-            AppendLog("Program start version {0} {1}", VersionString, ReleaseString);
+            AppendLog("Program start version {0} {1} built {2}", VersionString, ReleaseString, builddate);
             AppendLog("See https://github.com/longview/SonyMDRemote for the latest release.");
             AppendCmdLog("Program start version {0} {1}", VersionString, ReleaseString);
             AppendLog("Hint: select a COM port and hit Get Info to start everything");
