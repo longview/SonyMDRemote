@@ -111,6 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="img\gui2.png" />
+    <Content Include="img\guiv4.PNG" />
     <Content Include="Resources\BuildDate.txt" />
   </ItemGroup>
   <ItemGroup>

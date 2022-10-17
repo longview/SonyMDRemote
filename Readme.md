@@ -6,7 +6,7 @@ The goal is to replace the older SonyMDRemote program, which doesn't really work
 See the Docs folder for the protocol specifications if you want to help.
 Currently targets .NET 4.7.2
 
-![UI Screenshot](img/guiv4.png)
+![UI Screenshot](img/guiv4.PNG)
 
 See also my previous blog post on my E12: [Adding Optical I/O to the Sony MDS-E12 MiniDisc Recorder](http://longview.be/adding-optical-io-to-the-sony-mds-e12-minidisc-recorder.html).
 
