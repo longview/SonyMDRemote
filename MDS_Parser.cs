@@ -374,7 +374,7 @@ namespace SonyMDRemote
                     {
                         string modelname = TrimNonAscii(DecodeAscii(ref ArrRep, 6));
                         AppendLog("MD: Model is {0}", modelname);
-                        label9.Text = "Sony " + modelname;
+                        groupBox1.Text = "Sony " + modelname;
                     }
 
                     // 7.14 REC DATE DATA

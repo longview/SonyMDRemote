@@ -658,11 +658,11 @@ namespace SonyMDRemote
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
             DoUpdateTask();
-
+            /*
             if (checkBox2_Elapsed.Checked)
                 progressBar1.Visible = true;
             else
-                progressBar1.Visible = false;
+                progressBar1.Visible = false;*/
         }
 
         // this timer is continuously reset whenever a track title message is received
