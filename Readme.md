@@ -134,3 +134,32 @@ The actual fields are:
 	0x20 0x62 0x01 TrackNo Min Sec
 
 Further, requesting an invalid track number puts 0xFF in all fields from TrackNo and out.
+
+# Track List File Format
+Track lists are stored as .txt files. The format is whatever C# uses as default, probably Unicode. You shouldn't actually put Unicode in MD titles, it won't work. Characters outside the MD character set may cause glitches if they are multi-byte, unsupported characters will be changed to spaces upon writing to the MD.
+
+Newline character is CRLF, Windows standard.
+
+File naming convention may change and is only defined to allow a potential automatic loading upon disc insertion.
+
+	SonyMDTracklist_<disctitle>_<timestamp>_.txt
+
+Line 1 is a header containing information, this is logged upon reading but is not parsed.
+
+Line 2 is the disc title and length information. The disc length is parsed and may be used with the title to e.g. match a set of track datas to "fingerprint" a disc to autoload the track data from file.
+
+	Disc Title <TAB> (Disc length in format MMM:SS, zero pad) <TAB> (Disc free time in format MMM:SS, zero pad)
+
+Disc length and remaining free time is optional and can be skipped, in this case drop the tabs.
+
+Lines past 2 follow the general format:
+
+	Track Index (1 index) <TAB> Track Name <TAB> (Track length in format MMM:SS, zero pad)
+
+Track lengths are read and parsed, but are not mandatory, if the second Tab character is not present in the line the track length is considered to be unknown.
+
+For example for a 1-track disc:
+
+	Track listing exported 2022-10-17T22:43:00 by LA2YUA SonyMDRemote v0.4a-dev/<build timetamp>\r\n
+	My Cool MixDisc<TAB>069:42<TAB>010:20\r\n
+	1<TAB>Cool Track / Awesome Artist<TAB>004:20\r\n
