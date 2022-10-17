@@ -43,6 +43,8 @@ Release builds limits the log scrollback to around 200-400 lines to avoid balloo
 * Check of maximum track name length - seems to have a lot of room but would have to really dig into the MD format to figure it out properly
 * Might try to abstract some of the UI and command handling, more work but will make the UI update a bit less jittery and make future work easier
 * May want to invalidate some data when the disc is ejected, and re-acquire the data when a new disc is inserted, for now it's on the user to hit Get Info again if changing discs.
+* Save/restore of track names to file, could be useful for duplication or creation of large discs
+* (Maybe) Store track lengths automatically and reload based on disc title?
 
 ## Not really working:
 * Write-protection detection seems broken? Can't find a way to detect that using the documented commands.
