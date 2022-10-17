@@ -43,7 +43,7 @@
             this.button7 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.label3_playstatusindicator = new System.Windows.Forms.Label();
             this.button9 = new System.Windows.Forms.Button();
             this.button10 = new System.Windows.Forms.Button();
             this.button11 = new System.Windows.Forms.Button();
@@ -212,16 +212,16 @@
             this.label2.Text = "Track -/-";
             this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
-            // label3
+            // label3_playstatusindicator
             // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(12, 36);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(38, 20);
-            this.label3.TabIndex = 13;
-            this.label3.Text = "Play";
-            this.label3.Click += new System.EventHandler(this.label3_Click);
+            this.label3_playstatusindicator.AutoSize = true;
+            this.label3_playstatusindicator.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3_playstatusindicator.Location = new System.Drawing.Point(12, 36);
+            this.label3_playstatusindicator.Name = "label3_playstatusindicator";
+            this.label3_playstatusindicator.Size = new System.Drawing.Size(38, 20);
+            this.label3_playstatusindicator.TabIndex = 13;
+            this.label3_playstatusindicator.Text = "N/A";
+            this.label3_playstatusindicator.Click += new System.EventHandler(this.label3_Click);
             // 
             // button9
             // 
@@ -557,7 +557,7 @@
             this.Controls.Add(this.button15);
             this.Controls.Add(this.button10);
             this.Controls.Add(this.button9);
-            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label3_playstatusindicator);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.button8);
             this.Controls.Add(this.button7);
@@ -599,7 +599,7 @@
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label3_playstatusindicator;
         private System.Windows.Forms.Button button9;
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Button button11;

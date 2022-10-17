@@ -199,25 +199,31 @@ namespace SonyMDRemote
                             case 0x0:
                                 playbackstatus = MDS_Status_D1.STOP;
                                 playbackstatusstr = "Stop";
+                                label3_playstatusindicator.ForeColor = Color.Black;
                                 break;
                             case 0x1:
                                 playbackstatus = MDS_Status_D1.PLAY;
                                 playbackstatusstr = "Play";
+                                label3_playstatusindicator.ForeColor = Color.Green;
                                 break;
                             case 0x2:
                                 playbackstatus = MDS_Status_D1.PAUSE;
                                 playbackstatusstr = "Pause";
+                                label3_playstatusindicator.ForeColor = Color.Orange;
                                 break;
                             case 0x3:
                                 playbackstatus = MDS_Status_D1.EJECT;
                                 playbackstatusstr = "Eject";
+                                label3_playstatusindicator.ForeColor = Color.Black;
                                 break;
                             case 0x4:
                                 playbackstatus = MDS_Status_D1.REC_PLAY;
                                 playbackstatusstr = "Rec. Play";
+                                label3_playstatusindicator.ForeColor = Color.Red;
                                 break;
                             case 0x5:
                                 playbackstatus = MDS_Status_D1.REC_PAUSE;
+                                label3_playstatusindicator.ForeColor = Color.OrangeRed;
                                 playbackstatusstr = "Rec. Pause";
                                 break;
                             case 0x6:
@@ -227,7 +233,7 @@ namespace SonyMDRemote
 
                         }
 
-                        label3.Text = playbackstatusstr;
+                        label3_playstatusindicator.Text = playbackstatusstr;
 
                         toc_read_done = IsBitSet(Data2, 7);
                         bool rec_possible = IsBitSet(Data2, 5);
