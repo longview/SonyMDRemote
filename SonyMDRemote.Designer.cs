@@ -81,6 +81,8 @@
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
+            this.linkLabel_savetracks = new System.Windows.Forms.LinkLabel();
+            this.linkLabel_loadtracks = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -386,7 +388,7 @@
             this.length});
             this.dataGridView1.Location = new System.Drawing.Point(319, 42);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(473, 369);
+            this.dataGridView1.Size = new System.Drawing.Size(473, 354);
             this.dataGridView1.TabIndex = 26;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentDoubleClick);
@@ -681,11 +683,33 @@
             this.tableLayoutPanel4.Size = new System.Drawing.Size(473, 34);
             this.tableLayoutPanel4.TabIndex = 41;
             // 
+            // linkLabel_savetracks
+            // 
+            this.linkLabel_savetracks.AutoSize = true;
+            this.linkLabel_savetracks.Location = new System.Drawing.Point(728, 399);
+            this.linkLabel_savetracks.Name = "linkLabel_savetracks";
+            this.linkLabel_savetracks.Size = new System.Drawing.Size(64, 13);
+            this.linkLabel_savetracks.TabIndex = 42;
+            this.linkLabel_savetracks.TabStop = true;
+            this.linkLabel_savetracks.Text = "Save tracks";
+            // 
+            // linkLabel_loadtracks
+            // 
+            this.linkLabel_loadtracks.AutoSize = true;
+            this.linkLabel_loadtracks.Location = new System.Drawing.Point(658, 399);
+            this.linkLabel_loadtracks.Name = "linkLabel_loadtracks";
+            this.linkLabel_loadtracks.Size = new System.Drawing.Size(63, 13);
+            this.linkLabel_loadtracks.TabIndex = 43;
+            this.linkLabel_loadtracks.TabStop = true;
+            this.linkLabel_loadtracks.Text = "Load tracks";
+            // 
             // SonyMDRemote
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(804, 596);
+            this.Controls.Add(this.linkLabel_loadtracks);
+            this.Controls.Add(this.linkLabel_savetracks);
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.button17);
@@ -714,6 +738,7 @@
             this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel4.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -771,6 +796,8 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.LinkLabel linkLabel_savetracks;
+        private System.Windows.Forms.LinkLabel linkLabel_loadtracks;
     }
 }
 
