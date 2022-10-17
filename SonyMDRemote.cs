@@ -749,5 +749,20 @@ namespace SonyMDRemote
         {
 
         }
+
+        private void label7_disctitle_TextChanged(object sender, EventArgs e)
+        {
+            scaleFont((Label)sender);
+        }
+
+        private void label8_TextChanged(object sender, EventArgs e)
+        {
+            scaleFont((Label)sender);
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+            scaleFont((Label)sender);
+        }
     }
 }

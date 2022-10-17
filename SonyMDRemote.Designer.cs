@@ -74,6 +74,8 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label12_timestamp = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
@@ -82,6 +84,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox1.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -227,10 +231,10 @@
             // label3_playstatusindicator
             // 
             this.label3_playstatusindicator.AutoSize = true;
-            this.label3_playstatusindicator.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3_playstatusindicator.Font = new System.Drawing.Font("Segoe UI Black", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3_playstatusindicator.Location = new System.Drawing.Point(6, 16);
             this.label3_playstatusindicator.Name = "label3_playstatusindicator";
-            this.label3_playstatusindicator.Size = new System.Drawing.Size(38, 20);
+            this.label3_playstatusindicator.Size = new System.Drawing.Size(50, 25);
             this.label3_playstatusindicator.TabIndex = 13;
             this.label3_playstatusindicator.Text = "N/A";
             this.label3_playstatusindicator.Click += new System.EventHandler(this.label3_Click);
@@ -332,7 +336,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(75, 116);
+            this.label6.Location = new System.Drawing.Point(102, 116);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(74, 16);
             this.label6.TabIndex = 23;
@@ -340,24 +344,31 @@
             // 
             // label7_disctitle
             // 
-            this.label7_disctitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7_disctitle.Location = new System.Drawing.Point(50, 16);
+            this.label7_disctitle.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label7_disctitle.Font = new System.Drawing.Font("Segoe UI Black", 9.5F, System.Drawing.FontStyle.Bold);
+            this.label7_disctitle.Location = new System.Drawing.Point(6, 12);
             this.label7_disctitle.Name = "label7_disctitle";
-            this.label7_disctitle.Size = new System.Drawing.Size(245, 47);
+            this.label7_disctitle.Size = new System.Drawing.Size(199, 35);
             this.label7_disctitle.TabIndex = 24;
-            this.label7_disctitle.Text = "Disc Name";
+            this.label7_disctitle.Text = "Disc\r\nName\r\n";
             this.label7_disctitle.TextAlign = System.Drawing.ContentAlignment.BottomRight;
-            this.label7_disctitle.Click += new System.EventHandler(this.label7_Click);
+            this.label7_disctitle.TextChanged += new System.EventHandler(this.label7_disctitle_TextChanged);
             // 
             // label8
             // 
+            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label8.Cursor = System.Windows.Forms.Cursors.Default;
-            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(6, 62);
+            this.label8.Font = new System.Drawing.Font("Segoe UI Black", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.Location = new System.Drawing.Point(6, 16);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(289, 50);
+            this.label8.Size = new System.Drawing.Size(292, 50);
             this.label8.TabIndex = 25;
-            this.label8.Text = "Track Title";
+            this.label8.Text = "Track Title\r\nTrack Title";
+            this.label8.TextChanged += new System.EventHandler(this.label8_TextChanged);
             // 
             // dataGridView1
             // 
@@ -520,10 +531,10 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(9, 169);
+            this.progressBar1.Location = new System.Drawing.Point(9, 167);
             this.progressBar1.Maximum = 1000;
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(289, 17);
+            this.progressBar1.Size = new System.Drawing.Size(286, 19);
             this.progressBar1.TabIndex = 36;
             // 
             // label12_timestamp
@@ -538,21 +549,41 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.groupBox3);
             this.groupBox1.Controls.Add(this.label12_timestamp);
             this.groupBox1.Controls.Add(this.progressBar1);
             this.groupBox1.Controls.Add(this.label3_playstatusindicator);
-            this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.label11);
             this.groupBox1.Controls.Add(this.label6);
-            this.groupBox1.Controls.Add(this.label7_disctitle);
+            this.groupBox1.Controls.Add(this.groupBox4);
             this.groupBox1.Location = new System.Drawing.Point(12, 10);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(301, 192);
             this.groupBox1.TabIndex = 38;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Sony";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.label7_disctitle);
+            this.groupBox3.Location = new System.Drawing.Point(90, 0);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(211, 50);
+            this.groupBox3.TabIndex = 42;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Disc";
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.label8);
+            this.groupBox4.Location = new System.Drawing.Point(0, 42);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(301, 71);
+            this.groupBox4.TabIndex = 42;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Track";
             // 
             // groupBox2
             // 
@@ -660,8 +691,8 @@
             this.Controls.Add(this.button17);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.richTextBox_Log);
-            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.tableLayoutPanel4);
+            this.Controls.Add(this.groupBox1);
             this.MinimumSize = new System.Drawing.Size(820, 635);
             this.Name = "SonyMDRemote";
             this.Text = "LA2YUA SonyMDRemote";
@@ -671,6 +702,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
@@ -736,6 +769,8 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.GroupBox groupBox4;
     }
 }
 
