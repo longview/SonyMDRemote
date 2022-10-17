@@ -17,15 +17,16 @@ namespace SonyMDRemote
         {
             InitializeComponent();
 
-            string builddate = Properties.Resources.BuildDate;
+            string builddate = "";
             try
             {
+                builddate =  Properties.Resources.BuildDate;
                 DateTime builddate_parsed = DateTime.Parse(builddate);
                 builddate = builddate_parsed.ToString("s");
             }
             catch
             {
-                
+                builddate = "Unknown build time";
             }
             
 
