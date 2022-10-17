@@ -48,7 +48,23 @@ Release builds limits the log scrollback to around 200-400 lines to avoid balloo
 * Write-protection detection seems broken? Can't find a way to detect that using the documented commands.
 * Repeat-modes don't work on my unit
 
-## Vague Ideas
+## Will likely not be supported:
+* Recording
+* Track splitting/editing
+
+I usually just use the autoqueue feature for record so track splits are good right away, and adding track splitting seems complicated.
+
+## Vague Ideas & Thoughts
+### Track Record Dates
+I think this feature is relatively obscure - I didn't realize this was recorded by default as long as the clock is set. Not sure how many recorders have RTC's either so might narrow down what type of recorder was used.
+
+I don't think the E12 even displays this unless you have a remote or keyboard hooked up to hit the right button, the manual was entirely vague on if it can be accessed from the front panel.
+
+Note that when the E12 battery dies, it will start counting the time from some time in the year 2000, but it will seemingly not record these dates unless you set the time manually again.
+
+It's interesting to find that my exact copy of Retro Grooves Vol.3 was apparently recorded on the 21st of November 2018, at around 7 in the morning local time.
+
+### Obsoleting This Project
 Making an ESP-based device that could sit inside the MD recorder, put in a web-interface to replace this project. 
 
 The cleanest mod would be to re-route the cable that goes to the RS-232/Parallel card into a new PCA with the ESP on it. One of the relay connector holes could be repurposed for the Wi-Fi antenna, the RS-232 and parallel D-Subs could be plugged or taped over.
@@ -59,11 +75,7 @@ Doing that would also get you free access to the parallel switch I/O's.
 
 ![CNT board schematics](img/cnt_board.PNG)
 
-## Will likely not be supported:
-* Recording
-* Track splitting/editing
 
-I usually just use the autoqueue feature for record so track splits are good right away, and adding track splitting seems complicated.
 
 ## Documentation & Player Bugs
 Here's what I got so far for erratas.
