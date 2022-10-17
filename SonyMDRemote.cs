@@ -17,6 +17,11 @@ namespace SonyMDRemote
         {
             InitializeComponent();
 
+            // add the mouse-down handler to all element to allow the nav-keys to work anywhere
+            AllSubControls(this).OfType<Control>().ToList()
+                .ForEach(o => o.MouseDown += SonyMDRemote_MouseDown);
+
+
             string builddate = "";
             try
             {

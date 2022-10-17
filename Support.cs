@@ -38,6 +38,14 @@ namespace SonyMDRemote
                 newSize = minsize; // set a minimum and hope multi-line wrapping is enough
             lab.Font = new Font(lab.Font.FontFamily, newSize, lab.Font.Style);
         }
+
+        // https://stackoverflow.com/questions/15186828/loop-through-all-controls-of-a-form-even-those-in-groupboxes
+        private static IEnumerable<Control> AllSubControls(Control control)
+                    => Enumerable.Repeat(control, 1)
+                        .Union(control.Controls.OfType<Control>()
+                              .SelectMany(AllSubControls)
+             );
+
         public bool ByteEquality(byte[] a1, byte[] b1)
         {
             int i;
