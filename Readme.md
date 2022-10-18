@@ -164,7 +164,7 @@ Track index is included for compatibility with weird discs that may not start at
 
 For example for a 1-track disc:
 
-	Track listing exported 2022-10-17T22:43:00 by LA2YUA SonyMDRemote v0.4a-dev/<build timetamp>\r\n
+	Track listing exported 2022-10-17T22:43:00 by LA2YUA SonyMDRemote v0.4a-dev\r\n
 	My Cool MixDisc<TAB>069:42<TAB>010:20\r\n
 	1<TAB>Cool Track / Awesome Artist<TAB>004:20\r\n
 
