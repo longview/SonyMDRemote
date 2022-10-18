@@ -536,7 +536,8 @@ namespace SonyMDRemote
 
             // dump all these in the priority queue to get them out before the track change
             // these will be executed before any non priority commands regardless of state
-            Transmit_MDS_Message(MDS_TX_SetPowerOn, batch: true, priorityqueue: true, delay: 100);
+
+            //Transmit_MDS_Message(MDS_TX_SetPowerOn, batch: true, priorityqueue: true, delay: 100); // should only be issued for E11/E52 models
             Transmit_MDS_Message(MDS_TX_SetRemoteOn, batch: true, priorityqueue: true, delay: 100);
             Transmit_MDS_Message(MDS_TX_DisableElapsedTimeTransmit, batch: true, priorityqueue: true, delay: 100);
             Transmit_MDS_Message(MDS_TX_ReqStatus, batch: true, priorityqueue: true, delay: 100);
