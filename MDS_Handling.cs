@@ -18,6 +18,10 @@ namespace SonyMDRemote
         readonly byte[] MDS_TX_SetRemoteOn = new byte[] { 0x10, 0x03 };
         readonly byte[] MDS_TX_SetRemoteOff = new byte[] { 0x10, 0x04 };
 
+        // 6.3 POWER (MDS-E11/E52 only)
+        readonly byte[] MDS_TX_SetPowerOn = new byte[] { 0x01, 0x02 };
+        readonly byte[] MDS_TX_SetPowerOff = new byte[] { 0x01, 0x03 };
+
         readonly byte[] MDS_TX_ReqStatus = new byte[] { 0x20, 0x20 };
         readonly byte[] MDS_TX_ReqDiscData = new byte[] { 0x20, 0x21 };
         readonly byte[] MDS_TX_ReqModelName = new byte[] { 0x20, 0x22 };

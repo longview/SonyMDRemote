@@ -536,6 +536,7 @@ namespace SonyMDRemote
 
             // dump all these in the priority queue to get them out before the track change
             // these will be executed before any non priority commands regardless of state
+            Transmit_MDS_Message(MDS_TX_SetPowerOn, batch: true, priorityqueue: true, delay: 100);
             Transmit_MDS_Message(MDS_TX_SetRemoteOn, batch: true, priorityqueue: true, delay: 100);
             Transmit_MDS_Message(MDS_TX_DisableElapsedTimeTransmit, batch: true, priorityqueue: true, delay: 100);
             Transmit_MDS_Message(MDS_TX_ReqStatus, batch: true, priorityqueue: true, delay: 100);
@@ -801,6 +802,16 @@ namespace SonyMDRemote
             }
 
 
+        }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Transmit_MDS_Message(MDS_TX_SetPowerOff);
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Transmit_MDS_Message(MDS_TX_SetPowerOn);
         }
     }
 }
