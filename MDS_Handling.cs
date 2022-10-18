@@ -313,13 +313,14 @@ namespace SonyMDRemote
             timer_Poll_Time.Interval = nextcommand.Item2;
         }
 
-        private bool ExportTrackListing(ref IDictionary<int, StringBuilder> tracknames, ref IDictionary<int, TimeSpan> tracklengths, string discname, TimeSpan disclength, TimeSpan remainingrecordtime)
+        private bool ExportTrackListing(ref IDictionary<int, StringBuilder> tracknames, ref IDictionary<int, TimeSpan> tracklengths,
+            string discname, TimeSpan disclength, TimeSpan remainingrecordtime, string outputfilename)
         {
             StreamWriter outputfile;
-            string outputfilename = String.Format("SonyMDTracklist_{1}_{0}.txt", DateTime.UtcNow.ToString("o").Replace(':', '_'), discname);
+            
             outputfile = new StreamWriter(outputfilename, append: false);
 
-            outputfile.WriteLine(String.Format("Track listing exported on {0} by LA2YUA SonyMDRemote {1}{2}", DateTime.UtcNow.ToString("o"),
+            outputfile.WriteLine(String.Format("Track listing exported on {0} by LA2YUA SonyMDRemote {1} {2}", DateTime.UtcNow.ToString("o"),
                 VersionString, ReleaseString));
 
             outputfile.WriteLine(String.Format("{0}\t{1}\t{2}", discname, disclength.ToString(), remainingrecordtime.ToString()));

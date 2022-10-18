@@ -84,6 +84,7 @@
             this.linkLabel_savetracks = new System.Windows.Forms.LinkLabel();
             this.linkLabel_loadtracks = new System.Windows.Forms.LinkLabel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -807,6 +808,7 @@
         private System.Windows.Forms.LinkLabel linkLabel_savetracks;
         private System.Windows.Forms.LinkLabel linkLabel_loadtracks;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
     }
 }
 

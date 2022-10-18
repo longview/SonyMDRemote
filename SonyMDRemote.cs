@@ -72,6 +72,7 @@ namespace SonyMDRemote
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(comboBox1_SelectedIndexChanged);
 
             openFileDialog1.InitialDirectory = Directory.GetCurrentDirectory();
+            saveFileDialog1.InitialDirectory = Directory.GetCurrentDirectory();
 
             SendMessage(progressBar1.Handle,
               0x400 + 16, //WM_USER + PBM_SETSTATE
@@ -774,8 +775,17 @@ namespace SonyMDRemote
 
         private void linkLabel_savetracks_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            if (ExportTrackListing(ref tracknames, ref tracklengths, discname, _disclength, _remainingrecordtime))
-                AppendLog("Exported track listing successfully.");
+            saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+
+            string outputfilename = String.Format("SonyMDTracklist_{1}_{0}.txt", DateTime.UtcNow.ToString("o").Replace(':', '_'), discname);
+
+            saveFileDialog1.FileName = outputfilename;
+
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                if (ExportTrackListing(ref tracknames, ref tracklengths, discname, _disclength, _remainingrecordtime, outputfilename))
+                    AppendLog("Exported track listing successfully.");
+            }
         }
 
         private void linkLabel_loadtracks_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
