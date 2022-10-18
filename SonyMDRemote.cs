@@ -513,7 +513,7 @@ namespace SonyMDRemote
 
         private void button9_Click(object sender, EventArgs e)
         {
-            Transmit_MDS_Message(MDS_TX_Eject);
+            Transmit_MDS_Message(MDS_TX_Eject, priority: true);
         }
 
         bool _inforequest = false;
