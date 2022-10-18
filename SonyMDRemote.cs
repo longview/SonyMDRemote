@@ -71,6 +71,8 @@ namespace SonyMDRemote
             comboBox1.SelectedIndex = 0;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(comboBox1_SelectedIndexChanged);
 
+            openFileDialog1.InitialDirectory = Directory.GetCurrentDirectory();
+
             SendMessage(progressBar1.Handle,
               0x400 + 16, //WM_USER + PBM_SETSTATE
               0x0003, //PBST_PAUSED
@@ -368,7 +370,7 @@ namespace SonyMDRemote
         {
             // try to update the track title label
             StringBuilder sb;
-            if (tracknames.TryGetValue(_currentrack, out sb))
+            if (tracknames.TryGetValue(_currentrack, out sb) && sb.Length > 0)
                 label8.Text = sb.ToString();
             else
                 label8.Text = "Track Title";
@@ -768,6 +770,27 @@ namespace SonyMDRemote
         private void label8_Click(object sender, EventArgs e)
         {
             scaleFont((Label)sender);
+        }
+
+        private void linkLabel_savetracks_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (ExportTrackListing(ref tracknames, ref tracklengths, discname, _disclength, _remainingrecordtime))
+                AppendLog("Exported track listing successfully.");
+        }
+
+        private void linkLabel_loadtracks_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            openFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            var openfile = openFileDialog1.ShowDialog();
+            if (openfile == DialogResult.OK)
+            {
+                if (ImportTrackListing(ref tracknames, ref tracklengths, ref discname, ref _disclength, ref _remainingrecordtime, openFileDialog1.FileName))
+                    UpdateDataGrid();
+                if (discname.Length > 0)
+                    label7_disctitle.Text = String.Format("{0}", discname);
+            }
+
+
         }
     }
 }

@@ -418,7 +418,8 @@ namespace SonyMDRemote
                             discname = TrimNonAscii(DecodeAscii(ref ArrRep, 7));
                         else
                             discname += TrimNonAscii(DecodeAscii(ref ArrRep, 7));
-                        label7_disctitle.Text = String.Format("{0}", discname);
+                        if (discname.Length > 0)
+                            label7_disctitle.Text = String.Format("{0}", discname);
                         AppendLog("MD: Disc Title/{1} is: {0}", discname, Segment);
                     }
 

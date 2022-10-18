@@ -83,6 +83,7 @@
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.linkLabel_savetracks = new System.Windows.Forms.LinkLabel();
             this.linkLabel_loadtracks = new System.Windows.Forms.LinkLabel();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -692,6 +693,7 @@
             this.linkLabel_savetracks.TabIndex = 42;
             this.linkLabel_savetracks.TabStop = true;
             this.linkLabel_savetracks.Text = "Save tracks";
+            this.linkLabel_savetracks.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel_savetracks_LinkClicked);
             // 
             // linkLabel_loadtracks
             // 
@@ -702,6 +704,12 @@
             this.linkLabel_loadtracks.TabIndex = 43;
             this.linkLabel_loadtracks.TabStop = true;
             this.linkLabel_loadtracks.Text = "Load tracks";
+            this.linkLabel_loadtracks.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel_loadtracks_LinkClicked);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.DefaultExt = "txt";
+            this.openFileDialog1.FileName = "openFileDialog1";
             // 
             // SonyMDRemote
             // 
@@ -798,6 +806,7 @@
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.LinkLabel linkLabel_savetracks;
         private System.Windows.Forms.LinkLabel linkLabel_loadtracks;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
 
