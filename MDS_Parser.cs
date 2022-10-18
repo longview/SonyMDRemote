@@ -133,6 +133,16 @@ namespace SonyMDRemote
                         AppendLog("MD: Remote is {0}", ArrRep[5] == 0x03 ? "on" : "off");
                     }
 
+                    // 7.3 POWER (E11/E52)
+                    if (ArrRep[4] == 0x01 && ArrRep[5] == 0x02)
+                    {
+                        AppendLog("MD: Power is On");
+                    }
+                    else if (ArrRep[4] == 0x01 && ArrRep[5] == 0x03)
+                    {
+                        AppendLog("MD: Power is Off");
+                    }
+
                     // 7.4 PLAY
                     if (ArrRep[4] == 0x02 && ArrRep[5] == 0x01)
                     {
