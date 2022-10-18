@@ -18,6 +18,9 @@ namespace SonyMDRemote
         // https://stackoverflow.com/questions/9527721/resize-text-size-of-a-label-when-the-text-gets-longer-than-the-label-size
         private void scaleFont(Label lab)
         {
+            if (lab.Text.Length == 0)
+                return;
+
             SizeF extent = TextRenderer.MeasureText(lab.Text, lab.Font);
 
             float hRatio = (lab.Height - (lab.Padding.Left + lab.Padding.Right + lab.Padding.All)) / extent.Height;
