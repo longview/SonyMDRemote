@@ -133,10 +133,10 @@ namespace SonyMDRemote
                         AppendLog("MD: Remote is {0}", ArrRep[5] == 0x03 ? "on" : "off");
                     }
 
-                    // 7.6 PAUSE
-                    if (ArrRep[4] == 0x02 && ArrRep[5] == 0x03)
+                    // 7.4 PLAY
+                    if (ArrRep[4] == 0x02 && ArrRep[5] == 0x01)
                     {
-                        AppendLog("MD: Paused");
+                        AppendLog("MD: Playing");
                     }
 
                     // 7.5 STOP
@@ -145,10 +145,10 @@ namespace SonyMDRemote
                         AppendLog("MD: Stopped");
                     }
 
-                    // 7.4 PLAY
-                    if (ArrRep[4] == 0x02 && ArrRep[5] == 0x01)
+                    // 7.6 PAUSE
+                    if (ArrRep[4] == 0x02 && ArrRep[5] == 0x03)
                     {
-                        AppendLog("MD: Playing");
+                        AppendLog("MD: Paused");
                     }
 
                     // 7.7 REC
