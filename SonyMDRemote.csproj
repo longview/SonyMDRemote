@@ -113,6 +113,8 @@
     <Content Include="img\gui2.png" />
     <Content Include="img\guiv4.PNG" />
     <Content Include="Resources\BuildDate.txt" />
+    <Content Include="Test\SonyMDTracklist_Retro Grooves Vol.3_2022-10-18T18_15_01.1602608Z.txt" />
+    <Content Include="Test\test.txt" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
