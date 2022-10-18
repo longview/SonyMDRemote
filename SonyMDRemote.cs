@@ -102,7 +102,7 @@ namespace SonyMDRemote
             
         }
 
-        string VersionString = "v0.4a-dev";
+        string VersionString = "v0.4a";
 
 #if LOGGING
         string ReleaseString = "debug";
