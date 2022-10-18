@@ -174,7 +174,7 @@ namespace SonyMDRemote
                     byte ss = (byte)s;
                     // remove illegal values
                     if (s != 0 && (s < 0x20 || (s > 0x5A && s < 0x5E) || s > 0x7A))
-                        ss = (byte)' ';
+                        continue;
 
                     payloadcount++;
                     txdata.Add(ss);
