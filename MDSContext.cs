@@ -25,9 +25,12 @@ namespace SonyMDRemote
             RecordingPossible = false;
             DigitalInLocked = false;
             RecordingSource = MDSStatusD3Source.reserved;
-            _DiscInfoRequest = -1;
             CurrentTrackElapsedTime = TimeSpan.Zero;
             CurrentTrackProgress = 0;
+
+            _CommandQueue = new List<MDSTXCommand>(10);
+            _CommandQueue_Priority = new List<MDSTXCommand>(10);
+            _DiscInfoRequest = -1;
         }
 
         public MDDiscData Disc;
@@ -49,7 +52,10 @@ namespace SonyMDRemote
         public decimal CurrentTrackProgress;
 
 
+        private List<MDSTXCommand> _CommandQueue_Priority;
+        private List<MDSTXCommand> _CommandQueue;
         private int _DiscInfoRequest;
+        public System.Windows.Forms.Timer TXTimer;
 
         public string GetPlayerStateString()
         {
@@ -533,6 +539,14 @@ namespace SonyMDRemote
 
             static readonly byte[] MDS_TX_EnableElapsedTimeTransmit = new byte[] { 0x07, 0x10 };
             static readonly byte[] MDS_TX_DisableElapsedTimeTransmit = new byte[] { 0x07, 0x11 };
+        }
+
+        public class MDSTXCommand
+        {
+            public MDSTXCommand() { }
+            public byte[] Payload;
+            public bool IsTrackDump;
+            public int PostCommandDelay;
         }
 
         private bool IsBitSet(byte b, int pos)
