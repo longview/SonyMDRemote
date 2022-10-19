@@ -24,6 +24,20 @@ namespace SonyMDRemote
             Recordable = true;
         }
 
+        public bool HasLength()
+        {
+            return Length.Ticks > 0;
+        }
+        public bool HasRecordedDate()
+        {
+            return RecordedDate == DateTime.MinValue;
+        }
+
+        public bool HasTitle()
+        {
+            return Title.Length > 0;
+        }
+
         public string Title;
         public TimeSpan Length;
         public TimeSpan RemainingRecordingTime;

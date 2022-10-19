@@ -102,6 +102,8 @@ namespace SonyMDRemote
             
         }
 
+        MDSContext mdctx = new MDSContext();
+
         string VersionString = "v0.5a-dev";
 
 #if LOGGING
@@ -351,40 +353,36 @@ namespace SonyMDRemote
         // this function handles GUI updates when we receive track playing info
         // tracknounchanged flags that we received e.g. a last track number
         // note that track 0 is the stopped/new disc/no disc state
-        private void ReceivedPlayingTrack(byte TrackNo, bool tracknounchanged = false)
+        private void ReceivedPlayingTrack()
         {
-            if (!tracknounchanged)
-                _currentrack = TrackNo;
-
-            if (_currentrack > 0)
-                label2.Text = String.Format("Track {0}/{1}", _currentrack, _lasttrackno);
+            if (mdctx.CurrentTrack > 0)
+                label2.Text = String.Format("Track {0}/{1}", mdctx.CurrentTrack, mdctx.Disc.LastTrack);
             else
-                label2.Text = String.Format("Track -/{0}", _lasttrackno);
+                label2.Text = String.Format("Track -/{0}", mdctx.Disc.LastTrack);
+
+            // TODO: track 0 handling
+            if (mdctx.CurrentTrack > 0 && mdctx.Disc.Tracks.ContainsKey(mdctx.CurrentTrack) && mdctx.Disc.Tracks[mdctx.CurrentTrack].HasRecordedDate())
+                label12_timestamp.Text = "Recorded: " + mdctx.Disc.Tracks[mdctx.CurrentTrack].RecordedDate.ToString();
+            else
+                label12_timestamp.Text = "Recorded: N/A";
 
             // update the datagridview active track indicator
-            UpdateDataGridBold(_currentrack);
-
+            UpdateDataGridBold();
             UpdateTrackTitle();
         }
 
         private void UpdateTrackTitle()
         {
-            // try to update the track title label
-            StringBuilder sb;
-            if (tracknames.TryGetValue(_currentrack, out sb) && sb.Length > 0)
-                label8.Text = sb.ToString();
-            else
-                label8.Text = "Track Title";
+            label8.Text = mdctx.GetCurrentTrackTitleOrDefault();
         }
 
         private string GetTrackLenFormatted(int key)
         {
             if (key == 0)
-                return String.Format("{0:00}:{1:00}", (int)_disclength.TotalMinutes, (int)_disclength.Seconds);
+                return String.Format("{0:00}:{1:00}", (int)mdctx.Disc.Length.TotalMinutes, (int)mdctx.Disc.Length.Seconds);
 
-            TimeSpan ts;
-            if (tracklengths.TryGetValue(key, out ts))
-                return String.Format("{0:00}:{1:00}", (int)ts.TotalMinutes, (int)ts.Seconds);
+            if (mdctx.Disc.Tracks.ContainsKey(key))
+                return String.Format("{0:00}:{1:00}", (int)mdctx.Disc.Tracks[key].Length.TotalMinutes, (int)mdctx.Disc.Tracks[key].Length.Seconds);
             else
                 return "";
         }
@@ -396,25 +394,25 @@ namespace SonyMDRemote
             dataGridView1.Rows.Clear();
 
             // first index is disc name, this also makes the track and array indices line up
-            dataGridView1.Rows.Add("Disc", discname, discname.Length == 0 ? true : false, GetTrackLenFormatted(0));
+            dataGridView1.Rows.Add("Disc", mdctx.Disc.Title, mdctx.Disc.Title.Length == 0 ? true : false, GetTrackLenFormatted(0));
 
             foreach (DataGridViewCell cell in dataGridView1.Rows[0].Cells)
                 cell.Style.Font = new Font(DefaultFont, FontStyle.Bold);
 
-            foreach (var track in tracknames)
+            foreach (var track in mdctx.Disc.Tracks)
             {
 
-                dataGridView1.Rows.Add(track.Key, track.Value.ToString(), track.Value.ToString().Length == 0 ? true : false, GetTrackLenFormatted(track.Key));
+                dataGridView1.Rows.Add(track.Key, track.Value.Title.ToString(), track.Value.Title.ToString().Length == 0 ? true : false, GetTrackLenFormatted(track.Key));
             }
 
             //dataGridView1.CurrentCell = dataGridView1.Rows[dataGridView1.Rows.Count - 1].Cells[0];
 
-            UpdateDataGridBold(_currentrack);
+            UpdateDataGridBold();
 
         }
 
         // if we know the current track, bold it in the datagrid
-        private void UpdateDataGridBold(int trackplaying, bool setfocus = false)
+        private void UpdateDataGridBold(bool setfocus = false)
         {
             Font bold = new Font(DefaultFont, FontStyle.Bold);
             Font regular = new Font(DefaultFont, FontStyle.Regular);
@@ -432,7 +430,7 @@ namespace SonyMDRemote
 
                 row.Cells[3].Value = GetTrackLenFormatted((int)row.Cells[0].Value);
 
-                if (row.Cells[0].Value != null && (int)row.Cells[0].Value == trackplaying)
+                if (row.Cells[0].Value != null && (int)row.Cells[0].Value == mdctx.CurrentTrack)
                 {
                     
                     for (int i = 0; i < 4; i++)
@@ -564,10 +562,10 @@ namespace SonyMDRemote
                 Transmit_MDS_Message(MDS_TX_ReqDiscData);
                 // some commands are only supported or sensible in specific modes
 
-                if (_currentrack > 0)
-                    Transmit_MDS_Message(MDS_TX_ReqTrackRemainingNameSize, tracknumber: _currentrack);
-                if (_currentrack > 0)
-                    Transmit_MDS_Message(MDS_TX_ReqTrackRecordDate, tracknumber: _currentrack);
+                if (mdctx.CurrentTrack > 0)
+                    Transmit_MDS_Message(MDS_TX_ReqTrackRemainingNameSize, tracknumber: mdctx.CurrentTrack);
+                if (mdctx.CurrentTrack > 0)
+                    Transmit_MDS_Message(MDS_TX_ReqTrackRecordDate, tracknumber: mdctx.CurrentTrack);
             }
                 
             Transmit_MDS_Message(MDS_TX_ReqStatus);
@@ -647,6 +645,7 @@ namespace SonyMDRemote
         {
             if (e.RowIndex == 0)
                 return;
+            // TODO: actually check column0
             AppendLog("Playing track {0}", e.RowIndex);
             Transmit_MDS_Message(MDS_TX_StartPlayAtTrack, tracknumber: (byte)(e.RowIndex), priority: true);
         }
@@ -686,7 +685,7 @@ namespace SonyMDRemote
             UpdateDataGrid();
             timer_Poll_GetInfo.Enabled = false;
             // set focus to currently playing track
-            UpdateDataGridBold(_currentrack, setfocus: false);
+            UpdateDataGridBold(setfocus: false);
         }
 
         private void checkBox3_CheckedChanged(object sender, EventArgs e)
@@ -751,6 +750,7 @@ namespace SonyMDRemote
 
         private void dataGridView1_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
+            // TODO: actually check column0
             if (e.RowIndex <= numericUpDown1.Maximum && e.RowIndex >= numericUpDown1.Minimum)
                 numericUpDown1.Value = e.RowIndex;
         }

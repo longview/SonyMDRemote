@@ -28,9 +28,11 @@ namespace SonyMDRemote
             CurrentTrackElapsedTime = TimeSpan.Zero;
             CurrentTrackProgress = 0;
 
+            CurrentTrackObject = new MDTrackData(0);
+
             _CommandQueue = new List<MDSTXCommand>(10);
             _CommandQueue_Priority = new List<MDSTXCommand>(10);
-            _DiscInfoRequest = -1;
+            _DiscInfoRequest = 0;
         }
 
         public MDDiscData Disc;
@@ -49,6 +51,7 @@ namespace SonyMDRemote
         public bool DigitalInLocked;
         public TimeSpan CurrentTrackElapsedTime;
         public TimeSpan CurrentTrackRemainingTime;
+        public MDTrackData CurrentTrackObject;
         public decimal CurrentTrackProgress;
 
 
@@ -63,6 +66,17 @@ namespace SonyMDRemote
                 return "("+ this.ToString(PlayerState) +")";
             else
                 return this.ToString(PlayerState);
+        }
+
+        public string GetCurrentTrackTitleOrDefault()
+        {
+            if (!Disc.Tracks.ContainsKey(CurrentTrack))
+                return "No Title";
+
+            if (Disc.Tracks[CurrentTrack].Title.Length == 0)
+                return "No Title";
+
+            return Disc.Tracks[CurrentTrack].Title;
         }
 
         // parse data received from the MDS player
@@ -88,6 +102,7 @@ namespace SonyMDRemote
                 case MDSResponseType.MechaPause: break;
                 case MDSResponseType.MechaREC: break;
                 case MDSResponseType.MechaRECPause: break;
+                case MDSContext.MDSResponseType.MechaEject: break;
                 case MDSResponseType.RemoteOn:              RemoteEnabled = true; break;
                 case MDSResponseType.RemoteOff:             RemoteEnabled = false; break;
                 case MDSResponseType.InfoModelData:         break;
@@ -99,7 +114,7 @@ namespace SonyMDRemote
                 case MDSResponseType.InfoDiscNameCont:      HandleInfoDiscName(ref ArrRep); break;
                 case MDSResponseType.InfoTrackName:         HandleInfoTrackName(ref ArrRep); break;
                 case MDSResponseType.InfoTrackNameCont:     HandleInfoTrackName(ref ArrRep); break;
-                case MDSResponseType.InfoAllNameEnd: break;
+                case MDSResponseType.InfoAllNameEnd:        HandleInfoAllNameEnd(); break;
                 case MDSResponseType.InfoElapsedTime:       HandleInfoElapsedTime(ref ArrRep); break;
                 case MDSResponseType.InfoRecRemainData:     HandleInfoRecRemainData(ref ArrRep); break;
                 case MDSResponseType.InfoNameRemainData:    HandleInfoNameRemainData(ref ArrRep); break;
@@ -108,6 +123,7 @@ namespace SonyMDRemote
                 case MDSResponseType.InfoDiscExist: break;
                 case MDSResponseType.Info1TrackEnd: break;
                 case MDSResponseType.InfoNoDiscName: break;
+                case MDSResponseType.InfoNoTOCData: break;
                 case MDSResponseType.InfoNoTrackName: break;
                 case MDSResponseType.InfoWritePacketReceived: break;
                 case MDSResponseType.MessageImpossible: break;
@@ -117,6 +133,11 @@ namespace SonyMDRemote
 
 
             return messagetype;
+        }
+
+        private void HandleInfoAllNameEnd()
+        {
+            _DiscInfoRequest = 0;
         }
 
         private void HandleInfoTrackTimeData(ref byte[] ArrRep)
@@ -153,6 +174,29 @@ namespace SonyMDRemote
 
             if (disclength != Disc.Length)
                 Disc.Length = disclength;
+
+            PruneDiskTracks();
+        }
+
+        // Called when we know the track counts, get rid of any track infos that fall outside the valid range
+        private void PruneDiskTracks()
+        {
+            if (!DiscInserted)
+                return;
+
+            List<int> removetracks = new List<int>();
+            foreach(var track in Disc.Tracks)
+            {
+                if (track.Key > Disc.LastTrack)
+                    removetracks.Add(track.Key);
+                else if (track.Key < Disc.FirstTrack)
+                    removetracks.Add(track.Key);
+            }
+
+            foreach (int key in removetracks)
+            {
+                Disc.Tracks.Remove(key);
+            }
         }
 
         private void HandleInfoNameRemainData(ref byte[] ArrRep)
@@ -192,24 +236,25 @@ namespace SonyMDRemote
             }
 
             CurrentTrackRemainingTime = Disc.Tracks[CurrentTrack].Length - CurrentTrackElapsedTime;
-            CurrentTrackProgress = (decimal)CurrentTrackElapsedTime.Ticks / (decimal)(CurrentTrackRemainingTime.Ticks);
+            CurrentTrackProgress = (decimal)CurrentTrackElapsedTime.Ticks / (decimal)(Disc.Tracks[CurrentTrack].Length.Ticks);
         }
 
         private void HandleInfoTrackName(ref byte[] ArrRep)
         {
             byte Segment = ArrRep[6];
             string currenttrackname = TrimNonAscii(DecodeAscii(ref ArrRep, 7));
-            if (_DiscInfoRequest < 0)
-                return;
+            //if (_DiscInfoRequest < 0)
+                //return;
             if (ArrRep[5] == 0x4A)
             {
                 _DiscInfoRequest++;
-                Disc.Tracks.Add(_DiscInfoRequest, new MDTrackData((uint)_DiscInfoRequest, currenttrackname));
+                if (!Disc.Tracks.ContainsKey(_DiscInfoRequest))
+                    Disc.Tracks.Add(_DiscInfoRequest, new MDTrackData((uint)_DiscInfoRequest));
+                else
+                    Disc.Tracks[_DiscInfoRequest].Title = "";
             }
-            else if (Disc.Tracks.ContainsKey(_DiscInfoRequest))
-            {
-                Disc.Tracks[_DiscInfoRequest].Title += currenttrackname;
-            }
+
+            Disc.Tracks[_DiscInfoRequest].Title += currenttrackname;
         }
 
         private void HandleInfoDiscName(ref byte[] ArrRep)
@@ -273,7 +318,12 @@ namespace SonyMDRemote
             byte Data3 = ArrRep[8];
             // 9 is fixed 1
 
+
+            bool newtrack = CurrentTrack != ArrRep[10];
+            
             CurrentTrack = ArrRep[10];
+
+
             DiscInserted = !IsBitSet(Data1, 5);
             PoweredOn = !IsBitSet(Data1, 4);
 
@@ -318,10 +368,24 @@ namespace SonyMDRemote
             }
 
             // internal state updates
+            if (PlayerState == MDSStatusD1.EJECT)
+            {
+                CurrentTrack = 0;
+                Disc.Title = "No Disc";
+            }
+
+            // TODO: if leaving EJECT state with a new disc, clear track lengths?
+
+
             if (PlayerState == MDSStatusD1.EJECT || PlayerState == MDSStatusD1.STOP)
             {
                 CurrentTrackElapsedTime = TimeSpan.Zero;
                 CurrentTrackProgress = 0;
+            }
+
+            if (newtrack)
+            {
+                Disc.Tracks.TryGetValue(CurrentTrack, out CurrentTrackObject);
             }
         }
 
