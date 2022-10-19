@@ -9,7 +9,16 @@ namespace SonyMDRemote
     // track data
     public class MDTrackData
     {
-        public MDTrackData(string title, uint number)
+        public MDTrackData(uint number)
+        {
+            Title = "";
+            Length = TimeSpan.Zero;
+            RecordedDate = DateTime.MinValue;
+            Number = number;
+            RemainingNameSpace = uint.MaxValue;
+        }
+
+        public MDTrackData(uint number, string title)
         {
             Title = title;
             Length = TimeSpan.Zero;
@@ -17,7 +26,15 @@ namespace SonyMDRemote
             Number = number;
         }
 
-        public MDTrackData(string title, uint number, TimeSpan length, DateTime recordeddate)
+        public MDTrackData(uint number, string title, TimeSpan length)
+        {
+            Title = title;
+            Length = length;
+            RecordedDate = DateTime.MinValue;
+            Number = number;
+        }
+
+        public MDTrackData(uint number, string title, TimeSpan length, DateTime recordeddate)
         {
             Title = title;
             Length = length;
@@ -43,5 +60,6 @@ namespace SonyMDRemote
         public string Title;
         public TimeSpan Length;
         public DateTime RecordedDate;
+        public uint RemainingNameSpace;
     }
 }

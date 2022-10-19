@@ -20,6 +20,14 @@ namespace SonyMDRemote
             RepeatState = MDSStatusD2Repeat.REPEAT_OFF;
             AutoPause = false;
             CurrentTrack = 0;
+            TOCRead = false;
+            TOCDirty = true;
+            RecordingPossible = false;
+            DigitalInLocked = false;
+            RecordingSource = MDSStatusD3Source.reserved;
+            _DiscInfoRequest = -1;
+            CurrentTrackElapsedTime = TimeSpan.Zero;
+            CurrentTrackProgress = 0;
         }
 
         public MDDiscData Disc;
@@ -28,8 +36,20 @@ namespace SonyMDRemote
         public bool PoweredOn;
         public MDSStatusD1 PlayerState;
         public MDSStatusD2Repeat RepeatState;
+        public MDSStatusD3Source RecordingSource;
         public bool AutoPause;
         public byte CurrentTrack;
+        public bool DiscInserted;
+        public bool TOCRead;
+        public bool TOCDirty;
+        public bool RecordingPossible;
+        public bool DigitalInLocked;
+        public TimeSpan CurrentTrackElapsedTime;
+        public TimeSpan CurrentTrackRemainingTime;
+        public decimal CurrentTrackProgress;
+
+
+        private int _DiscInfoRequest;
 
         public string GetPlayerStateString()
         {
@@ -64,7 +84,7 @@ namespace SonyMDRemote
                 case MDSResponseType.MechaRECPause: break;
                 case MDSResponseType.RemoteOn:              RemoteEnabled = true; break;
                 case MDSResponseType.RemoteOff:             RemoteEnabled = false; break;
-                case MDSResponseType.InfoModelData:         HandleInfoModelData(ref ArrRep); break;
+                case MDSResponseType.InfoModelData:         break;
                 case MDSResponseType.InfoStatusData:        HandleInfoStatusData(ref ArrRep); break;
                 case MDSResponseType.InfoDiscData:          HandleInfoDiscData(ref ArrRep); break;
                 case MDSResponseType.InfoModelName:         ModelName = TrimNonAscii(DecodeAscii(ref ArrRep, 6)); break;
@@ -93,59 +113,210 @@ namespace SonyMDRemote
             return messagetype;
         }
 
-        private void HandleInfoTrackTimeData(ref byte[] arrRep)
+        private void HandleInfoTrackTimeData(ref byte[] ArrRep)
         {
-            throw new NotImplementedException();
+            if (ArrRep[6] == 0x01 && ArrRep[7] == CurrentTrack)
+            {
+                byte Min = ArrRep[8];
+                byte Sec = ArrRep[9];
+
+                TimeSpan newts = new TimeSpan(0, Min, Sec);
+
+                if (Disc.Tracks.ContainsKey(CurrentTrack) && Disc.Tracks[CurrentTrack].Length == newts)
+                    return;
+                
+                if (Disc.Tracks.ContainsKey(CurrentTrack))
+                    Disc.Tracks[CurrentTrack].Length = newts;
+                else
+                    Disc.Tracks.Add(CurrentTrack, new MDTrackData(CurrentTrack, "", newts));
+            }
         }
 
-        private void HandleInfoTOCData(ref byte[] arrRep)
+        private void HandleInfoTOCData(ref byte[] ArrRep)
         {
-            throw new NotImplementedException();
+            if (ArrRep[7] > ArrRep[8])
+                return;
+
+            Disc.FirstTrack = ArrRep[7];
+            Disc.LastTrack = ArrRep[8];
+
+
+            byte Min = ArrRep[9];
+            byte Sec = ArrRep[10];
+            TimeSpan disclength = new TimeSpan(0, Min, Sec);
+
+            if (disclength != Disc.Length)
+                Disc.Length = disclength;
         }
 
-        private void HandleInfoNameRemainData(ref byte[] arrRep)
+        private void HandleInfoNameRemainData(ref byte[] ArrRep)
         {
-            throw new NotImplementedException();
+            byte TrackNo = ArrRep[7];
+            byte RemainH = ArrRep[8];
+            byte RemainL = ArrRep[9];
+
+            if (Disc.Tracks.ContainsKey(TrackNo))
+                Disc.Tracks[TrackNo].RemainingNameSpace = (uint)(RemainH << 8 | RemainL);
         }
 
-        private void HandleInfoRecRemainData(ref byte[] arrRep)
+        private void HandleInfoRecRemainData(ref byte[] ArrRep)
         {
-            throw new NotImplementedException();
+            byte Min = ArrRep[7];
+            byte Sec = ArrRep[8];
+
+            if (Min != (int)Disc.RemainingRecordingTime.TotalMinutes || Sec != Disc.RemainingRecordingTime.Seconds)
+            {
+                Disc.RemainingRecordingTime = new TimeSpan(0, Min, Sec);
+            }
         }
 
-        private void HandleInfoElapsedTime(ref byte[] arrRep)
+        private void HandleInfoElapsedTime(ref byte[] ArrRep)
         {
-            throw new NotImplementedException();
+            CurrentTrack = ArrRep[6];
+            byte Min = ArrRep[8];
+            byte Sec = ArrRep[9];
+
+            CurrentTrackElapsedTime = new TimeSpan(0, Min, Sec);
+
+            if (!Disc.Tracks.ContainsKey(CurrentTrack) || !Disc.Tracks[CurrentTrack].HasLength())
+            {
+                CurrentTrackRemainingTime = TimeSpan.Zero;
+                CurrentTrackProgress = 0;
+                return;
+            }
+
+            CurrentTrackRemainingTime = Disc.Tracks[CurrentTrack].Length - CurrentTrackElapsedTime;
+            CurrentTrackProgress = (decimal)CurrentTrackElapsedTime.Ticks / (decimal)(CurrentTrackRemainingTime.Ticks);
         }
 
-        private void HandleInfoTrackName(ref byte[] arrRep)
+        private void HandleInfoTrackName(ref byte[] ArrRep)
         {
-            throw new NotImplementedException();
+            byte Segment = ArrRep[6];
+            string currenttrackname = TrimNonAscii(DecodeAscii(ref ArrRep, 7));
+            if (_DiscInfoRequest < 0)
+                return;
+            if (ArrRep[5] == 0x4A)
+            {
+                _DiscInfoRequest++;
+                Disc.Tracks.Add(_DiscInfoRequest, new MDTrackData((uint)_DiscInfoRequest, currenttrackname));
+            }
+            else if (Disc.Tracks.ContainsKey(_DiscInfoRequest))
+            {
+                Disc.Tracks[_DiscInfoRequest].Title += currenttrackname;
+            }
         }
 
-        private void HandleInfoDiscName(ref byte[] arrRep)
+        private void HandleInfoDiscName(ref byte[] ArrRep)
         {
-            throw new NotImplementedException();
+            byte Segment = ArrRep[6];
+            if (ArrRep[5] == 0x48)
+                Disc.Title = TrimNonAscii(DecodeAscii(ref ArrRep, 7));
+            else
+                Disc.Title += TrimNonAscii(DecodeAscii(ref ArrRep, 7));
         }
 
-        private void HandleInfoRecDateData(ref byte[] arrRep)
+        private void HandleInfoRecDateData(ref byte[] ArrRep)
         {
-            throw new NotImplementedException();
+            if (ArrRep.Length < 13)
+                return;
+
+            byte TrackNo = ArrRep[6];
+            byte Year = ArrRep[7];
+            byte Month = ArrRep[8];
+            byte Day = ArrRep[9];
+            byte Hour = ArrRep[10];
+            byte Min = ArrRep[11];
+            byte Sec = ArrRep[12];
+
+            // assume anything with a year from the future is from 19xx, most likely recordings are from 20xx
+            int fullyear = 1900 + Year;
+            if (Year < (DateTime.Now.Year) - 2000)
+                fullyear = 2000 + Year;
+
+            // a valid day/month starts at 1, so if zero the data is invalid
+            if (Month > 0 && Day > 0)
+            {
+                DateTime recdate = new DateTime(fullyear, Month, Day, Hour, Min, Sec);
+                if (TrackNo == 0)
+                    Disc.RecordedDate = recdate;
+                else if (Disc.Tracks.ContainsKey(TrackNo))
+                {
+                    Disc.Tracks[TrackNo].RecordedDate = recdate;
+                }
+                else
+                {
+                    Disc.Tracks.Add(TrackNo, new MDTrackData(TrackNo));
+                }
+            }
+
         }
 
-        private void HandleInfoDiscData(ref byte[] arrRep)
+        private void HandleInfoDiscData(ref byte[] ArrRep)
         {
-            throw new NotImplementedException();
+            byte DiscData = ArrRep[6];
+
+            Disc.Error = IsBitSet(DiscData, 3);
+            Disc.WriteProtected = IsBitSet(DiscData, 2);
+            Disc.Recordable = IsBitSet(DiscData, 0);
         }
 
-        private void HandleInfoStatusData(ref byte[] arrRep)
+        private void HandleInfoStatusData(ref byte[] ArrRep)
         {
-            throw new NotImplementedException();
-        }
+            byte Data1 = ArrRep[6];
+            byte Data2 = ArrRep[7];
+            byte Data3 = ArrRep[8];
+            // 9 is fixed 1
 
-        private void HandleInfoModelData(ref byte[] arrRep)
-        {
-            throw new NotImplementedException();
+            CurrentTrack = ArrRep[10];
+            DiscInserted = !IsBitSet(Data1, 5);
+            PoweredOn = !IsBitSet(Data1, 4);
+
+            switch (Data1 & 0x0f)
+            {
+                case 0x0: PlayerState = MDSStatusD1.STOP;break;
+                case 0x1: PlayerState = MDSStatusD1.PLAY;break;
+                case 0x2: PlayerState = MDSStatusD1.PAUSE; break;
+                case 0x3: PlayerState = MDSStatusD1.EJECT; break;
+                case 0x4: PlayerState = MDSStatusD1.REC_PLAY; break;
+                case 0x5: PlayerState = MDSStatusD1.REC_PAUSE; break;
+                case 0x6: PlayerState = MDSStatusD1.rehearsal; break;
+                default: PlayerState = MDSStatusD1.reserved; break;
+            }
+
+            TOCRead = IsBitSet(Data2, 7);
+            if (DiscInserted && TOCRead)
+                TOCDirty = false;
+            else
+                TOCDirty = true;
+
+            RecordingPossible = IsBitSet(Data2, 5);
+
+            
+
+            if (IsBitSet(Data2, 4) && !IsBitSet(Data2, 3))
+                RepeatState = MDSStatusD2Repeat.TRACK_REPEAT;
+            else if (!IsBitSet(Data2, 4) && IsBitSet(Data2, 3))
+                RepeatState = MDSStatusD2Repeat.ALL_REPEAT;
+            else if (!IsBitSet(Data2, 4) && !IsBitSet(Data2, 3))
+                RepeatState = MDSStatusD2Repeat.REPEAT_OFF;
+
+            Disc.Stereo = !IsBitSet(Data3, 7);
+            Disc.CopyProtected = IsBitSet(Data3, 6);
+            DigitalInLocked = IsBitSet(Data3, 5);
+
+            switch (Data3 & 0x07)
+            {
+                case 0x1:RecordingSource = MDSStatusD3Source.Analog;break;
+                case 0x3:RecordingSource = MDSStatusD3Source.Optical;break;
+                case 0x5:RecordingSource = MDSStatusD3Source.Coaxial;break;
+            }
+
+            // internal state updates
+            if (PlayerState == MDSStatusD1.EJECT || PlayerState == MDSStatusD1.STOP)
+            {
+                CurrentTrackElapsedTime = TimeSpan.Zero;
+                CurrentTrackProgress = 0;
+            }
         }
 
         public enum MDSResponseType
@@ -185,6 +356,46 @@ namespace SonyMDRemote
             // skipped dividemode etc.
             MessageUndefinedCommand = 0x4001,
             MessageImpossible = 0x4003
+        }
+
+        public string ToString(MDSResponseType messagetype)
+        {
+            switch (messagetype)
+            {
+                case MDSResponseType.PowerOn: return "Powered On";
+                case MDSResponseType.PowerOff: return "Powered Off";
+                // mecha responses only indicate acknowledge, not anything special
+                case MDSResponseType.MechaPlay: return "Playing";
+                case MDSResponseType.MechaStop: return "Stopping";
+                case MDSResponseType.MechaPause: return "Pausing";
+                case MDSResponseType.MechaREC: return "Recording";
+                case MDSResponseType.MechaRECPause: return "Pausing Recording";
+                case MDSResponseType.RemoteOn: return "Remote On";
+                case MDSResponseType.RemoteOff: return "Remote Off";
+                case MDSResponseType.InfoModelData: return "Model Data";
+                case MDSResponseType.InfoStatusData: return "Status Data";
+                case MDSResponseType.InfoDiscData: return "Disc Data";
+                case MDSResponseType.InfoModelName: return "Model Name";
+                case MDSResponseType.InfoRecDateData: return "Rec Date Data";
+                case MDSResponseType.InfoDiscName: return "Disc Name";
+                case MDSResponseType.InfoDiscNameCont: return "Disc Name Cont.";
+                case MDSResponseType.InfoTrackName: return "Track Name";
+                case MDSResponseType.InfoTrackNameCont: return "Track Name Continued";
+                case MDSResponseType.InfoAllNameEnd: return "All Name End";
+                case MDSResponseType.InfoElapsedTime: return "Elapsed Time";
+                case MDSResponseType.InfoRecRemainData: return "Recording Remaining Time";
+                case MDSResponseType.InfoNameRemainData: return "Track Name Remaining Bytes";
+                case MDSResponseType.InfoTOCData: return "TOC Data";
+                case MDSResponseType.InfoTrackTimeData: return "Track Time Data";
+                case MDSResponseType.InfoDiscExist: return "Disc Exists";
+                case MDSResponseType.Info1TrackEnd: return "End Of Track";
+                case MDSResponseType.InfoNoDiscName: return "No Disc Name";
+                case MDSResponseType.InfoNoTrackName: return "No Track Name";
+                case MDSResponseType.InfoWritePacketReceived: return "Write Packet Received";
+                case MDSResponseType.MessageImpossible: return "Command Not Possible Or Unsupported";
+                case MDSResponseType.MessageUndefinedCommand: return "Undefined Message";
+                default: return "Unknown";
+            }
         }
 
 
