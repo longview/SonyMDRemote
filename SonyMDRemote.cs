@@ -393,6 +393,11 @@ namespace SonyMDRemote
             // TODO: maybe update instead of clearing each time?
             dataGridView1.Rows.Clear();
 
+            // TODO: the order of the track list is not guaranteed to match the track indices!
+            // so we should sort it first
+            // or maybe sort the datagridview after
+            // we could also just iterate over the first to lasttrack fields
+
             // first index is disc name, this also makes the track and array indices line up
             dataGridView1.Rows.Add("Disc", mdctx.Disc.Title, mdctx.Disc.Title.Length == 0 ? true : false, GetTrackLenFormatted(0));
 
@@ -401,7 +406,6 @@ namespace SonyMDRemote
 
             foreach (var track in mdctx.Disc.Tracks)
             {
-
                 dataGridView1.Rows.Add(track.Key, track.Value.Title.ToString(), track.Value.Title.ToString().Length == 0 ? true : false, GetTrackLenFormatted(track.Key));
             }
 

@@ -51,6 +51,12 @@ Release builds limits the log scrollback to around 200-400 lines to avoid balloo
 * Write-protection detection seems broken? Can't find a way to detect that using the documented commands.
 * Repeat-modes don't work on my unit
 
+New bugs to fix: 
+
+if track data is received before the get info, then the dictionary index will not match the track order
+
+when ejecting the disk the track listing is cleared in addition to the track lengths
+
 ## Will likely not be supported:
 * Recording
 * Track splitting/editing
