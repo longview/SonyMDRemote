@@ -527,8 +527,10 @@ namespace SonyMDRemote
             checkBox1_Autopoll.Checked = false;
             checkBox2_Elapsed.Checked = false;
             // reset list of names
-            _infocounter = 0;
+            //_infocounter = 0;
+            // TODO: need to make a trackname-clear function
             tracknames.Clear();
+            
 
             // stop any commands in queue
             timer_Poll_Time.Stop();
@@ -609,13 +611,13 @@ namespace SonyMDRemote
         private void label3_Click(object sender, EventArgs e)
         {
             Transmit_MDS_Message(MDS_TX_ReqStatus);
-            Transmit_MDS_Message(MDS_TX_ReqTrackTime, tracknumber: _currentrack);
+            Transmit_MDS_Message(MDS_TX_ReqTrackTime, tracknumber: mdctx.CurrentTrack);
         }
 
         private void label2_Click(object sender, EventArgs e)
         {
             Transmit_MDS_Message(MDS_TX_ReqStatus);
-            Transmit_MDS_Message(MDS_TX_ReqTrackTime, tracknumber: _currentrack);
+            Transmit_MDS_Message(MDS_TX_ReqTrackTime, tracknumber: mdctx.CurrentTrack);
         }
 
         private void label4_Click(object sender, EventArgs e)
@@ -783,14 +785,14 @@ namespace SonyMDRemote
         {
             saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
 
-            string outputfilename = String.Format("SonyMDTracklist_{1}_{0}.txt", DateTime.UtcNow.ToString("o").Replace(':', '_'), discname);
+            string outputfilename = String.Format("SonyMDTracklist_{1}_{0}.txt", DateTime.UtcNow.ToString("o").Replace(':', '_'), mdctx.Disc.Title);
 
             saveFileDialog1.FileName = outputfilename;
 
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                if (ExportTrackListing(ref tracknames, ref tracklengths, discname, _disclength, _remainingrecordtime, outputfilename))
-                    AppendLog("Exported track listing successfully.");
+                //if (ExportTrackListing(ref tracknames, ref tracklengths, discname, _disclength, _remainingrecordtime, outputfilename))
+                    //AppendLog("Exported track listing successfully.");
             }
         }
 
@@ -800,10 +802,10 @@ namespace SonyMDRemote
             var openfile = openFileDialog1.ShowDialog();
             if (openfile == DialogResult.OK)
             {
-                if (ImportTrackListing(ref tracknames, ref tracklengths, ref discname, ref _disclength, ref _remainingrecordtime, openFileDialog1.FileName))
-                    UpdateDataGrid();
-                if (discname.Length > 0)
-                    label7_disctitle.Text = String.Format("{0}", discname);
+                //if (ImportTrackListing(ref tracknames, ref tracklengths, ref discname, ref _disclength, ref _remainingrecordtime, openFileDialog1.FileName))
+                    //UpdateDataGrid();
+                //if (discname.Length > 0)
+                    //label7_disctitle.Text = String.Format("{0}", discname);
             }
 
 

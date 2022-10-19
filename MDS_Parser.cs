@@ -29,30 +29,7 @@ namespace SonyMDRemote
         private List<byte> serialRXData = new List<byte>();
         delegate void SetSerialDataInputCallback(byte[] text);
 
-        byte _currentrack = 1;
         byte _packetlen = 0;
-        int _infocounter = -1;
-        bool toc_read_done = false;
-        //byte _currtracklen_min = 0;
-        //byte _currtracklen_sec = 0;
-        byte _lasttrackno = 0;
-        byte _firsttrackno = 0;
-        TimeSpan _remainingrecordtime = new TimeSpan(0);
-        TimeSpan _disclength = new TimeSpan(0);
-        string discname;
-        MDS_Status_D1 playbackstatus = MDS_Status_D1.reserved;
-        MDS_Status_D1 lastplaybackstatus = MDS_Status_D1.reserved;
-
-        string laststatusstr = String.Empty;
-        string lastrptstr = String.Empty;
-        string lastdiscstatusstr = String.Empty;
-        string lastrecdatestr = String.Empty;
-
-        // list of track names
-        IDictionary<int, StringBuilder> tracknames = new Dictionary<int, StringBuilder>();
-
-        // list of track lengths
-        IDictionary<int, TimeSpan> tracklengths = new Dictionary<int, TimeSpan>();
 
         private void serialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
@@ -172,7 +149,7 @@ namespace SonyMDRemote
                             if (mdctx.PlayerState != MDSContext.MDSStatusD1.EJECT)
                             {
                                 // request these since we now know the track number
-                                Transmit_MDS_Message(MDS_TX_ReqTrackTime, tracknumber: _currentrack);
+                                Transmit_MDS_Message(MDS_TX_ReqTrackTime, tracknumber: mdctx.CurrentTrack);
                                 Transmit_MDS_Message(MDS_TX_ReqTOCData);
                             }
 
