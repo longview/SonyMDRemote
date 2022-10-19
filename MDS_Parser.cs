@@ -125,7 +125,7 @@ namespace SonyMDRemote
 
                     MDSContext.MDSResponseType messagetype = mdctx.ParseRXData(ref ArrRep);
 #if DEBUG
-                    AppendLog("MD sent: {0}, type {2}, ASCII: {1}", BitConverter.ToString(ArrRep), TrimNonAscii(System.Text.Encoding.ASCII.GetString(ArrRep)),
+                    AppendLog("MD sent: type {2}, {0}, ASCII: {1}", BitConverter.ToString(ArrRep), TrimNonAscii(System.Text.Encoding.ASCII.GetString(ArrRep)),
                         mdctx.ToString(messagetype));
 #endif                   
 
@@ -184,7 +184,7 @@ namespace SonyMDRemote
                             else
                                 label7_disctitle.Text = mdctx.Disc.Title;
 
-                            Transmit_MDS_Message(MDS_TX_ReqTrackTime, mdctx.CurrentTrack);
+                            Transmit_MDS_Message(MDS_TX_ReqTrackTime, tracknumber: mdctx.CurrentTrack);
 
                             break;
                         case MDSContext.MDSResponseType.InfoDiscData: break; // NOP
@@ -209,10 +209,17 @@ namespace SonyMDRemote
                             ReceivedPlayingTrack();
                             progressBar1.Value = (int)Math.Min(mdctx.CurrentTrackProgress * 1000, 1000);
                             if (checkBox2_Elapsed.Checked)
-                                label6.Text = String.Format("{0:00}:{1:00}/{2:00}:{3:00} (r: {4:00}:{5:00})", 
+                            {
+                                MDTrackData track = new MDTrackData(0);
+                                mdctx.Disc.Tracks.TryGetValue(mdctx.CurrentTrack, out track);
+                                if (track == null)
+                                    track = new MDTrackData(0);
+                                label6.Text = String.Format("{0:00}:{1:00}/{2:00}:{3:00} (r: {4:00}:{5:00})",
                                     (int)mdctx.CurrentTrackElapsedTime.TotalMinutes, mdctx.CurrentTrackElapsedTime.Seconds,
-                                                        (int)mdctx.CurrentTrackObject.Length.TotalMinutes, mdctx.CurrentTrackObject.Length.Seconds,
+                                                        (int)track.Length.TotalMinutes, track.Length.Seconds,
                                                         (int)mdctx.CurrentTrackRemainingTime.TotalMinutes, mdctx.CurrentTrackRemainingTime.Seconds);
+                            }
+                                
                             break;
                         case MDSContext.MDSResponseType.InfoRecRemainData: break;
                         case MDSContext.MDSResponseType.InfoNameRemainData: break;
@@ -222,8 +229,8 @@ namespace SonyMDRemote
                             label4.Text = String.Format("{0} tracks ({1}-{2}; {3:00}:{4:00}; {5:00}:{6:00} remaining)",
                                     1 + mdctx.Disc.LastTrack - mdctx.Disc.FirstTrack,
                                     mdctx.Disc.FirstTrack, mdctx.Disc.LastTrack,
-                                    (int)mdctx.CurrentTrackElapsedTime.TotalMinutes, (int)mdctx.CurrentTrackElapsedTime.Seconds,
-                                    (int)mdctx.CurrentTrackRemainingTime.TotalMinutes, (int)mdctx.CurrentTrackRemainingTime.Seconds);
+                                    (int)mdctx.Disc.Length.TotalMinutes, (int)mdctx.Disc.Length.Seconds,
+                                    (int)mdctx.Disc.RemainingRecordingTime.TotalMinutes, (int)mdctx.Disc.RemainingRecordingTime.Seconds);
 
                             if (mdctx.Disc.FirstTrack != 0 && mdctx.Disc.LastTrack != 0)
                             {

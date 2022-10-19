@@ -48,7 +48,7 @@ namespace SonyMDRemote
         }
         public bool HasRecordedDate()
         {
-            return RecordedDate == DateTime.MinValue;
+            return RecordedDate != DateTime.MinValue;
         }
 
         public bool HasTitle()

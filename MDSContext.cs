@@ -28,8 +28,6 @@ namespace SonyMDRemote
             CurrentTrackElapsedTime = TimeSpan.Zero;
             CurrentTrackProgress = 0;
 
-            CurrentTrackObject = new MDTrackData(0);
-
             _CommandQueue = new List<MDSTXCommand>(10);
             _CommandQueue_Priority = new List<MDSTXCommand>(10);
             _DiscInfoRequest = 0;
@@ -51,7 +49,7 @@ namespace SonyMDRemote
         public bool DigitalInLocked;
         public TimeSpan CurrentTrackElapsedTime;
         public TimeSpan CurrentTrackRemainingTime;
-        public MDTrackData CurrentTrackObject;
+        //public MDTrackData CurrentTrackObject;
         public decimal CurrentTrackProgress;
 
 
@@ -385,7 +383,8 @@ namespace SonyMDRemote
 
             if (newtrack)
             {
-                Disc.Tracks.TryGetValue(CurrentTrack, out CurrentTrackObject);
+                CurrentTrackElapsedTime = TimeSpan.Zero;
+                CurrentTrackProgress = 0;
             }
         }
 

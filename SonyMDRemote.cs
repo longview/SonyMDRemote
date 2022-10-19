@@ -381,7 +381,7 @@ namespace SonyMDRemote
             if (key == 0)
                 return String.Format("{0:00}:{1:00}", (int)mdctx.Disc.Length.TotalMinutes, (int)mdctx.Disc.Length.Seconds);
 
-            if (mdctx.Disc.Tracks.ContainsKey(key))
+            if (mdctx.Disc.Tracks.ContainsKey(key) && mdctx.Disc.Tracks[key].HasLength())
                 return String.Format("{0:00}:{1:00}", (int)mdctx.Disc.Tracks[key].Length.TotalMinutes, (int)mdctx.Disc.Tracks[key].Length.Seconds);
             else
                 return "";
@@ -554,7 +554,7 @@ namespace SonyMDRemote
 
         private void DoUpdateTask()
         {
-            if (playbackstatus != MDS_Status_D1.EJECT)
+            if (mdctx.PlayerState != MDSContext.MDSStatusD1.EJECT)
             {
                 // some of these might not be required since status receipt triggers other reads
                 // but doesn't seem to cause any problems
@@ -574,7 +574,7 @@ namespace SonyMDRemote
 
             
 
-            if (playbackstatus == MDS_Status_D1.PAUSE || playbackstatus == MDS_Status_D1.PLAY)
+            if (mdctx.PlayerState == MDSContext.MDSStatusD1.PAUSE || mdctx.PlayerState == MDSContext.MDSStatusD1.PLAY)
             {
                 if (checkBox2_Elapsed.Checked)
                     Transmit_MDS_Message(MDS_TX_EnableElapsedTimeTransmit);
