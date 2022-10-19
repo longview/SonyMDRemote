@@ -61,12 +61,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MDDiscData.cs" />
+    <Compile Include="MDSContext.cs" />
     <Compile Include="MDS_Handling.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MDS_Parser.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="MDTrackData.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SonyMDRemote.cs">
       <SubType>Form</SubType>
