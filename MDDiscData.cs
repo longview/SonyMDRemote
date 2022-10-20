@@ -90,7 +90,7 @@ namespace SonyMDRemote
             int tracknumber = 0;
 
             Tracks.Clear();
-            int _firsttrack = uint.MaxValue;
+            int _firsttrack = int.MaxValue;
             string line;
             while ((line = inputfile.ReadLine()) != null)
             {
