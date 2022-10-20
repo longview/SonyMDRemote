@@ -597,8 +597,7 @@ namespace SonyMDRemote
 
                 if (mdctx.CurrentTrack > 0)
                     Transmit_MDS_Message(MDS_TX_ReqTrackRemainingNameSize, tracknumber: mdctx.CurrentTrack);
-                if (mdctx.CurrentTrack > 0)
-                    Transmit_MDS_Message(MDS_TX_ReqTrackRecordDate, tracknumber: mdctx.CurrentTrack);
+                Transmit_MDS_Message(MDS_TX_ReqTrackRecordDate, tracknumber: mdctx.CurrentTrack);
             }
                 
             Transmit_MDS_Message(MDS_TX_ReqStatus);
