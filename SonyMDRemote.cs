@@ -402,7 +402,6 @@ namespace SonyMDRemote
         private void UpdateDataGrid()
         {
             dataGridView1.SuspendLayout();
-            // TODO: maybe update instead of clearing each time?
             if (dataGridView1.Rows.Count > mdctx.Disc.Tracks.Count + 1)
                 dataGridView1.Rows.Clear();
 
