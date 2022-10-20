@@ -109,8 +109,6 @@ namespace SonyMDRemote
                     Tracks.Add(tracknumber, new MDTrackData((uint)tracknumber, trackinfo[1], TimeSpan.Parse(trackinfo[2])));
                     if (trackinfo.Length > 3)
                         DateTime.TryParse(trackinfo[3], out Tracks[tracknumber].RecordedDate);
-                    else
-                        Tracks[tracknumber].RecordedDate = DateTime.MinValue;
                 }
                 if (_firsttrack > tracknumber)
                     _firsttrack = tracknumber;
