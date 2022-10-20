@@ -61,7 +61,7 @@ namespace SonyMDRemote
             outputfile.WriteLine(String.Format("Track listing exported on {0} by LA2YUA SonyMDRemote {1} {2}", DateTime.UtcNow.ToString("o"),
                 VersionString, ReleaseString));
 
-            outputfile.WriteLine(String.Format("{0}\t{1}\t{2}", Title, Length.ToString(), RemainingRecordingTime.ToString()));
+            outputfile.WriteLine(String.Format("{0}\t{1}\t{2}\t{3}", Title, Length.ToString(), RemainingRecordingTime.ToString(), RecordedDate.ToString()));
 
             foreach (var track in Tracks)
             {
@@ -81,8 +81,11 @@ namespace SonyMDRemote
                 Title = discinfo[0];
             if (discinfo.Length > 1)
                 Length = TimeSpan.Parse(discinfo[1]);
-            //if (discinfo.Length > 2)
-            //  RemainingRecordingTime = TimeSpan.Parse(discinfo[2]);
+            if (discinfo.Length > 2)
+                RemainingRecordingTime = TimeSpan.Parse(discinfo[2]);
+            if (discinfo.Length > 3)
+                RecordedDate = DateTime.Parse(discinfo[3]);
+            
 
             int tracknumber = 0;
 
@@ -111,6 +114,9 @@ namespace SonyMDRemote
                 }
 
             }
+
+            FirstTrack = 1;
+            LastTrack = tracknumber;
 
             inputfile.Close();
         }

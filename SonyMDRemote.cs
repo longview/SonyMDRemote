@@ -845,6 +845,8 @@ namespace SonyMDRemote
             AppendLog("Loaded track data from file {0}", openFileDialog1.FileName);
             AppendLog("Header was: {0}", mdctx.Disc.ImportHeader);
             UpdateDataGrid();
+            ReceivedPlayingTrack();
+            ReceivedTOCData();
         }
 
         private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

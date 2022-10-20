@@ -45,6 +45,7 @@ Release builds limits the log scrollback to around 200-400 lines to avoid balloo
 * Check of maximum track name length - seems to have a lot of room but would have to really dig into the MD format to figure it out properly
 * May want to invalidate some data when the disc is ejected, and re-acquire the data when a new disc is inserted, for now it's on the user to hit Get Info again if changing discs.
 * (Maybe) Store track lengths automatically and reload based on disc title?
+* Cleaning up the TX code and moving it into the OO layer
 
 ## Not really working:
 * Write-protection detection seems broken? Can't find a way to detect that using the documented commands.
@@ -156,7 +157,7 @@ Line 1 is a header containing information, this is logged upon reading but is no
 
 Line 2 is the disc title and length information. The disc length is parsed and may be used with the title to e.g. match a set of track datas to "fingerprint" a disc to autoload the track data from file.
 
-	Disc Title <TAB> (Disc length) <TAB> (Disc free time)
+	Disc Title <TAB> (Disc length) <TAB> (Disc free time) <TAB> Disc recorded date
 
 Disc length and remaining free time is optional and can be skipped, in this case drop the tabs.
 

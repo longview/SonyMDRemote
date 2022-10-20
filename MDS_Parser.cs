@@ -189,39 +189,7 @@ namespace SonyMDRemote
                         case MDSContext.MDSResponseType.InfoNameRemainData: break;
                         case MDSContext.MDSResponseType.InfoTOCData:
                             ReceivedPlayingTrack();
-
-                            label4.Text = String.Format("{0} tracks ({1}-{2}; {3:00}:{4:00}; {5:00}:{6:00} remaining)",
-                                    1 + mdctx.Disc.LastTrack - mdctx.Disc.FirstTrack,
-                                    mdctx.Disc.FirstTrack, mdctx.Disc.LastTrack,
-                                    (int)mdctx.Disc.Length.TotalMinutes, (int)mdctx.Disc.Length.Seconds,
-                                    (int)mdctx.Disc.RemainingRecordingTime.TotalMinutes, (int)mdctx.Disc.RemainingRecordingTime.Seconds);
-
-                            if (mdctx.Disc.FirstTrack != 0 && mdctx.Disc.LastTrack != 0)
-                            {
-                                try
-                                {
-                                    numericUpDown1.Minimum = mdctx.Disc.FirstTrack;
-                                    numericUpDown1.Maximum = mdctx.Disc.LastTrack;
-                                    if (numericUpDown1.Value < mdctx.Disc.FirstTrack)
-                                        numericUpDown1.Value = mdctx.Disc.FirstTrack;
-                                    if (numericUpDown1.Value > mdctx.Disc.LastTrack && mdctx.Disc.LastTrack != 0)
-                                        numericUpDown1.Value = mdctx.Disc.LastTrack;
-
-                                    numericUpDown1.Minimum = mdctx.Disc.FirstTrack;
-                                    numericUpDown1.Maximum = mdctx.Disc.LastTrack;
-                                }
-                                catch
-                                {
-                                    // do nothing, it literally makes no difference if this errors out
-                                }
-                            }
-                            else
-                            {
-                                numericUpDown1.Minimum = 1;
-                                numericUpDown1.Maximum = 255;
-                                numericUpDown1.Value = 1;
-                            }
-
+                            ReceivedTOCData();
                             break;
                         case MDSContext.MDSResponseType.InfoTrackTimeData:
                             if (!checkBox2_Elapsed.Checked)
@@ -258,6 +226,41 @@ namespace SonyMDRemote
                     }
                 }
 
+            }
+        }
+
+        private void ReceivedTOCData()
+        {
+            label4.Text = String.Format("{0} tracks ({1}-{2}; {3:00}:{4:00}; {5:00}:{6:00} remaining)",
+                    1 + mdctx.Disc.LastTrack - mdctx.Disc.FirstTrack,
+                    mdctx.Disc.FirstTrack, mdctx.Disc.LastTrack,
+                    (int)mdctx.Disc.Length.TotalMinutes, (int)mdctx.Disc.Length.Seconds,
+                    (int)mdctx.Disc.RemainingRecordingTime.TotalMinutes, (int)mdctx.Disc.RemainingRecordingTime.Seconds);
+
+            if (mdctx.Disc.FirstTrack != 0 && mdctx.Disc.LastTrack != 0)
+            {
+                try
+                {
+                    numericUpDown1.Minimum = mdctx.Disc.FirstTrack;
+                    numericUpDown1.Maximum = mdctx.Disc.LastTrack;
+                    if (numericUpDown1.Value < mdctx.Disc.FirstTrack)
+                        numericUpDown1.Value = mdctx.Disc.FirstTrack;
+                    if (numericUpDown1.Value > mdctx.Disc.LastTrack && mdctx.Disc.LastTrack != 0)
+                        numericUpDown1.Value = mdctx.Disc.LastTrack;
+
+                    numericUpDown1.Minimum = mdctx.Disc.FirstTrack;
+                    numericUpDown1.Maximum = mdctx.Disc.LastTrack;
+                }
+                catch
+                {
+                    // do nothing, it literally makes no difference if this errors out
+                }
+            }
+            else
+            {
+                numericUpDown1.Minimum = 1;
+                numericUpDown1.Maximum = 255;
+                numericUpDown1.Value = 1;
             }
         }
     }
