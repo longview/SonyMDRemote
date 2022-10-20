@@ -15,7 +15,7 @@ namespace SonyMDRemote
             RemainingRecordingTime = TimeSpan.Zero;
             FirstTrack = 0;
             LastTrack = 0;
-            Tracks = new Dictionary<int, MDTrackData>(30); // most discs have less than 30 tracks so start there
+            Tracks = new SortedDictionary<int, MDTrackData>();
             RecordedDate = DateTime.MinValue;
             CopyProtected = false;
             Stereo = true;
@@ -41,7 +41,7 @@ namespace SonyMDRemote
         public string Title;
         public TimeSpan Length;
         public TimeSpan RemainingRecordingTime;
-        public IDictionary<int, MDTrackData> Tracks;
+        public SortedDictionary<int, MDTrackData> Tracks;
         public DateTime RecordedDate;
         public int FirstTrack;
         public int LastTrack;
