@@ -367,6 +367,16 @@ namespace SonyMDRemote
             else
                 label12_timestamp.Text = "Recorded: N/A";
 
+            progressBar1.Value = (int)Math.Min(mdctx.CurrentTrackProgress * 1000, 999) + 1;
+            if (checkBox2_Elapsed.Checked)
+            {
+                MDTrackData track = mdctx.GetCurrentTrackOrEmpty();
+                label6.Text = String.Format("{0:00}:{1:00}/{2:00}:{3:00} (r: {4:00}:{5:00})",
+                    (int)mdctx.CurrentTrackElapsedTime.TotalMinutes, mdctx.CurrentTrackElapsedTime.Seconds,
+                                        (int)track.Length.TotalMinutes, track.Length.Seconds,
+                                        (int)mdctx.CurrentTrackRemainingTime.TotalMinutes, mdctx.CurrentTrackRemainingTime.Seconds);
+            }
+
             // update the datagridview active track indicator
             UpdateDataGridBold();
             UpdateTrackTitle();

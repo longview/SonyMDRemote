@@ -184,19 +184,6 @@ namespace SonyMDRemote
                             break;
                         case MDSContext.MDSResponseType.InfoElapsedTime:
                             ReceivedPlayingTrack();
-                            progressBar1.Value = (int)Math.Min(mdctx.CurrentTrackProgress * 1000, 1000);
-                            if (checkBox2_Elapsed.Checked)
-                            {
-                                MDTrackData track = new MDTrackData(0);
-                                mdctx.Disc.Tracks.TryGetValue(mdctx.CurrentTrack, out track);
-                                if (track == null)
-                                    track = new MDTrackData(0);
-                                label6.Text = String.Format("{0:00}:{1:00}/{2:00}:{3:00} (r: {4:00}:{5:00})",
-                                    (int)mdctx.CurrentTrackElapsedTime.TotalMinutes, mdctx.CurrentTrackElapsedTime.Seconds,
-                                                        (int)track.Length.TotalMinutes, track.Length.Seconds,
-                                                        (int)mdctx.CurrentTrackRemainingTime.TotalMinutes, mdctx.CurrentTrackRemainingTime.Seconds);
-                            }
-                                
                             break;
                         case MDSContext.MDSResponseType.InfoRecRemainData: break;
                         case MDSContext.MDSResponseType.InfoNameRemainData: break;

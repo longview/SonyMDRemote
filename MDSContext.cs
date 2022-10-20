@@ -404,12 +404,14 @@ namespace SonyMDRemote
             if (PlayerState == MDSStatusD1.EJECT || PlayerState == MDSStatusD1.STOP)
             {
                 CurrentTrackElapsedTime = TimeSpan.Zero;
+                CurrentTrackRemainingTime = TimeSpan.Zero;
                 CurrentTrackProgress = 0;
             }
 
             if (newtrack)
             {
                 CurrentTrackElapsedTime = TimeSpan.Zero;
+                CurrentTrackRemainingTime = TimeSpan.Zero;
                 CurrentTrackProgress = 0;
             }
         }
