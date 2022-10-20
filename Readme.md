@@ -43,7 +43,6 @@ Release builds limits the log scrollback to around 200-400 lines to avoid balloo
 
 ## Planned:
 * Check of maximum track name length - seems to have a lot of room but would have to really dig into the MD format to figure it out properly
-* Might try to abstract some of the UI and command handling, more work but will make the UI update a bit less jittery and make future work easier
 * May want to invalidate some data when the disc is ejected, and re-acquire the data when a new disc is inserted, for now it's on the user to hit Get Info again if changing discs.
 * (Maybe) Store track lengths automatically and reload based on disc title?
 
@@ -163,19 +162,13 @@ Disc length and remaining free time is optional and can be skipped, in this case
 
 Lines past 2 follow the general format:
 
-	Track Index (1 index) <TAB> Track Name <TAB> (Track length in format MMM:SS, zero pad)
+	Track Index (1 index) <TAB> Track Name <TAB> Track Length <TAB> Recorded Date
 
 Track lengths are read and parsed, but are not mandatory, if the second Tab character is not present in the line the track length is considered to be unknown. 
 
 Track index is included for compatibility with weird discs that may not start at track 1, it is to be considered optional.
 
-For example for a 1-track disc:
-
-	Track listing exported 2022-10-17T22:43:00 by LA2YUA SonyMDRemote v0.4a-dev\r\n
-	My Cool MixDisc<TAB>069:42<TAB>010:20\r\n
-	1<TAB>Cool Track / Awesome Artist<TAB>004:20\r\n
-
-But this should also work:
+This is the bare minimum:
 
 	<whatever/empty>
 	My MixDisc

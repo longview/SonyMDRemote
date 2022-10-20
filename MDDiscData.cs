@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,5 +51,68 @@ namespace SonyMDRemote
         public bool Error;
         public bool WriteProtected;
         public bool Recordable;
+
+        public string ImportHeader;
+
+
+        public void Serialize(StreamWriter outputfile, string VersionString = "N/A", string ReleaseString = "N/A")
+        {
+
+            outputfile.WriteLine(String.Format("Track listing exported on {0} by LA2YUA SonyMDRemote {1} {2}", DateTime.UtcNow.ToString("o"),
+                VersionString, ReleaseString));
+
+            outputfile.WriteLine(String.Format("{0}\t{1}\t{2}", Title, Length.ToString(), RemainingRecordingTime.ToString()));
+
+            foreach (var track in Tracks)
+            {
+                outputfile.WriteLine(String.Format("{0}\t{1}\t{2}\t{3}", track.Key, track.Value.Title, track.Value.Length.ToString(), track.Value.RecordedDate.ToString()));
+            }
+
+            outputfile.Close();
+        }
+
+        public void Import(StreamReader inputfile)
+        {
+            ImportHeader = inputfile.ReadLine();
+
+            string[] discinfo = inputfile.ReadLine().Split('\t');
+
+            if (discinfo.Length > 0)
+                Title = discinfo[0];
+            if (discinfo.Length > 1)
+                Length = TimeSpan.Parse(discinfo[1]);
+            //if (discinfo.Length > 2)
+            //  RemainingRecordingTime = TimeSpan.Parse(discinfo[2]);
+
+            int tracknumber = 0;
+
+            Tracks.Clear();
+
+            string line;
+            while ((line = inputfile.ReadLine()) != null)
+            {
+                string[] trackinfo = line.Split('\t');
+
+                // use tracknumber from file if available, but also keep track of the 1-indexed one
+                tracknumber++;
+                if (trackinfo.Length > 1)
+                    tracknumber = int.Parse(trackinfo[0]);
+
+                if (trackinfo.Length == 1)
+                    Tracks.Add(tracknumber, new MDTrackData((uint)tracknumber, trackinfo[0]));
+                //tracknames.Add(tracknumber, new StringBuilder(trackinfo[0]));
+                else
+                {
+                    Tracks.Add(tracknumber, new MDTrackData((uint)tracknumber, trackinfo[1], TimeSpan.Parse(trackinfo[2])));
+                    if (trackinfo.Length > 3 && DateTime.TryParse(trackinfo[3], out Tracks[tracknumber].RecordedDate))
+                        ;
+                    else
+                        Tracks[tracknumber].RecordedDate = DateTime.MinValue;
+                }
+
+            }
+
+            inputfile.Close();
+        }
     }
 }

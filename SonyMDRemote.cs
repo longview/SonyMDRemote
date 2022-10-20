@@ -831,10 +831,9 @@ namespace SonyMDRemote
             saveFileDialog1.FileName = outputfilename;
 
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                //if (ExportTrackListing(ref tracknames, ref tracklengths, discname, _disclength, _remainingrecordtime, outputfilename))
-                    //AppendLog("Exported track listing successfully.");
-            }
+                mdctx.Disc.Serialize(new StreamWriter(saveFileDialog1.FileName), VersionString, ReleaseString);
+
+            AppendLog("Saved track data to file {0}", saveFileDialog1.FileName);
         }
 
         private void linkLabel_loadtracks_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -842,14 +841,10 @@ namespace SonyMDRemote
             openFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             var openfile = openFileDialog1.ShowDialog();
             if (openfile == DialogResult.OK)
-            {
-                //if (ImportTrackListing(ref tracknames, ref tracklengths, ref discname, ref _disclength, ref _remainingrecordtime, openFileDialog1.FileName))
-                    //UpdateDataGrid();
-                //if (discname.Length > 0)
-                    //label7_disctitle.Text = String.Format("{0}", discname);
-            }
-
-
+                mdctx.Disc.Import(new StreamReader(openFileDialog1.FileName));
+            AppendLog("Loaded track data from file {0}", openFileDialog1.FileName);
+            AppendLog("Header was: {0}", mdctx.Disc.ImportHeader);
+            UpdateDataGrid();
         }
 
         private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
