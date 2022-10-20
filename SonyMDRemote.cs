@@ -361,8 +361,8 @@ namespace SonyMDRemote
                 label2.Text = String.Format("Track -/{0}", mdctx.Disc.LastTrack);
 
             // TODO: track 0 handling
-            if (mdctx.CurrentTrack > 0 && mdctx.Disc.Tracks.ContainsKey(mdctx.CurrentTrack) && mdctx.Disc.Tracks[mdctx.CurrentTrack].HasRecordedDate())
-                label12_timestamp.Text = "Recorded: " + mdctx.Disc.Tracks[mdctx.CurrentTrack].RecordedDate.ToString();
+            if (mdctx.CurrentTrack > 0 && mdctx.GetCurrentTrackOrEmpty().HasRecordedDate())
+                label12_timestamp.Text = "Recorded: " + mdctx.GetCurrentTrackOrNull().RecordedDate.ToString();
             else
                 label12_timestamp.Text = "Recorded: N/A";
 

@@ -58,6 +58,16 @@ namespace SonyMDRemote
         private int _DiscInfoRequest;
         public System.Windows.Forms.Timer TXTimer;
 
+        public MDTrackData GetCurrentTrackOrNull()
+        {
+            return Disc.Tracks.ContainsKey(CurrentTrack) ? Disc.Tracks[CurrentTrack] : null;
+        }
+
+        public MDTrackData GetCurrentTrackOrEmpty()
+        {
+            return Disc.Tracks.ContainsKey(CurrentTrack) ? Disc.Tracks[CurrentTrack] : new MDTrackData(0);
+        }
+
         public string GetPlayerStateString()
         {
             if (AutoPause)
