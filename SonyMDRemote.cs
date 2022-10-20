@@ -391,26 +391,42 @@ namespace SonyMDRemote
         // convert our populated track-name index when a full disc title sequence has been received
         private void UpdateDataGrid()
         {
+            dataGridView1.SuspendLayout();
             // TODO: maybe update instead of clearing each time?
-            dataGridView1.Rows.Clear();
-
-            // TODO: the order of the track list is not guaranteed to match the track indices!
-            // so we should sort it first
-            // or maybe sort the datagridview after
-            // we could also just iterate over the first to lasttrack fields
+            if (dataGridView1.Rows.Count > mdctx.Disc.Tracks.Count + 1)
+                dataGridView1.Rows.Clear();
 
             // first index is disc name, this also makes the track and array indices line up
-            dataGridView1.Rows.Add("Disc", mdctx.Disc.Title, mdctx.Disc.Title.Length == 0 ? true : false, GetTrackLenFormatted(0));
+            if (dataGridView1.Rows.Count == 0)
+                dataGridView1.Rows.Add("Disc", mdctx.Disc.Title, mdctx.Disc.Title.Length == 0 ? true : false, GetTrackLenFormatted(0));
+            else
+            {
+                dataGridView1.Rows[0].Cells[0].Value = "Disc";
+                dataGridView1.Rows[0].Cells[1].Value = mdctx.Disc.Title;
+                dataGridView1.Rows[0].Cells[2].Value = mdctx.Disc.Title.Length == 0 ? true : false;
+                dataGridView1.Rows[0].Cells[3].Value = GetTrackLenFormatted(0);
+            }
 
             foreach (DataGridViewCell cell in dataGridView1.Rows[0].Cells)
                 cell.Style.Font = new Font(DefaultFont, FontStyle.Bold);
 
             foreach (var track in mdctx.Disc.Tracks)
             {
-                dataGridView1.Rows.Add(track.Key, track.Value.Title.ToString(), track.Value.Title.ToString().Length == 0 ? true : false, GetTrackLenFormatted(track.Key));
+                // if there is already a row like this
+                if (dataGridView1.Rows.Count - 1 >= track.Key)
+                {
+                    dataGridView1.Rows[track.Key].Cells[0].Value = track.Key;
+                    dataGridView1.Rows[track.Key].Cells[1].Value = track.Value.Title.ToString();
+                    dataGridView1.Rows[track.Key].Cells[2].Value = track.Value.Title.ToString().Length == 0 ? true : false;
+                    dataGridView1.Rows[track.Key].Cells[3].Value = GetTrackLenFormatted(track.Key);
+                }
+                else
+                    dataGridView1.Rows.Add(track.Key, track.Value.Title.ToString(), track.Value.Title.ToString().Length == 0 ? true : false, GetTrackLenFormatted(track.Key));
             }
 
             //dataGridView1.CurrentCell = dataGridView1.Rows[dataGridView1.Rows.Count - 1].Cells[0];
+
+            dataGridView1.ResumeLayout();
 
             UpdateDataGridBold();
 
