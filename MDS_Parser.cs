@@ -172,7 +172,7 @@ namespace SonyMDRemote
                         case MDSContext.MDSResponseType.InfoDiscName:
                         case MDSContext.MDSResponseType.InfoDiscNameCont:
                             if (mdctx.Disc.HasTitle())
-                                label7_disctitle.Text = mdctx.Disc.Title.ToString();
+                                label7_disctitle.Text = mdctx.Disc.Title;
                             else
                                 label7_disctitle.Text = "No Title";
                             break;

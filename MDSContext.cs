@@ -201,13 +201,15 @@ namespace SonyMDRemote
             if (disclength != Disc.Length)
                 Disc.Length = disclength;
 
-            PruneDiskTracks();
+            PruneDiscTracks();
         }
 
         // Called when we know the track counts, get rid of any track infos that fall outside the valid range
-        private void PruneDiskTracks()
+        private void PruneDiscTracks()
         {
             if (!DiscInserted)
+                return;
+            if (PlayerState == MDSStatusD1.EJECT)
                 return;
 
             List<int> removetracks = new List<int>();
