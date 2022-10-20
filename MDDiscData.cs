@@ -90,10 +90,11 @@ namespace SonyMDRemote
             int tracknumber = 0;
 
             Tracks.Clear();
-
+            int _firsttrack = uint.MaxValue;
             string line;
             while ((line = inputfile.ReadLine()) != null)
             {
+                
                 string[] trackinfo = line.Split('\t');
 
                 // use tracknumber from file if available, but also keep track of the 1-indexed one
@@ -103,7 +104,6 @@ namespace SonyMDRemote
 
                 if (trackinfo.Length == 1)
                     Tracks.Add(tracknumber, new MDTrackData((uint)tracknumber, trackinfo[0]));
-                //tracknames.Add(tracknumber, new StringBuilder(trackinfo[0]));
                 else
                 {
                     Tracks.Add(tracknumber, new MDTrackData((uint)tracknumber, trackinfo[1], TimeSpan.Parse(trackinfo[2])));
@@ -112,10 +112,11 @@ namespace SonyMDRemote
                     else
                         Tracks[tracknumber].RecordedDate = DateTime.MinValue;
                 }
-
+                if (_firsttrack > tracknumber)
+                    _firsttrack = tracknumber;
             }
 
-            FirstTrack = 1;
+            FirstTrack = _firsttrack;
             LastTrack = tracknumber;
 
             inputfile.Close();
