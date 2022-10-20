@@ -360,8 +360,9 @@ namespace SonyMDRemote
             else
                 label2.Text = String.Format("Track -/{0}", mdctx.Disc.LastTrack);
 
-            // TODO: track 0 handling
-            if (mdctx.CurrentTrack > 0 && mdctx.GetCurrentTrackOrEmpty().HasRecordedDate())
+            if (mdctx.CurrentTrack == 0 && mdctx.Disc.HasRecordedDate())
+                label12_timestamp.Text = "Disc Recorded: " + mdctx.Disc.RecordedDate.ToString();
+            else if (mdctx.CurrentTrack > 0 && mdctx.GetCurrentTrackOrEmpty().HasRecordedDate())
                 label12_timestamp.Text = "Recorded: " + mdctx.GetCurrentTrackOrNull().RecordedDate.ToString();
             else
                 label12_timestamp.Text = "Recorded: N/A";
@@ -529,7 +530,7 @@ namespace SonyMDRemote
             // reset list of names
             //_infocounter = 0;
             // TODO: need to make a trackname-clear function
-            tracknames.Clear();
+            //tracknames.Clear();
             
 
             // stop any commands in queue
@@ -651,9 +652,15 @@ namespace SonyMDRemote
         {
             if (e.RowIndex == 0)
                 return;
-            // TODO: actually check column0
-            AppendLog("Playing track {0}", e.RowIndex);
-            Transmit_MDS_Message(MDS_TX_StartPlayAtTrack, tracknumber: (byte)(e.RowIndex), priority: true);
+
+            DataGridView gridview = (DataGridView)sender;
+            DataGridViewRow row = gridview.Rows[e.RowIndex];
+            if (row.Cells.Count == 0)
+                return;
+
+            int key = int.Parse(row.Cells[0].Value.ToString());
+            AppendLog("Playing track {0}", key);
+            Transmit_MDS_Message(MDS_TX_StartPlayAtTrack, tracknumber: (byte)(key), priority: true);
         }
 
         private void label7_Click(object sender, EventArgs e)
@@ -756,9 +763,18 @@ namespace SonyMDRemote
 
         private void dataGridView1_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-            // TODO: actually check column0
-            if (e.RowIndex <= numericUpDown1.Maximum && e.RowIndex >= numericUpDown1.Minimum)
-                numericUpDown1.Value = e.RowIndex;
+            if (e.RowIndex == 0)
+                return;
+
+            DataGridView gridview = (DataGridView)sender;
+            DataGridViewRow row = gridview.Rows[e.RowIndex];
+            if (row.Cells.Count == 0)
+                return;
+
+            int key = int.Parse(row.Cells[0].Value.ToString());
+
+            if (key <= numericUpDown1.Maximum && key >= numericUpDown1.Minimum)
+                numericUpDown1.Value = key;
         }
 
         private void label12_timestamp_Click(object sender, EventArgs e)

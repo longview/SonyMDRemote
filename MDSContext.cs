@@ -58,14 +58,33 @@ namespace SonyMDRemote
         private int _DiscInfoRequest;
         public System.Windows.Forms.Timer TXTimer;
 
-        public MDTrackData GetCurrentTrackOrNull()
+        public MDTrackData GetCurrentTrackOrNull(int key = -1)
         {
-            return Disc.Tracks.ContainsKey(CurrentTrack) ? Disc.Tracks[CurrentTrack] : null;
+            if (key == -1)
+                key = CurrentTrack;
+            return Disc.Tracks.ContainsKey(key) ? Disc.Tracks[key] : null;
         }
 
-        public MDTrackData GetCurrentTrackOrEmpty()
+        public MDTrackData GetCurrentTrackOrEmpty(int key = -1)
         {
-            return Disc.Tracks.ContainsKey(CurrentTrack) ? Disc.Tracks[CurrentTrack] : new MDTrackData(0);
+            if (key == -1)
+                key = CurrentTrack;
+            return Disc.Tracks.ContainsKey(key) ? Disc.Tracks[key] : new MDTrackData((uint)key);
+        }
+
+        // return true if track existed already
+        private bool SetOrUpdateTrack(MDTrackData track)
+        {
+            if (Disc.Tracks.ContainsKey((int)track.Number))
+            {
+                Disc.Tracks[(int)track.Number] = track;
+                return true;
+            }
+            else
+            {
+                Disc.Tracks.Add((int)track.Number, track);
+                return false;
+            }
         }
 
         public string GetPlayerStateString()
@@ -157,13 +176,12 @@ namespace SonyMDRemote
 
                 TimeSpan newts = new TimeSpan(0, Min, Sec);
 
-                if (Disc.Tracks.ContainsKey(CurrentTrack) && Disc.Tracks[CurrentTrack].Length == newts)
+                if (GetCurrentTrackOrEmpty().Length == newts)
                     return;
-                
-                if (Disc.Tracks.ContainsKey(CurrentTrack))
-                    Disc.Tracks[CurrentTrack].Length = newts;
-                else
-                    Disc.Tracks.Add(CurrentTrack, new MDTrackData(CurrentTrack, "", newts));
+
+                MDTrackData tr = GetCurrentTrackOrEmpty();
+                tr.Length = newts;
+                SetOrUpdateTrack(tr);
             }
         }
 
@@ -236,7 +254,7 @@ namespace SonyMDRemote
 
             CurrentTrackElapsedTime = new TimeSpan(0, Min, Sec);
 
-            if (!Disc.Tracks.ContainsKey(CurrentTrack) || !Disc.Tracks[CurrentTrack].HasLength())
+            if (!GetCurrentTrackOrEmpty().HasLength())
             {
                 CurrentTrackRemainingTime = TimeSpan.Zero;
                 CurrentTrackProgress = 0;
@@ -298,13 +316,11 @@ namespace SonyMDRemote
                 DateTime recdate = new DateTime(fullyear, Month, Day, Hour, Min, Sec);
                 if (TrackNo == 0)
                     Disc.RecordedDate = recdate;
-                else if (Disc.Tracks.ContainsKey(TrackNo))
-                {
-                    Disc.Tracks[TrackNo].RecordedDate = recdate;
-                }
                 else
                 {
-                    Disc.Tracks.Add(TrackNo, new MDTrackData(TrackNo));
+                    MDTrackData tr = GetCurrentTrackOrEmpty(TrackNo);
+                    tr.RecordedDate = recdate;
+                    SetOrUpdateTrack(tr);
                 }
             }
 
