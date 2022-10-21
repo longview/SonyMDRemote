@@ -569,78 +569,106 @@ namespace SonyMDRemote
         // stuff for issuing commands to the MDSes
         public class TransmitData
         {
-            static readonly byte[] MDS_TX_SetRemoteOn = new byte[] { 0x10, 0x03 };
-            static readonly byte[] MDS_TX_SetRemoteOff = new byte[] { 0x10, 0x04 };
+            public class MDSTXCommand
+            {
+                public MDSTXCommand() { }
+                public MDSMsgType MessageType;
+                public byte TrackNumber;
+                public bool IsTrackDump;
+                public int PostCommandDelay;
+            }
 
-            // 6.3 POWER (MDS-E11/E52 only)
-            static readonly byte[] MDS_TX_SetPowerOn = new byte[] { 0x01, 0x02 };
-            static readonly byte[] MDS_TX_SetPowerOff = new byte[] { 0x01, 0x03 };
+            public enum MDSMsgType
+            {
+                Unknown = 0xffff,
+                SetPowerOn = 0x0102,
+                SetPowerOff = 0x0103,
+                SetRemoteOn = 0x1003,
+                SetRemoteOff = 0x1004,
+                ReqStatus = 0x2020,
+                ReqDiscData = 0x2021,
+                ReqModelName = 0x2022,
+                ReqTrackRecordDate = 0x2024,
+                ReqTOCData = 0x2044,
+                ReqTrackTime = 0x2045,
+                ReqDiscName = 0x2048,
+                ReqDiscAndTrackNames = 0x204c,
+                ReqRemainingRecordTime = 0x2054,
+                ReqTrackRemainingNameSize = 0x2055,
+                WriteDiscName1 = 0x2070,
+                WriteDiscName2 = 0x2071,
+                WriteTrackName1 = 0x2072,
+                WriteTrackName2 = 0x2073,
+                Play = 0x0201,
+                Stop = 0x0202,
+                PlayPause = 0x0203,
+                Pause = 0x0206,
+                FFW_REW_Off=0x00,
+                Rewind = 0x0213,
+                FastForward = 0x0214,
+                NextTrack = 0x0216,
+                PrevTrack = 0x0215,
+                RecordArm = 0x0221,
+                Eject = 0x0240,
+                AutoPauseOn = 0x0281,
+                AutoPauseOff = 0x0280,
+                RepeatOff = 0x02A0,
+                RepeatAll = 0x02A1,
+                Repeat1Tr = 0x02A2,
+                StartPlayAtTrack = 0x0342,
+                PauseAtTrack = 0x0343,
+                EnableElapsedTimeTransmit = 0x0710,
+                DisableElapsedTimeTransmit = 0x0711
+            }
 
-            static readonly byte[] MDS_TX_ReqStatus = new byte[] { 0x20, 0x20 };
-            static readonly byte[] MDS_TX_ReqDiscData = new byte[] { 0x20, 0x21 };
-            static readonly byte[] MDS_TX_ReqModelName = new byte[] { 0x20, 0x22 };
-            static readonly byte[] MDS_TX_ReqTrackRecordDate = new byte[] { 0x20, 0x24 }; // next byte is track number
-            static readonly byte[] MDS_TX_ReqTOCData = new byte[] { 0x20, 0x44, 0x01 };
-            static readonly byte[] MDS_TX_ReqTrackTime = new byte[] { 0x20, 0x45, 0x01 }; // next byte is track number
-            static readonly byte[] MDS_TX_ReqDiscName = new byte[] { 0x20, 0x48, 0x01 };
-            static readonly byte[] MDS_TX_ReqTrackName = new byte[] { 0x20, 0x4A }; // next byte is track number
-            static readonly byte[] MDS_TX_ReqDiscAndTrackNames = new byte[] { 0x20, 0x4C, 0x01 };
-            static readonly byte[] MDS_TX_ReqRemainingRecordTime = new byte[] { 0x20, 0x54, 0x01 };
-            static readonly byte[] MDS_TX_ReqTrackRemainingNameSize = new byte[] { 0x20, 0x55, 0x00 }; // next byte is track number
+            public static string ToString(MDSMsgType msg)
+            {
+                switch (msg)
+                {
+                    case MDSMsgType.AutoPauseOff: return "Auto Pause Off";
+                    case MDSMsgType.AutoPauseOn: return "Auto Pause On";
+                    case MDSMsgType.DisableElapsedTimeTransmit: return "Disable Elapsed Time Transmit";
+                    case MDSMsgType.Eject: return "Eject";
+                    case MDSMsgType.EnableElapsedTimeTransmit: return "Enable Elapsed Time Transmit";
+                    case MDSMsgType.FastForward: return "Fast Forward";
+                    case MDSMsgType.FFW_REW_Off: return "FFW REW OFF";
+                    case MDSMsgType.NextTrack: return "Next Track";
+                    case MDSMsgType.Pause: return "Pause";
+                    case MDSMsgType.PauseAtTrack: return "Pause At Track";
+                    case MDSMsgType.Play: return "Play";
+                    case MDSMsgType.PlayPause: return "Pause";
+                    case MDSMsgType.PrevTrack: return "Previous Track";
+                    case MDSMsgType.RecordArm: return "Record Arm";
+                    case MDSMsgType.Repeat1Tr: return "Repeat 1 Track";
+                    case MDSMsgType.RepeatAll: return "Repeat All";
+                    case MDSMsgType.RepeatOff: return "Repeat Off";
+                    case MDSMsgType.ReqDiscAndTrackNames: return "Request Disc And Track Names";
+                    case MDSMsgType.ReqDiscData: return "Request Disc Data";
+                    case MDSMsgType.ReqDiscName: return "Request Disc Name";
+                    case MDSMsgType.ReqModelName: return "Request Model Name";
+                    case MDSMsgType.ReqRemainingRecordTime: return "Request Remaining Record Time";
+                    case MDSMsgType.ReqStatus: return "Request Status";
+                    case MDSMsgType.ReqTOCData: return "Request TOC Data";
+                    case MDSMsgType.ReqTrackRecordDate: return "Request Track Recording Date";
+                    case MDSMsgType.ReqTrackRemainingNameSize: return "Request Track Remaining Name Size";
+                    case MDSMsgType.ReqTrackTime: return "Request Track Length";
+                    case MDSMsgType.Rewind: return "Rewind";
+                    case MDSMsgType.SetPowerOff: return "Set Power Off";
+                    case MDSMsgType.SetPowerOn: return "Set Power On";
+                    case MDSMsgType.SetRemoteOff: return "Set Remote Off";
+                    case MDSMsgType.SetRemoteOn: return "Set Remote On";
+                    case MDSMsgType.StartPlayAtTrack: return "Start Playing At Track";
+                    case MDSMsgType.Stop: return "Stop";
+                    case MDSMsgType.WriteDiscName1: return "Write Disc Name, 1st packet";
+                    case MDSMsgType.WriteDiscName2: return "Write Disc Name, continued";
+                    case MDSMsgType.WriteTrackName1: return "Write Track Name, 1st packet";
+                    case MDSMsgType.WriteTrackName2: return "Write Track Name, continued";
+                    default: return "Unknown";
+                }
+            }
 
-            // 6.42 DISC NAME WRITE
-            // Playback must be stopped first
-            // supports ASCII values 0, 0x20-0x5A, 0x5E-0x7A
-            // should wait for WRITE PACKET RECEIVED message between writes
-            // final namedata byte must be 0 to effect write
-            // then finally WRITE COMPLETE?
-            readonly byte[] MDS_TX_WriteDiscName1 = new byte[] { 0x20, 0x70 }; // next byte is packet number, next 16 bytes is name data
-            readonly byte[] MDS_TX_WriteDiscName2 = new byte[] { 0x20, 0x71 }; // next byte is packet number, next 16 bytes is name data, null terminated
-
-            // 6.43 TRACK NO. NAME WRITE
-            // Playback must be stopped first
-            // supports ASCII values 0, 0x20-0x5A, 0x5E-0x7A
-            // should wait for WRITE PACKET RECEIVED message between writes
-            // final namedata byte must be 0 to effect write
-            // then finally WRITE COMPLETE
-            static readonly byte[] MDS_TX_WriteTrackName1 = new byte[] { 0x20, 0x72 }; // next byte is track number, next 16 bytes is name data, null terminated
-            static readonly byte[] MDS_TX_WriteTrackName2 = new byte[] { 0x20, 0x73 }; // next byte is packet number, next 16 bytes is name data, null terminated
-
-            // basic transport controls
-            static readonly byte[] MDS_TX_Play = new byte[] { 0x02, 0x01 };
-            static readonly byte[] MDS_TX_Stop = new byte[] { 0x02, 0x02 };
-            static readonly byte[] MDS_TX_PlayPause = new byte[] { 0x02, 0x03 };
-            static readonly byte[] MDS_TX_Pause = new byte[] { 0x02, 0x06 };
-            static readonly byte[] MDS_TX_FFW_REW_OFF = new byte[] { 0x00 };
-            static readonly byte[] MDS_TX_Rewind = new byte[] { 0x02, 0x13 };
-            static readonly byte[] MDS_TX_FastForward = new byte[] { 0x02, 0x14 };
-            static readonly byte[] MDS_TX_NextTrack = new byte[] { 0x02, 0x16 };
-            static readonly byte[] MDS_TX_PrevTrack = new byte[] { 0x02, 0x15 };
-            static readonly byte[] MDS_TX_RecordArm = new byte[] { 0x02, 0x21 };
-            static readonly byte[] MDS_TX_Eject = new byte[] { 0x02, 0x40 };
-            static readonly byte[] MDS_TX_AutoPauseOn = new byte[] { 0x02, 0x81 };
-            static readonly byte[] MDS_TX_AutoPauseOff = new byte[] { 0x02, 0x80 };
-
-            // from addendum
-            static readonly byte[] MDS_TX_RepeatOff = new byte[] { 0x02, 0xA0 };
-            static readonly byte[] MDS_TX_RepeatAll = new byte[] { 0x02, 0xA1 };
-            static readonly byte[] MDS_TX_Repeat1Tr = new byte[] { 0x02, 0xA2 };
-
-            // track management
-            static readonly byte[] MDS_TX_StartPlayAtTrack = new byte[] { 0x03, 0x42, 0x01 }; // next byte is track number
-            static readonly byte[] MDS_TX_PausePlayAtTrack = new byte[] { 0x03, 0x43, 0x01 }; // next byte is track number, pauses at the start of specific track
-
-            static readonly byte[] MDS_TX_EnableElapsedTimeTransmit = new byte[] { 0x07, 0x10 };
-            static readonly byte[] MDS_TX_DisableElapsedTimeTransmit = new byte[] { 0x07, 0x11 };
         }
 
-        public class MDSTXCommand
-        {
-            public MDSTXCommand() { }
-            public byte[] Payload;
-            public bool IsTrackDump;
-            public int PostCommandDelay;
-        }
 
         private bool IsBitSet(byte b, int pos)
         {
