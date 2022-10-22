@@ -85,8 +85,8 @@
             this.linkLabel_loadtracks = new System.Windows.Forms.LinkLabel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-            this.linkLabel2 = new System.Windows.Forms.LinkLabel();
+            this.linkLabel_PowerOn = new System.Windows.Forms.LinkLabel();
+            this.linkLabel_PowerOff = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -713,35 +713,35 @@
             // 
             this.openFileDialog1.DefaultExt = "txt";
             // 
-            // linkLabel1
+            // linkLabel_PowerOn
             // 
-            this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(316, 399);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(54, 13);
-            this.linkLabel1.TabIndex = 44;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "Power On";
-            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+            this.linkLabel_PowerOn.AutoSize = true;
+            this.linkLabel_PowerOn.Location = new System.Drawing.Point(316, 399);
+            this.linkLabel_PowerOn.Name = "linkLabel_PowerOn";
+            this.linkLabel_PowerOn.Size = new System.Drawing.Size(54, 13);
+            this.linkLabel_PowerOn.TabIndex = 44;
+            this.linkLabel_PowerOn.TabStop = true;
+            this.linkLabel_PowerOn.Text = "Power On";
+            this.linkLabel_PowerOn.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
-            // linkLabel2
+            // linkLabel_PowerOff
             // 
-            this.linkLabel2.AutoSize = true;
-            this.linkLabel2.Location = new System.Drawing.Point(376, 399);
-            this.linkLabel2.Name = "linkLabel2";
-            this.linkLabel2.Size = new System.Drawing.Size(54, 13);
-            this.linkLabel2.TabIndex = 45;
-            this.linkLabel2.TabStop = true;
-            this.linkLabel2.Text = "Power Off";
-            this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
+            this.linkLabel_PowerOff.AutoSize = true;
+            this.linkLabel_PowerOff.Location = new System.Drawing.Point(376, 399);
+            this.linkLabel_PowerOff.Name = "linkLabel_PowerOff";
+            this.linkLabel_PowerOff.Size = new System.Drawing.Size(54, 13);
+            this.linkLabel_PowerOff.TabIndex = 45;
+            this.linkLabel_PowerOff.TabStop = true;
+            this.linkLabel_PowerOff.Text = "Power Off";
+            this.linkLabel_PowerOff.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
             // 
             // SonyMDRemote
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(804, 596);
-            this.Controls.Add(this.linkLabel2);
-            this.Controls.Add(this.linkLabel1);
+            this.Controls.Add(this.linkLabel_PowerOff);
+            this.Controls.Add(this.linkLabel_PowerOn);
             this.Controls.Add(this.linkLabel_loadtracks);
             this.Controls.Add(this.linkLabel_savetracks);
             this.Controls.Add(this.tableLayoutPanel2);
@@ -834,8 +834,8 @@
         private System.Windows.Forms.LinkLabel linkLabel_loadtracks;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private System.Windows.Forms.LinkLabel linkLabel1;
-        private System.Windows.Forms.LinkLabel linkLabel2;
+        private System.Windows.Forms.LinkLabel linkLabel_PowerOn;
+        private System.Windows.Forms.LinkLabel linkLabel_PowerOff;
     }
 }
 

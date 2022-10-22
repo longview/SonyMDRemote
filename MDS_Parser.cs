@@ -167,6 +167,8 @@ namespace SonyMDRemote
                         case MDSContext.MDSResponseType.InfoDiscData: break; // NOP
                         case MDSContext.MDSResponseType.InfoModelName:
                             groupBox1.Text = "Sony " + mdctx.ModelName;
+                            linkLabel_PowerOff.Visible = mdctx.ModelHasSoftPower;
+                            linkLabel_PowerOn.Visible = mdctx.ModelHasSoftPower;
                             break;
                         case MDSContext.MDSResponseType.InfoRecDateData: break;
                         case MDSContext.MDSResponseType.InfoDiscName:

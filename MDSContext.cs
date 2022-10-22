@@ -31,6 +31,7 @@ namespace SonyMDRemote
             _CommandQueue = new List<MDSTXCommand>(10);
             _CommandQueue_Priority = new List<MDSTXCommand>(10);
             _DiscInfoRequest = 0;
+            ModelHasSoftPower = true;
         }
 
         public MDDiscData Disc;
@@ -51,10 +52,11 @@ namespace SonyMDRemote
         public TimeSpan CurrentTrackRemainingTime;
         //public MDTrackData CurrentTrackObject;
         public decimal CurrentTrackProgress;
+        public bool ModelHasSoftPower;
 
 
-        private List<MDSTXCommand> _CommandQueue_Priority;
-        private List<MDSTXCommand> _CommandQueue;
+        private List<TransmitData.MDSTXCommand> _CommandQueue_Priority;
+        private List<TransmitData.MDSTXCommand> _CommandQueue;
         private int _DiscInfoRequest;
         public System.Windows.Forms.Timer TXTimer;
 
@@ -135,7 +137,7 @@ namespace SonyMDRemote
                 case MDSResponseType.InfoModelData:         break;
                 case MDSResponseType.InfoStatusData:        HandleInfoStatusData(ref ArrRep); break;
                 case MDSResponseType.InfoDiscData:          HandleInfoDiscData(ref ArrRep); break;
-                case MDSResponseType.InfoModelName:         ModelName = TrimNonAscii(DecodeAscii(ref ArrRep, 6)); break;
+                case MDSResponseType.InfoModelName:         HandleModelName(ref ArrRep); break;
                 case MDSResponseType.InfoRecDateData:       HandleInfoRecDateData(ref ArrRep); break;
                 case MDSResponseType.InfoDiscName:          HandleInfoDiscName(ref ArrRep); break;
                 case MDSResponseType.InfoDiscNameCont:      HandleInfoDiscName(ref ArrRep); break;
@@ -161,6 +163,17 @@ namespace SonyMDRemote
 
             return messagetype;
         }
+
+        private void HandleModelName(ref byte[] ArrRep)
+        {
+            ModelName = TrimNonAscii(DecodeAscii(ref ArrRep, 6));
+
+            if (ModelName == "MDS-E12")
+                ModelHasSoftPower = false;
+            else
+                ModelHasSoftPower = true;
+        }
+
 
         private void HandleInfoAllNameEnd()
         {
