@@ -28,8 +28,8 @@ namespace SonyMDRemote
             CurrentTrackElapsedTime = TimeSpan.Zero;
             CurrentTrackProgress = 0;
 
-            _CommandQueue = new List<MDSTXCommand>(10);
-            _CommandQueue_Priority = new List<MDSTXCommand>(10);
+            _CommandQueue = new List<TransmitData.MDSTXCommand>(10);
+            _CommandQueue_Priority = new List<TransmitData.MDSTXCommand>(10);
             _DiscInfoRequest = 0;
             ModelHasSoftPower = true;
         }

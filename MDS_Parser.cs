@@ -226,6 +226,8 @@ namespace SonyMDRemote
                             break;
 
                     }
+
+                    label_RXIndicator.Text = "R";
                 }
 
             }

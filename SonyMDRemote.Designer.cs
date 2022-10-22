@@ -81,12 +81,16 @@
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
+            this.label_TXIndicator = new System.Windows.Forms.Label();
+            this.label_RXIndicator = new System.Windows.Forms.Label();
             this.linkLabel_savetracks = new System.Windows.Forms.LinkLabel();
             this.linkLabel_loadtracks = new System.Windows.Forms.LinkLabel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.linkLabel_PowerOn = new System.Windows.Forms.LinkLabel();
             this.linkLabel_PowerOff = new System.Windows.Forms.LinkLabel();
+            this.timer_TXBusy = new System.Windows.Forms.Timer(this.components);
+            this.timer_RXBusy = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -118,7 +122,7 @@
             // comboBox1_Serial_Port
             // 
             this.comboBox1_Serial_Port.FormattingEnabled = true;
-            this.comboBox1_Serial_Port.Location = new System.Drawing.Point(330, 3);
+            this.comboBox1_Serial_Port.Location = new System.Drawing.Point(292, 3);
             this.comboBox1_Serial_Port.Name = "comboBox1_Serial_Port";
             this.comboBox1_Serial_Port.Size = new System.Drawing.Size(57, 21);
             this.comboBox1_Serial_Port.TabIndex = 1;
@@ -131,9 +135,9 @@
             // 
             // button_Serial_Connect
             // 
-            this.button_Serial_Connect.Location = new System.Drawing.Point(393, 3);
+            this.button_Serial_Connect.Location = new System.Drawing.Point(357, 3);
             this.button_Serial_Connect.Name = "button_Serial_Connect";
-            this.button_Serial_Connect.Size = new System.Drawing.Size(75, 23);
+            this.button_Serial_Connect.Size = new System.Drawing.Size(74, 23);
             this.button_Serial_Connect.TabIndex = 3;
             this.button_Serial_Connect.Text = "Connect";
             this.button_Serial_Connect.UseVisualStyleBackColor = true;
@@ -259,7 +263,7 @@
             // 
             this.button10.Location = new System.Drawing.Point(3, 3);
             this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(67, 23);
+            this.button10.Size = new System.Drawing.Size(57, 23);
             this.button10.TabIndex = 15;
             this.button10.Text = "Get Info";
             this.button10.UseVisualStyleBackColor = true;
@@ -432,7 +436,7 @@
             // 
             // button15
             // 
-            this.button15.Location = new System.Drawing.Point(76, 3);
+            this.button15.Location = new System.Drawing.Point(69, 3);
             this.button15.Name = "button15";
             this.button15.Size = new System.Drawing.Size(46, 23);
             this.button15.TabIndex = 15;
@@ -483,9 +487,9 @@
             // 
             // button16
             // 
-            this.button16.Location = new System.Drawing.Point(214, 3);
+            this.button16.Location = new System.Drawing.Point(189, 3);
             this.button16.Name = "button16";
-            this.button16.Size = new System.Drawing.Size(75, 23);
+            this.button16.Size = new System.Drawing.Size(72, 23);
             this.button16.TabIndex = 31;
             this.button16.Text = "Write";
             this.button16.UseVisualStyleBackColor = true;
@@ -494,7 +498,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(128, 0);
+            this.label10.Location = new System.Drawing.Point(121, 0);
             this.label10.Name = "label10";
             this.label10.Padding = new System.Windows.Forms.Padding(0, 6, 0, 0);
             this.label10.Size = new System.Drawing.Size(59, 19);
@@ -667,25 +671,50 @@
             // 
             // tableLayoutPanel4
             // 
-            this.tableLayoutPanel4.ColumnCount = 6;
+            this.tableLayoutPanel4.ColumnCount = 9;
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 86F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 116F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 63F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 83F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 68F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 78F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 65F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 19F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel4.Controls.Add(this.button10, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.button15, 1, 0);
             this.tableLayoutPanel4.Controls.Add(this.label10, 2, 0);
             this.tableLayoutPanel4.Controls.Add(this.button16, 3, 0);
-            this.tableLayoutPanel4.Controls.Add(this.comboBox1_Serial_Port, 4, 0);
-            this.tableLayoutPanel4.Controls.Add(this.button_Serial_Connect, 5, 0);
+            this.tableLayoutPanel4.Controls.Add(this.button_Serial_Connect, 6, 0);
+            this.tableLayoutPanel4.Controls.Add(this.comboBox1_Serial_Port, 5, 0);
+            this.tableLayoutPanel4.Controls.Add(this.label_TXIndicator, 7, 0);
+            this.tableLayoutPanel4.Controls.Add(this.label_RXIndicator, 8, 0);
             this.tableLayoutPanel4.Location = new System.Drawing.Point(319, 12);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 1;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel4.Size = new System.Drawing.Size(473, 34);
             this.tableLayoutPanel4.TabIndex = 41;
+            // 
+            // label_TXIndicator
+            // 
+            this.label_TXIndicator.AutoSize = true;
+            this.label_TXIndicator.Location = new System.Drawing.Point(437, 0);
+            this.label_TXIndicator.Name = "label_TXIndicator";
+            this.label_TXIndicator.Padding = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this.label_TXIndicator.Size = new System.Drawing.Size(13, 19);
+            this.label_TXIndicator.TabIndex = 33;
+            this.label_TXIndicator.Text = "T";
+            // 
+            // label_RXIndicator
+            // 
+            this.label_RXIndicator.AutoSize = true;
+            this.label_RXIndicator.Location = new System.Drawing.Point(456, 0);
+            this.label_RXIndicator.Name = "label_RXIndicator";
+            this.label_RXIndicator.Padding = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this.label_RXIndicator.Size = new System.Drawing.Size(14, 19);
+            this.label_RXIndicator.TabIndex = 34;
+            this.label_RXIndicator.Text = "R";
             // 
             // linkLabel_savetracks
             // 
@@ -734,6 +763,18 @@
             this.linkLabel_PowerOff.TabStop = true;
             this.linkLabel_PowerOff.Text = "Power Off";
             this.linkLabel_PowerOff.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
+            // 
+            // timer_TXBusy
+            // 
+            this.timer_TXBusy.Enabled = true;
+            this.timer_TXBusy.Interval = 1000;
+            this.timer_TXBusy.Tick += new System.EventHandler(this.timer_TXBusy_Tick);
+            // 
+            // timer_RXBusy
+            // 
+            this.timer_RXBusy.Enabled = true;
+            this.timer_RXBusy.Interval = 1000;
+            this.timer_RXBusy.Tick += new System.EventHandler(this.timer_RXBusy_Tick);
             // 
             // SonyMDRemote
             // 
@@ -836,6 +877,10 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.LinkLabel linkLabel_PowerOn;
         private System.Windows.Forms.LinkLabel linkLabel_PowerOff;
+        private System.Windows.Forms.Label label_TXIndicator;
+        private System.Windows.Forms.Label label_RXIndicator;
+        private System.Windows.Forms.Timer timer_TXBusy;
+        private System.Windows.Forms.Timer timer_RXBusy;
     }
 }
 

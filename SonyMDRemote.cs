@@ -857,5 +857,20 @@ namespace SonyMDRemote
         {
             Transmit_MDS_Message(MDS_TX_SetPowerOn);
         }
+
+        private void timer_TXBusy_Tick(object sender, EventArgs e)
+        {
+            label_TXIndicator.Text = "-";
+        }
+
+        private void label_RXIndicator_Click(object sender, EventArgs e)
+        {
+            label_RXIndicator.Text = "-";
+        }
+
+        private void timer_RXBusy_Tick(object sender, EventArgs e)
+        {
+            label_RXIndicator.Text = "-";
+        }
     }
 }

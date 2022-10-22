@@ -289,6 +289,7 @@ namespace SonyMDRemote
                 serialPort1.Write(nextcommand.Item1, 0, nextcommand.Item1.Length);
 
                 timer_Poll_Time.Interval = nextcommand.Item2;
+                label_TXIndicator.Text = "T";
                 return;
             }
 
@@ -313,6 +314,8 @@ namespace SonyMDRemote
             AppendLog("PC sent: {0}, ASCII: {1}", BitConverter.ToString(nextcommand.Item1), TrimNonAscii(System.Text.Encoding.ASCII.GetString(nextcommand.Item1)));
 #endif
             serialPort1.Write(nextcommand.Item1, 0, nextcommand.Item1.Length);
+
+            label_TXIndicator.Text = "T";
 
             timer_Poll_Time.Interval = nextcommand.Item2;
         }
